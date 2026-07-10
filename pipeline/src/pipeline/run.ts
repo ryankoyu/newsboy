@@ -56,7 +56,7 @@ export interface RunOptions {
  * `rankInEdition` (1..10, unique within one edition) makes same-day
  * collisions impossible without touching the human-readable prefix.
  */
-function slugify(title: string, rankInEdition: number): string {
+export function slugify(title: string, rankInEdition: number): string {
   const base =
     title
       .toLowerCase()
