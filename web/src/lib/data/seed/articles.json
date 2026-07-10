@@ -1,0 +1,26 @@
+[
+  {
+    "id": "article-meta-layoffs",
+    "edition_id": "edition-2026-07-10",
+    "category_id": 3,
+    "slug": "meta-ai-layoffs-2026",
+    "event_summary": "Meta laid off ~8,000 employees while reassigning ~7,000 to new AI teams; Zuckerberg admitted AI progress was slower than expected.",
+    "rank_in_edition": 1,
+    "status": "published",
+    "published_at": "2026-07-10T00:00:00.000Z",
+    "created_at": "2026-07-10T00:00:00.000Z",
+    "updated_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "article-norway-brazil",
+    "edition_id": "edition-2026-07-10",
+    "category_id": 8,
+    "slug": "norway-beats-brazil-world-cup-2026",
+    "event_summary": "Norway beat Brazil 2-1 in the World Cup Round of 16 on Haaland's brace; Neymar retired from international football after the match.",
+    "rank_in_edition": 2,
+    "status": "published",
+    "published_at": "2026-07-10T00:00:00.000Z",
+    "created_at": "2026-07-10T00:00:00.000Z",
+    "updated_at": "2026-07-10T00:00:00.000Z"
+  }
+]

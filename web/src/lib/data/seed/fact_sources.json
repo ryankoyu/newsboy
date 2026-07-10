@@ -1,0 +1,65 @@
+[
+  { "fact_id": "fact-meta-1", "source_id": "source-meta-yahoo", "search_summary_only": false },
+  { "fact_id": "fact-meta-1", "source_id": "source-meta-npr", "search_summary_only": true },
+  { "fact_id": "fact-meta-1", "source_id": "source-meta-gulf", "search_summary_only": true },
+  { "fact_id": "fact-meta-1", "source_id": "source-meta-247wallst", "search_summary_only": true },
+  { "fact_id": "fact-meta-1", "source_id": "source-meta-quartz", "search_summary_only": true },
+
+  { "fact_id": "fact-meta-2", "source_id": "source-meta-yahoo", "search_summary_only": false },
+  { "fact_id": "fact-meta-2", "source_id": "source-meta-npr", "search_summary_only": true },
+  { "fact_id": "fact-meta-2", "source_id": "source-meta-gulf", "search_summary_only": true },
+
+  { "fact_id": "fact-meta-3", "source_id": "source-meta-yahoo", "search_summary_only": false },
+
+  { "fact_id": "fact-meta-4", "source_id": "source-meta-yahoo", "search_summary_only": false },
+  { "fact_id": "fact-meta-4", "source_id": "source-meta-gulf", "search_summary_only": true },
+  { "fact_id": "fact-meta-4", "source_id": "source-meta-247wallst", "search_summary_only": true },
+
+  { "fact_id": "fact-meta-5", "source_id": "source-meta-yahoo", "search_summary_only": false },
+  { "fact_id": "fact-meta-5", "source_id": "source-meta-gulf", "search_summary_only": true },
+
+  { "fact_id": "fact-meta-6", "source_id": "source-meta-yahoo", "search_summary_only": false },
+  { "fact_id": "fact-meta-6", "source_id": "source-meta-gulf", "search_summary_only": true },
+
+  { "fact_id": "fact-meta-7", "source_id": "source-meta-gulf", "search_summary_only": true },
+  { "fact_id": "fact-meta-7", "source_id": "source-meta-quartz", "search_summary_only": true },
+
+  { "fact_id": "fact-meta-8", "source_id": "source-meta-yahoo", "search_summary_only": false },
+
+  { "fact_id": "fact-meta-9", "source_id": "source-meta-247wallst", "search_summary_only": true },
+  { "fact_id": "fact-meta-9", "source_id": "source-meta-gulf", "search_summary_only": true },
+
+  { "fact_id": "fact-meta-10", "source_id": "source-meta-247wallst", "search_summary_only": true },
+
+  { "fact_id": "fact-meta-11", "source_id": "source-meta-yahoo", "search_summary_only": false },
+
+  { "fact_id": "fact-meta-12", "source_id": "source-meta-yahoo", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-1", "source_id": "source-wc-espn", "search_summary_only": false },
+  { "fact_id": "fact-wc-1", "source_id": "source-wc-aljazeera", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-2", "source_id": "source-wc-espn", "search_summary_only": false },
+  { "fact_id": "fact-wc-2", "source_id": "source-wc-aljazeera", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-3", "source_id": "source-wc-espn", "search_summary_only": false },
+  { "fact_id": "fact-wc-3", "source_id": "source-wc-aljazeera", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-4", "source_id": "source-wc-espn", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-5", "source_id": "source-wc-espn", "search_summary_only": false },
+  { "fact_id": "fact-wc-5", "source_id": "source-wc-aljazeera", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-6", "source_id": "source-wc-espn", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-7", "source_id": "source-wc-espn", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-8", "source_id": "source-wc-espn", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-9", "source_id": "source-wc-espn", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-10", "source_id": "source-wc-aljazeera", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-11", "source_id": "source-wc-aljazeera", "search_summary_only": false },
+
+  { "fact_id": "fact-wc-12", "source_id": "source-wc-aljazeera", "search_summary_only": false }
+]

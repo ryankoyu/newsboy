@@ -1,0 +1,37 @@
+[
+  { "id": "word-meta-a2-1", "version_id": "version-meta-a2", "term": "lay off", "meaning_ko": "(경영상) 해고하다, 정리해고하다", "example": "The factory had to lay off 200 workers last year.", "pronunciation": "LAY-off (동사는 두 단어, 명사는 layoff 한 단어: LAY-off)", "sort_order": 1 },
+  { "id": "word-meta-a2-2", "version_id": "version-meta-a2", "term": "workforce", "meaning_ko": "(한 조직의) 전체 직원, 노동력", "example": "Half of the company's workforce works from home.", "pronunciation": "WORK-forss", "sort_order": 2 },
+  { "id": "word-meta-a2-3", "version_id": "version-meta-a2", "term": "restructuring", "meaning_ko": "(조직) 구조조정, 개편", "example": "The restructuring created three new teams.", "pronunciation": "ree-STRUCK-cher-ing", "sort_order": 3 },
+  { "id": "word-meta-a2-4", "version_id": "version-meta-a2", "term": "reassign", "meaning_ko": "(다른 일·자리로) 재배치하다", "example": "She was reassigned to the marketing team.", "pronunciation": "ree-uh-SINE", "sort_order": 4 },
+  { "id": "word-meta-a2-5", "version_id": "version-meta-a2", "term": "acknowledge", "meaning_ko": "인정하다, 시인하다", "example": "He acknowledged that the plan was too slow.", "pronunciation": "ak-NOL-ij (첫 k는 발음, 두 번째 위치의 -ledge는 '리지')", "sort_order": 5 },
+
+  { "id": "word-meta-b1-1", "version_id": "version-meta-b1", "term": "lay off", "meaning_ko": "(경영상) 해고하다, 정리해고하다", "example": "The factory had to lay off 200 workers last year.", "pronunciation": "LAY-off (동사는 두 단어, 명사는 layoff 한 단어: LAY-off)", "sort_order": 1 },
+  { "id": "word-meta-b1-2", "version_id": "version-meta-b1", "term": "workforce", "meaning_ko": "(한 조직의) 전체 직원, 노동력", "example": "Half of the company's workforce works from home.", "pronunciation": "WORK-forss", "sort_order": 2 },
+  { "id": "word-meta-b1-3", "version_id": "version-meta-b1", "term": "restructuring", "meaning_ko": "(조직) 구조조정, 개편", "example": "The restructuring created three new teams.", "pronunciation": "ree-STRUCK-cher-ing", "sort_order": 3 },
+  { "id": "word-meta-b1-4", "version_id": "version-meta-b1", "term": "reassign", "meaning_ko": "(다른 일·자리로) 재배치하다", "example": "She was reassigned to the marketing team.", "pronunciation": "ree-uh-SINE", "sort_order": 4 },
+  { "id": "word-meta-b1-5", "version_id": "version-meta-b1", "term": "acknowledge", "meaning_ko": "인정하다, 시인하다", "example": "He acknowledged that the plan was too slow.", "pronunciation": "ak-NOL-ij (첫 k는 발음, 두 번째 위치의 -ledge는 '리지')", "sort_order": 5 },
+
+  { "id": "word-meta-b2-1", "version_id": "version-meta-b2", "term": "lay off", "meaning_ko": "(경영상) 해고하다, 정리해고하다", "example": "The factory had to lay off 200 workers last year.", "pronunciation": "LAY-off (동사는 두 단어, 명사는 layoff 한 단어: LAY-off)", "sort_order": 1 },
+  { "id": "word-meta-b2-2", "version_id": "version-meta-b2", "term": "workforce", "meaning_ko": "(한 조직의) 전체 직원, 노동력", "example": "Half of the company's workforce works from home.", "pronunciation": "WORK-forss", "sort_order": 2 },
+  { "id": "word-meta-b2-3", "version_id": "version-meta-b2", "term": "restructuring", "meaning_ko": "(조직) 구조조정, 개편", "example": "The restructuring created three new teams.", "pronunciation": "ree-STRUCK-cher-ing", "sort_order": 3 },
+  { "id": "word-meta-b2-4", "version_id": "version-meta-b2", "term": "reassign", "meaning_ko": "(다른 일·자리로) 재배치하다", "example": "She was reassigned to the marketing team.", "pronunciation": "ree-uh-SINE", "sort_order": 4 },
+  { "id": "word-meta-b2-5", "version_id": "version-meta-b2", "term": "acknowledge", "meaning_ko": "인정하다, 시인하다", "example": "He acknowledged that the plan was too slow.", "pronunciation": "ak-NOL-ij (첫 k는 발음, 두 번째 위치의 -ledge는 '리지')", "sort_order": 5 },
+
+  { "id": "word-wc-a2-1", "version_id": "version-wc-a2", "term": "upset (n.)", "meaning_ko": "(스포츠) 이변, 예상 밖의 결과", "example": "The small team's win was a huge upset.", "pronunciation": "명사는 UP-set (앞 강세), 동사는 up-SET", "sort_order": 1 },
+  { "id": "word-wc-a2-2", "version_id": "version-wc-a2", "term": "stun", "meaning_ko": "깜짝 놀라게 하다, 충격을 주다", "example": "Their late goal stunned the home crowd.", "pronunciation": "스턴 (stun) — 짧은 '어' 소리", "sort_order": 2 },
+  { "id": "word-wc-a2-3", "version_id": "version-wc-a2", "term": "striker", "meaning_ko": "(축구) 공격수, 스트라이커", "example": "The striker scored twice in one game.", "pronunciation": "STRY-ker", "sort_order": 3 },
+  { "id": "word-wc-a2-4", "version_id": "version-wc-a2", "term": "penalty", "meaning_ko": "(축구) 페널티킥, 벌칙", "example": "He scored from the penalty in the last minute.", "pronunciation": "PEN-uhl-tee", "sort_order": 4 },
+  { "id": "word-wc-a2-5", "version_id": "version-wc-a2", "term": "era", "meaning_ko": "시대, 시기", "example": "This win marks the start of a new era.", "pronunciation": "EER-uh 또는 AIR-uh (둘 다 쓰임)", "sort_order": 5 },
+
+  { "id": "word-wc-b1-1", "version_id": "version-wc-b1", "term": "upset (n.)", "meaning_ko": "(스포츠) 이변, 예상 밖의 결과", "example": "The small team's win was a huge upset.", "pronunciation": "명사는 UP-set (앞 강세), 동사는 up-SET", "sort_order": 1 },
+  { "id": "word-wc-b1-2", "version_id": "version-wc-b1", "term": "stun", "meaning_ko": "깜짝 놀라게 하다, 충격을 주다", "example": "Their late goal stunned the home crowd.", "pronunciation": "스턴 (stun) — 짧은 '어' 소리", "sort_order": 2 },
+  { "id": "word-wc-b1-3", "version_id": "version-wc-b1", "term": "striker", "meaning_ko": "(축구) 공격수, 스트라이커", "example": "The striker scored twice in one game.", "pronunciation": "STRY-ker", "sort_order": 3 },
+  { "id": "word-wc-b1-4", "version_id": "version-wc-b1", "term": "penalty", "meaning_ko": "(축구) 페널티킥, 벌칙", "example": "He scored from the penalty in the last minute.", "pronunciation": "PEN-uhl-tee", "sort_order": 4 },
+  { "id": "word-wc-b1-5", "version_id": "version-wc-b1", "term": "era", "meaning_ko": "시대, 시기", "example": "This win marks the start of a new era.", "pronunciation": "EER-uh 또는 AIR-uh (둘 다 쓰임)", "sort_order": 5 },
+
+  { "id": "word-wc-b2-1", "version_id": "version-wc-b2", "term": "upset (n.)", "meaning_ko": "(스포츠) 이변, 예상 밖의 결과", "example": "The small team's win was a huge upset.", "pronunciation": "명사는 UP-set (앞 강세), 동사는 up-SET", "sort_order": 1 },
+  { "id": "word-wc-b2-2", "version_id": "version-wc-b2", "term": "stun", "meaning_ko": "깜짝 놀라게 하다, 충격을 주다", "example": "Their late goal stunned the home crowd.", "pronunciation": "스턴 (stun) — 짧은 '어' 소리", "sort_order": 2 },
+  { "id": "word-wc-b2-3", "version_id": "version-wc-b2", "term": "striker", "meaning_ko": "(축구) 공격수, 스트라이커", "example": "The striker scored twice in one game.", "pronunciation": "STRY-ker", "sort_order": 3 },
+  { "id": "word-wc-b2-4", "version_id": "version-wc-b2", "term": "penalty", "meaning_ko": "(축구) 페널티킥, 벌칙", "example": "He scored from the penalty in the last minute.", "pronunciation": "PEN-uhl-tee", "sort_order": 4 },
+  { "id": "word-wc-b2-5", "version_id": "version-wc-b2", "term": "era", "meaning_ko": "시대, 시기", "example": "This win marks the start of a new era.", "pronunciation": "EER-uh 또는 AIR-uh (둘 다 쓰임)", "sort_order": 5 }
+]

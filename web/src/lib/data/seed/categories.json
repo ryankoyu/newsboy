@@ -1,0 +1,12 @@
+[
+  { "id": 1, "slug": "world", "label": "World", "emoji": "🌍", "sort_order": 1 },
+  { "id": 2, "slug": "korea", "label": "Korea", "emoji": "🇰🇷", "sort_order": 2 },
+  { "id": 3, "slug": "ai", "label": "AI", "emoji": "🤖", "sort_order": 3 },
+  { "id": 4, "slug": "tech", "label": "Technology", "emoji": "💻", "sort_order": 4 },
+  { "id": 5, "slug": "business", "label": "Business", "emoji": "💼", "sort_order": 5 },
+  { "id": 6, "slug": "finance", "label": "Finance", "emoji": "💰", "sort_order": 6 },
+  { "id": 7, "slug": "science", "label": "Science", "emoji": "🔬", "sort_order": 7 },
+  { "id": 8, "slug": "sports", "label": "Sports", "emoji": "⚽", "sort_order": 8 },
+  { "id": 9, "slug": "culture", "label": "Culture", "emoji": "🎭", "sort_order": 9 },
+  { "id": 10, "slug": "lifestyle", "label": "Lifestyle", "emoji": "🌿", "sort_order": 10 }
+]

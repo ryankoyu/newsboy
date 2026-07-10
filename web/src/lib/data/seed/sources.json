@@ -1,0 +1,92 @@
+[
+  {
+    "id": "source-meta-yahoo",
+    "article_id": "article-meta-layoffs",
+    "url": "https://finance.yahoo.com/sectors/technology/articles/meta-layoffs-2026-8-000-114209703.html",
+    "outlet": "Yahoo Finance",
+    "title": null,
+    "fetched_at": "2026-07-10T00:00:00.000Z",
+    "fetch_method": "full_text",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "source-meta-npr",
+    "article_id": "article-meta-layoffs",
+    "url": "https://www.npr.org/2026/05/20/nx-s1-5826917/meta-layoffs-ai-jobs",
+    "outlet": "NPR",
+    "title": null,
+    "fetched_at": "2026-07-10T00:00:00.000Z",
+    "fetch_method": "search_summary",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "source-meta-gulf",
+    "article_id": "article-meta-layoffs",
+    "url": "https://gulfbusiness.com/en/2026/tech/meta-cuts-8000-jobs-zuckerberg-no-more-layoffs-ai-restructuring/",
+    "outlet": "Gulf Business",
+    "title": null,
+    "fetched_at": "2026-07-10T00:00:00.000Z",
+    "fetch_method": "search_summary",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "source-meta-247wallst",
+    "article_id": "article-meta-layoffs",
+    "url": "https://247wallst.com/investing/2026/07/07/after-laying-off-8000-employees-zuckerberg-admits-metas-ai-hasnt-really-accelerated-as-expected/",
+    "outlet": "24/7 Wall St.",
+    "title": null,
+    "fetched_at": "2026-07-10T00:00:00.000Z",
+    "fetch_method": "search_summary",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "source-meta-quartz",
+    "article_id": "article-meta-layoffs",
+    "url": "https://qz.com/meta-layoffs-8000-jobs-ai-restructuring-052026",
+    "outlet": "Quartz",
+    "title": null,
+    "fetched_at": "2026-07-10T00:00:00.000Z",
+    "fetch_method": "search_summary",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "source-wc-espn",
+    "article_id": "article-norway-brazil",
+    "url": "https://www.espn.com/soccer/report/_/gameId/760504",
+    "outlet": "ESPN",
+    "title": null,
+    "fetched_at": "2026-07-10T00:00:00.000Z",
+    "fetch_method": "full_text",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "source-wc-aljazeera",
+    "article_id": "article-norway-brazil",
+    "url": "https://www.aljazeera.com/sports/2026/7/6/neymar-quits-international-football-after-brazils-world-cup-knockout-loss",
+    "outlet": "Al Jazeera",
+    "title": null,
+    "fetched_at": "2026-07-10T00:00:00.000Z",
+    "fetch_method": "full_text",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "source-wc-fifa",
+    "article_id": "article-norway-brazil",
+    "url": "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/brazil-norway-match-report-highlights",
+    "outlet": "FIFA official",
+    "title": null,
+    "fetched_at": "2026-07-10T00:00:00.000Z",
+    "fetch_method": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "source-wc-goal",
+    "article_id": "article-norway-brazil",
+    "url": "https://www.goal.com/en-in/lists/erling-haaland-norway-brazil-world-cup-reaction/blt04a77aa28ff4c73e",
+    "outlet": "Goal.com",
+    "title": null,
+    "fetched_at": "2026-07-10T00:00:00.000Z",
+    "fetch_method": "search_summary",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  }
+]

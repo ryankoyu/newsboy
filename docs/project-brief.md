@@ -276,7 +276,7 @@ Reading → Vocabulary → Listening → Speaking → Review → Retention
 4. Smart Dictionary (단어 클릭 → 뜻/예문)
 5. 회원가입 + 레벨 선택
 
-**나중으로 미룰 것**: AI Conversation, Shadowing(TTS), 복습 알림, 관심사 큐레이션, Progress, 결제
+**나중으로 미룰 것**: **퀴즈(2026-07-10 사용자 지시로 MVP 제외)**, AI Conversation, Shadowing(TTS), 복습 알림, 관심사 큐레이션, Progress, 결제
 
 ---
 

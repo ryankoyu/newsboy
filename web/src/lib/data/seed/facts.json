@@ -1,0 +1,218 @@
+[
+  {
+    "id": "fact-meta-1",
+    "article_id": "article-meta-layoffs",
+    "statement": "Meta laid off about 8,000 employees.",
+    "source_count": 5,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-2",
+    "article_id": "article-meta-layoffs",
+    "statement": "The cuts are roughly 10% of Meta's workforce.",
+    "source_count": 3,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-3",
+    "article_id": "article-meta-layoffs",
+    "statement": "Meta had just under 80,000 employees at the end of March 2026.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-4",
+    "article_id": "article-meta-layoffs",
+    "statement": "About 7,000 more workers were moved to new AI-focused teams.",
+    "source_count": 3,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-5",
+    "article_id": "article-meta-layoffs",
+    "statement": "New AI teams named: Applied AI Engineering, Agent Transformation Accelerator XFN, Central Analytics.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-6",
+    "article_id": "article-meta-layoffs",
+    "statement": "Singapore workers were notified first (around 4 a.m. local time).",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-7",
+    "article_id": "article-meta-layoffs",
+    "statement": "Cuts hit integrity, cybersecurity, and Reality Labs; AI infrastructure and monetization teams were protected.",
+    "source_count": 2,
+    "used_in_text": false,
+    "note": "used only as background, softened in text",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-8",
+    "article_id": "article-meta-layoffs",
+    "statement": "Chief People Officer Janelle Gale announced the reassignments.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-9",
+    "article_id": "article-meta-layoffs",
+    "statement": "At a July 2, 2026 town hall, Zuckerberg said AI agent progress over the prior ~4 months \"hasn't really accelerated in the way that we expected.\"",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": "quote used with attribution only",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-10",
+    "article_id": "article-meta-layoffs",
+    "statement": "Zuckerberg said he expects benefits within three to six months.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": "single source, presented as his statement, not fact",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-11",
+    "article_id": "article-meta-layoffs",
+    "statement": "Meta's projected 2026 capital spending is about $125-145 billion, more than double 2025.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": "single-source and non-central, simplified to 'very large' in text",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-meta-12",
+    "article_id": "article-meta-layoffs",
+    "statement": "U.S. severance: 16 weeks base pay plus 2 weeks per year of service; 18 months of health coverage.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": "single-source and non-central, not used in learner text",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-1",
+    "article_id": "article-norway-brazil",
+    "statement": "Norway beat Brazil 2-1 in the Round of 16.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-2",
+    "article_id": "article-norway-brazil",
+    "statement": "The match was played on July 5, 2026.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-3",
+    "article_id": "article-norway-brazil",
+    "statement": "Venue: MetLife Stadium, East Rutherford, New Jersey.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-4",
+    "article_id": "article-norway-brazil",
+    "statement": "Erling Haaland scored both Norway goals, in the 79th and 90th minutes.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": "single source (score corroborated by Al Jazeera)",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-5",
+    "article_id": "article-norway-brazil",
+    "statement": "Neymar scored a late penalty for Brazil (added time, as a substitute).",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-6",
+    "article_id": "article-norway-brazil",
+    "statement": "It was Norway's first-ever World Cup quarterfinal.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-7",
+    "article_id": "article-norway-brazil",
+    "statement": "Norway had not played at a World Cup for 28 years before this tournament.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-8",
+    "article_id": "article-norway-brazil",
+    "statement": "Goalkeeper Ørjan Nyland saved a Bruno Guimarães penalty in the 14th minute.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-9",
+    "article_id": "article-norway-brazil",
+    "statement": "Brazil were five-time World Cup winners entering the round.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-10",
+    "article_id": "article-norway-brazil",
+    "statement": "Neymar, aged 34, announced the end of his international career after the match.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-11",
+    "article_id": "article-norway-brazil",
+    "statement": "Neymar quote: \"I tried. It started here, at MetLife Stadium, and I finished here. It is now over.\"",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": "used with attribution",
+    "created_at": "2026-07-10T00:00:00.000Z"
+  },
+  {
+    "id": "fact-wc-12",
+    "article_id": "article-norway-brazil",
+    "statement": "Neymar is Brazil's all-time top scorer; his international debut was August 10, 2010, also at MetLife Stadium.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-10T00:00:00.000Z"
+  }
+]
