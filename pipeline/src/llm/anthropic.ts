@@ -25,8 +25,8 @@ import type { ExtractedFact, WordEntry } from "../types.js";
 
 const MODEL_BY_TIER: Record<ModelTier, string> = {
   haiku: "claude-haiku-4-5",
-  sonnet: "claude-sonnet-4-5",
-  opus: "claude-opus-4-1",
+  sonnet: "claude-sonnet-5",
+  opus: "claude-opus-4-8",
 };
 
 const FABRICATION_GUARDRAIL =
@@ -124,6 +124,13 @@ export class AnthropicLLMProvider implements LLMProvider {
       `facts provided — do not add outside facts. Target: ${targets[input.level]}. ` +
       "Write a brand-new headline (never reuse a source headline). Also produce 5 key " +
       "vocabulary words with Korean meaning, an example sentence, and a pronunciation hint. " +
+      "CRITICAL: every word you select MUST actually appear in the article body you just wrote " +
+      "for THIS level (exact word, or a simple inflected form — plural -s/-es, past -ed, " +
+      "progressive -ing; multi-word terms like \"lay off\" must appear as that exact phrase). " +
+      "Do not pick a word that only appears in your notes, the source facts, or a different " +
+      "level's version — a curated word the reader cannot find and click in the text is a " +
+      "defect. If fewer than 5 in-text words are suitable, return fewer rather than inventing " +
+      "one that isn't in the body. " +
       'Respond with strict JSON only: {"title": "...", "content": "...", "wordCount": 0, ' +
       '"words": [{"term": "...", "meaningKo": "...", "example": "...", "pronunciation": "...", "sortOrder": 0}]}.' +
       (input.feedback ? ` Previous attempt failed a quality gate: ${input.feedback}. Fix this specifically.` : "");

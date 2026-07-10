@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import type { EditionWithArticles, CefrLevel } from "@/lib/types";
 import { estimateReadingMinutes } from "@/lib/data";
 import { useSession } from "@/lib/useSession";
@@ -10,22 +8,22 @@ import { CategorySummaryChips } from "@/components/CategorySummaryChips";
 import { ArticleCard } from "@/components/ArticleCard";
 import { ArticleCardSkeleton } from "@/components/Skeleton";
 import { EmptyState } from "@/components/EmptyState";
+import { OnboardingBanner } from "@/components/OnboardingBanner";
 
 const TOP_N = 10;
 
+/**
+ * Home is immediately viewable, no forced onboarding redirect — policy
+ * confirmed in design-decisions.md §4.6 (Q1/Q2 QA): "온보딩은 강제하지
+ * 않는다. 홈 즉시 열람, 레벨 미설정 시 홈 상단 배너로 레벨 진단 유도,
+ * 기본 레벨 A2." OnboardingBanner (non-intrusive, dismissible) handles the
+ * nudge; session.getLevel() already defaults to "A2" (session.ts DEFAULTS).
+ */
 export function HomeView({ edition }: { edition: EditionWithArticles | null }) {
-  const router = useRouter();
   const { session, hydrated } = useSession();
-  const needsOnboarding = hydrated && !session.hasOnboarded();
 
-  // Redirect is a side effect on an external system (the router) — no local
-  // state involved (lint: react-hooks/set-state-in-effect compliant).
-  useEffect(() => {
-    if (needsOnboarding) router.replace("/onboarding");
-  }, [needsOnboarding, router]);
-
-  if (!hydrated || needsOnboarding) {
-    // Avoid a content flash before the onboarding redirect decision lands.
+  if (!hydrated) {
+    // Avoid a content flash before client-side session state hydrates.
     return (
       <main
         style={{ maxWidth: "var(--content-max)", margin: "0 auto", padding: "var(--sp-4)" }}
@@ -42,6 +40,7 @@ export function HomeView({ edition }: { edition: EditionWithArticles | null }) {
   if (!edition || edition.articles.length === 0) {
     return (
       <main style={{ maxWidth: "var(--content-max)", margin: "0 auto", padding: "var(--sp-4)" }}>
+        <OnboardingBanner />
         <EmptyState
           emoji="☕"
           title="오늘의 브리핑을 준비하고 있어요."
@@ -69,6 +68,7 @@ export function HomeView({ edition }: { edition: EditionWithArticles | null }) {
         padding: "var(--sp-4)",
       }}
     >
+      <OnboardingBanner />
       <GreetingBlock totalArticles={TOP_N} totalMinutes={totalMinutes || 1} />
       <CategorySummaryChips articles={articles} />
 

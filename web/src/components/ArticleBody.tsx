@@ -15,6 +15,23 @@ import { useSession } from "@/lib/useSession";
  * - lookup key = lowercase, punctuation-stripped lemma
  * - role="button" tabindex="0", Enter/Space triggers
  * - seen words get a dotted underline
+ *
+ * Matching curated words (Word[]) against body tokens (Q2 fix):
+ * - Multi-word terms ("lay off") match a contiguous token sequence, and the
+ *   ENTIRE sequence becomes one clickable span (not just the first word).
+ * - Curly apostrophes (') are normalized to straight ('), and vice versa,
+ *   so "Zuckerberg's" (curly, from seed/CMS text) matches a term written
+ *   with a straight apostrophe or without one.
+ * - Matching is case-insensitive.
+ * - A conservative inflection check covers plural -s/-es, past -ed, and
+ *   progressive -ing (plus simple consonant-doubling / -e-drop spelling
+ *   variants: stun/stunned, hope/hoping). Irregular forms (e.g. lay→laid)
+ *   are intentionally NOT covered — aggressive stemming risks false
+ *   matches, which is worse than a missed match (falls back to the
+ *   "Words in this story" section, which already handles zero-match
+ *   levels correctly).
+ * - This only changes matching logic — no new word/meaning data is
+ *   invented for terms absent from the body (task constraint).
  */
 
 // Split a sentence into tokens, keeping punctuation/whitespace as separate
@@ -39,8 +56,157 @@ function tokenizeSentence(sentence: string): Array<{ text: string; isWord: boole
   return tokens;
 }
 
+// Normalize curly quotes/apostrophes to straight ones and lowercase, so
+// "Zuckerberg's" (curly ') and "Zuckerberg's" (straight ') compare equal.
+function normalizeApostrophes(raw: string): string {
+  return raw.replace(/[‘’ʼ]/g, "'");
+}
+
 function lookupKey(raw: string): string {
-  return raw.toLowerCase();
+  return normalizeApostrophes(raw).toLowerCase();
+}
+
+// Strip a parenthetical POS/usage hint from a curated term, e.g.
+// "upset (n.)" -> "upset".
+function stripParenthetical(term: string): string {
+  return term.replace(/\s*\(.*?\)\s*/g, "").trim();
+}
+
+/**
+ * Conservative inflected forms of a single base word: plural -s/-es, past
+ * -ed, progressive -ing, including the common spelling adjustments
+ * (drop final -e before a vowel suffix; double a short final consonant).
+ * Deliberately does NOT touch irregular verbs/nouns.
+ */
+function conservativeInflections(base: string): Set<string> {
+  const forms = new Set<string>([base]);
+  if (base.length < 2) return forms;
+
+  const lastChar = base[base.length - 1];
+  const secondLast = base[base.length - 2];
+  const endsInConsonant = !"aeiou".includes(lastChar);
+  const isVowel = (c: string) => "aeiou".includes(c);
+
+  // Plural / 3rd-person -s / -es.
+  if (/[sxz]$/.test(base) || /(ch|sh)$/.test(base)) {
+    forms.add(base + "es");
+  } else if (base.endsWith("y") && !isVowel(secondLast ?? "")) {
+    forms.add(base.slice(0, -1) + "ies");
+  } else {
+    forms.add(base + "s");
+  }
+
+  // Past tense -ed / progressive -ing.
+  if (base.endsWith("e")) {
+    forms.add(base + "d"); // hope -> hoped
+    forms.add(base.slice(0, -1) + "ing"); // hope -> hoping
+  } else if (
+    base.endsWith("y") &&
+    !isVowel(secondLast ?? "") &&
+    base.length > 1
+  ) {
+    forms.add(base.slice(0, -1) + "ied"); // study -> studied
+    forms.add(base + "ing"); // study -> studying
+  } else {
+    forms.add(base + "ed");
+    forms.add(base + "ing");
+    // Short vowel + single final consonant -> double it (stun -> stunned).
+    if (
+      endsInConsonant &&
+      base.length >= 3 &&
+      isVowel(secondLast ?? "") &&
+      !isVowel(base[base.length - 3] ?? "x") &&
+      !"wxy".includes(lastChar)
+    ) {
+      forms.add(base + lastChar + "ed");
+      forms.add(base + lastChar + "ing");
+    }
+  }
+
+  return forms;
+}
+
+interface WordSequence {
+  /** Normalized, lowercase tokens of the curated term, e.g. ["lay", "off"]. */
+  tokens: string[];
+  entry: Word;
+}
+
+/** Precompute normalized multi-token sequences for every curated word. */
+function buildWordSequences(words: Word[]): WordSequence[] {
+  return words.map((w) => ({
+    tokens: lookupKey(stripParenthetical(w.term)).split(/\s+/).filter(Boolean),
+    entry: w,
+  }));
+}
+
+/** Does body token `bodyTok` match sequence token `seqTok` (exact or a conservative inflection)? */
+function tokenMatches(bodyTok: string, seqTok: string): boolean {
+  if (bodyTok === seqTok) return true;
+  return conservativeInflections(seqTok).has(bodyTok);
+}
+
+// A run of one or more consecutive word-tokens (from tokenizeSentence) that
+// matches one curated Word entry — the whole run becomes one clickable span.
+interface MatchedRun {
+  startIdx: number; // index into the token array (inclusive)
+  endIdx: number; // index into the token array (inclusive)
+  entry: Word;
+}
+
+/**
+ * Greedily scan a sentence's tokens and find runs that match a curated
+ * word's sequence. Longer (multi-word) sequences are tried first at each
+ * position so "lay off" wins over a hypothetical single-word "lay" entry.
+ * Whitespace/punctuation tokens between two matched word-tokens are allowed
+ * inside a multi-word run (e.g. "lay   off" or "lay-off").
+ */
+function findMatchedRuns(
+  tokens: Array<{ text: string; isWord: boolean }>,
+  sequences: WordSequence[],
+): MatchedRun[] {
+  const runs: MatchedRun[] = [];
+  const wordTokenIdxs = tokens
+    .map((t, i) => (t.isWord ? i : -1))
+    .filter((i) => i >= 0);
+
+  const sortedSequences = [...sequences].sort((a, b) => b.tokens.length - a.tokens.length);
+
+  let cursor = 0; // index into wordTokenIdxs
+  while (cursor < wordTokenIdxs.length) {
+    let matched: MatchedRun | null = null;
+
+    for (const seq of sortedSequences) {
+      if (seq.tokens.length === 0) continue;
+      if (cursor + seq.tokens.length > wordTokenIdxs.length) continue;
+
+      let ok = true;
+      for (let k = 0; k < seq.tokens.length; k++) {
+        const bodyIdx = wordTokenIdxs[cursor + k];
+        const bodyTok = lookupKey(tokens[bodyIdx].text);
+        if (!tokenMatches(bodyTok, seq.tokens[k])) {
+          ok = false;
+          break;
+        }
+      }
+
+      if (ok) {
+        const startIdx = wordTokenIdxs[cursor];
+        const endIdx = wordTokenIdxs[cursor + seq.tokens.length - 1];
+        matched = { startIdx, endIdx, entry: seq.entry };
+        cursor += seq.tokens.length;
+        break;
+      }
+    }
+
+    if (matched) {
+      runs.push(matched);
+    } else {
+      cursor += 1;
+    }
+  }
+
+  return runs;
 }
 
 export function ArticleBody({
@@ -58,35 +224,15 @@ export function ArticleBody({
   } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Build a lookup map: lemma -> Word entry. Falls back to fuzzy contains
-  // match for multi-word terms like "lay off".
-  const wordMap = new Map<string, Word>();
-  for (const w of words) {
-    wordMap.set(lookupKey(w.term.replace(/\s*\(.*?\)\s*/g, "")), w);
-  }
-
-  function findWordEntry(raw: string): Word | null {
-    const key = lookupKey(raw);
-    if (wordMap.has(key)) return wordMap.get(key)!;
-    // Multi-word terms (e.g. "lay off") won't match a single token; check
-    // if this token is the start of any multi-word term.
-    for (const w of words) {
-      const cleanTerm = lookupKey(w.term.replace(/\s*\(.*?\)\s*/g, ""));
-      if (cleanTerm.split(/\s+/)[0] === key && cleanTerm.includes(" ")) {
-        return w;
-      }
-    }
-    return null;
-  }
+  const sequences = buildWordSequences(words);
 
   function handleWordClick(
-    raw: string,
+    entry: Word,
+    text: string,
     el: HTMLElement,
     refObj: React.RefObject<HTMLElement | null>
   ) {
-    const entry = findWordEntry(raw);
-    if (!entry) return; // Word not in the curated list — not clickable-meaningful.
-    session.markWordSeen(raw);
+    session.markWordSeen(text);
     refresh();
     setActive({ word: entry, rect: el.getBoundingClientRect(), ref: refObj });
   }
@@ -96,6 +242,42 @@ export function ArticleBody({
       <div className="briefly-article-body">
         {sentences.map((sentence, sIdx) => {
           const tokens = tokenizeSentence(sentence);
+          const runs = findMatchedRuns(tokens, sequences);
+          const runByStart = new Map(runs.map((r) => [r.startIdx, r]));
+          const insideRun = new Set<number>();
+          for (const r of runs) {
+            for (let i = r.startIdx; i <= r.endIdx; i++) insideRun.add(i);
+          }
+
+          const rendered: React.ReactNode[] = [];
+          let tIdx = 0;
+          while (tIdx < tokens.length) {
+            const tok = tokens[tIdx];
+            const run = runByStart.get(tIdx);
+            if (run) {
+              const text = tokens
+                .slice(run.startIdx, run.endIdx + 1)
+                .map((t) => t.text)
+                .join("");
+              const seen = session.isWordSeen(text);
+              rendered.push(
+                <ClickableWordToken
+                  key={tIdx}
+                  text={text}
+                  entry={run.entry}
+                  seen={seen}
+                  onActivate={handleWordClick}
+                />,
+              );
+              tIdx = run.endIdx + 1;
+              continue;
+            }
+            if (!insideRun.has(tIdx)) {
+              rendered.push(<span key={tIdx}>{tok.text}</span>);
+            }
+            tIdx += 1;
+          }
+
           return (
             <p
               key={sIdx}
@@ -108,20 +290,7 @@ export function ArticleBody({
                 marginBottom: "var(--sp-5)",
               }}
             >
-              {tokens.map((tok, tIdx) => {
-                if (!tok.isWord) return <span key={tIdx}>{tok.text}</span>;
-                const entry = findWordEntry(tok.text);
-                const seen = session.isWordSeen(tok.text);
-                if (!entry) return <span key={tIdx}>{tok.text}</span>;
-                return (
-                  <ClickableWordToken
-                    key={tIdx}
-                    text={tok.text}
-                    seen={seen}
-                    onActivate={handleWordClick}
-                  />
-                );
-              })}
+              {rendered}
             </p>
           );
         })}
@@ -141,12 +310,19 @@ export function ArticleBody({
 
 function ClickableWordToken({
   text,
+  entry,
   seen,
   onActivate,
 }: {
   text: string;
+  entry: Word;
   seen: boolean;
-  onActivate: (raw: string, el: HTMLElement, ref: React.RefObject<HTMLElement | null>) => void;
+  onActivate: (
+    entry: Word,
+    text: string,
+    el: HTMLElement,
+    ref: React.RefObject<HTMLElement | null>
+  ) => void;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   return (
@@ -157,11 +333,11 @@ function ClickableWordToken({
       className="briefly-word"
       data-seen={seen}
       aria-label={`${text}, 뜻 보기`}
-      onClick={() => ref.current && onActivate(text, ref.current, ref)}
+      onClick={() => ref.current && onActivate(entry, text, ref.current, ref)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          if (ref.current) onActivate(text, ref.current, ref);
+          if (ref.current) onActivate(entry, text, ref.current, ref);
         }
       }}
     >

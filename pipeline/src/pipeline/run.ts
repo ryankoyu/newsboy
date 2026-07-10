@@ -46,15 +46,25 @@ export interface RunOptions {
   log?: (message: string) => void;
 }
 
-function slugify(title: string): string {
-  return (
+/**
+ * Slugify a title and append a uniqueness suffix.
+ *
+ * `articles.slug` has a `unique` constraint (supabase/migrations/0001_schema.sql),
+ * but two Top-10 events on the same day can produce identical title-derived
+ * slugs (e.g. near-duplicate headlines, or a rewrite that reuses generic
+ * phrasing) — a bare slugify() risked a same-day collision. Appending
+ * `rankInEdition` (1..10, unique within one edition) makes same-day
+ * collisions impossible without touching the human-readable prefix.
+ */
+function slugify(title: string, rankInEdition: number): string {
+  const base =
     title
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, "")
       .trim()
       .replace(/\s+/g, "-")
-      .slice(0, 60) || `article-${randomUUID().slice(0, 8)}`
-  );
+      .slice(0, 60) || `article-${randomUUID().slice(0, 8)}`;
+  return `${base}-${rankInEdition}`;
 }
 
 function todayISODate(): string {
@@ -124,21 +134,27 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
       : top10.selected;
 
     // [4]-[6] 이벤트별: 사실 추출 → 재작성 → 게이트
+    // extract/rewrite/gate run per-event inside one loop (facts feed straight
+    // into that event's rewrite), but are still reported as separate
+    // PipelineStage outcomes for monitoring — each with real counts, not a
+    // placeholder (a previous version of this stage recorded ok:true with no
+    // actual work; see extractStart below for the real fact-count tally).
     const articles: PipelineArticle[] = [];
 
-    await stage("extract", async () => {
-      // extract/rewrite/gate run per-event inside one loop, but are reported
-      // as separate stages for monitoring; extract stage records fact counts.
-      return { note: "per-event extraction happens inside rewrite loop below" };
-    });
+    const extractStart = new Date().toISOString();
+    let totalFactsExtracted = 0;
+    let totalFactsUsedInText = 0;
 
     const rewriteStart = new Date().toISOString();
     let gateFailures = 0;
     try {
       for (const event of eventsToProcess) {
         const { facts } = await extractFacts(event, options.llm);
+        const usableCount = facts.filter((f) => f.usedInText).length;
+        totalFactsExtracted += facts.length;
+        totalFactsUsedInText += usableCount;
         log(
-          `[pipeline] event="${event.title.slice(0, 50)}" facts=${facts.length} usable=${facts.filter((f) => f.usedInText).length}`,
+          `[pipeline] event="${event.title.slice(0, 50)}" facts=${facts.length} usable=${usableCount}`,
         );
 
         const rewrite = await rewriteAllLevels(event.id, event.category, facts, options.llm);
@@ -159,7 +175,7 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
 
         articles.push({
           id: event.id,
-          slug: slugify(gatedVersions[0]?.version.title ?? event.title),
+          slug: slugify(gatedVersions[0]?.version.title ?? event.title, event.rankInEdition),
           category: event.category,
           rankInEdition: event.rankInEdition,
           // status='review' — human approval happens in web/ admin, never here.
@@ -176,6 +192,17 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
           createdAt: new Date().toISOString(),
         });
       }
+      run.stages.push({
+        stage: "extract",
+        startedAt: extractStart,
+        finishedAt: new Date().toISOString(),
+        ok: true,
+        detail: {
+          eventsProcessed: eventsToProcess.length,
+          factsExtracted: totalFactsExtracted,
+          factsUsedInText: totalFactsUsedInText,
+        },
+      });
       run.stages.push({
         stage: "rewrite",
         startedAt: rewriteStart,
@@ -195,6 +222,17 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
+      run.stages.push({
+        stage: "extract",
+        startedAt: extractStart,
+        finishedAt: new Date().toISOString(),
+        ok: totalFactsExtracted > 0 || articles.length > 0,
+        detail: {
+          eventsProcessed: articles.length,
+          factsExtracted: totalFactsExtracted,
+          factsUsedInText: totalFactsUsedInText,
+        },
+      });
       run.stages.push({
         stage: "rewrite",
         startedAt: rewriteStart,

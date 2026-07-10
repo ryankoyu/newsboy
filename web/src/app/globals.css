@@ -314,6 +314,18 @@ a {
   }
 }
 
+/* AppHeader logo — hidden on desktop, where SideNav already carries the
+   BRIEFLY logo (Q2: duplicate logo). Visible on mobile/tablet, which have
+   no side nav. */
+.briefly-header-logo {
+  display: inline-flex;
+}
+@media (min-width: 1024px) {
+  .briefly-header-logo {
+    display: none;
+  }
+}
+
 .briefly-shell-content {
   padding-bottom: calc(var(--tabbar-h) + var(--sp-4));
 }

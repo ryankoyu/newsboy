@@ -8,8 +8,11 @@ import { usePathname } from "next/navigation";
  * a3-ui-ux.md §1-4 "탭(레벨 스위처 & 하단 네비)" + §2-1 desktop variant +
  * §4-2 breakpoints. MVP tabs: Home / Saved / Settings.
  *
- * Both variants render; CSS (globals via Tailwind-ish media query using
- * inline + a small stylesheet class) hides one or the other per breakpoint.
+ * Both variants render; the `.briefly-tabbar` / `.briefly-sidenav` classes
+ * in globals.css (media query, §4-2) decide which one is visible per
+ * breakpoint. Layout-only concerns (flex direction, spacing, colors) stay
+ * inline here — `display` must NOT be set inline, or it would always win
+ * over the media query and break the mobile/desktop switch.
  */
 const TABS = [
   { href: "/", label: "Home", emoji: "🏠", match: (p: string) => p === "/" },
@@ -31,7 +34,6 @@ export function TabBar() {
         zIndex: 30,
         height: "var(--tabbar-h)",
         paddingBottom: "env(safe-area-inset-bottom)",
-        display: "flex",
         background: "var(--color-bg)",
         boxShadow: "var(--shadow-sticky)",
         borderTop: "1px solid var(--color-border)",
@@ -77,7 +79,6 @@ export function SideNav() {
       style={{
         width: 240,
         flexShrink: 0,
-        display: "flex",
         flexDirection: "column",
         gap: "var(--sp-2)",
         padding: "var(--sp-6) var(--sp-4)",

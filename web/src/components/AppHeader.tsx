@@ -4,6 +4,11 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 /**
  * AppHeader — logo + theme toggle + settings. a3-ui-ux.md §2-1 header spec.
  * Sticky, 56px, bottom border. Used on Home; article viewer has its own bar.
+ *
+ * The logo is hidden on desktop (>=1024px, `.briefly-header-logo` in
+ * globals.css) — SideNav already shows the BRIEFLY logo there, so keeping
+ * both was a duplicate-logo defect (Q2). Mobile/tablet still show it since
+ * there is no side nav to carry it.
  */
 export function AppHeader() {
   return (
@@ -23,8 +28,8 @@ export function AppHeader() {
     >
       <Link
         href="/"
+        className="briefly-header-logo"
         style={{
-          display: "inline-flex",
           alignItems: "center",
           gap: "var(--sp-2)",
           fontFamily: "var(--font-ui)",
@@ -37,7 +42,7 @@ export function AppHeader() {
         <span aria-hidden>☕</span>
         <span>BRIEFLY</span>
       </Link>
-      <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-1)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-1)", marginLeft: "auto" }}>
         <ThemeToggle />
         <Link
           href="/settings"

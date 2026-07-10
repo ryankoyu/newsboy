@@ -10,7 +10,7 @@
 create type cefr_level     as enum ('A2', 'B1', 'B2');
 create type article_status as enum ('ingest', 'generated', 'review', 'approved', 'published', 'rejected');
 create type edition_status as enum ('draft', 'published');
-create type check_kind     as enum ('cefr', 'ngram_overlap'); -- 품질 게이트 종류
+create type check_kind     as enum ('cefr', 'ngram_overlap', 'two_source', 'word_match'); -- 품질 게이트 종류
 
 -- =========================================================
 -- 공개 콘텐츠
@@ -56,7 +56,9 @@ create table article_versions (
   title       text not null,                   -- 레벨별 새로 쓴 제목
   content     text not null,                   -- 재작성 본문 (통째로)
   word_count  int,
-  -- sentences jsonb,                          -- V1.5 Sentence Compare용 (문장 배열)
+  sentences   jsonb not null default '[]',      -- 문장 단위 배열 (design-decisions.md §2-3, §4.6:
+                                                  --   단어 클릭·문장 비교 V1.5·쉐도잉 V2가 전부
+                                                  --   문장 단위 인터랙션이라 활성화)
   -- audio_url text,                           -- V1.5 Shadowing TTS용
   created_at  timestamptz not null default now(),
   unique (article_id, level)                   -- 기사당 레벨 1개
@@ -130,7 +132,7 @@ create index on quiz_options (quiz_id);
 create table quality_checks (
   id          uuid primary key default gen_random_uuid(),
   version_id  uuid not null references article_versions(id) on delete cascade,
-  kind        check_kind not null,             -- 'cefr' | 'ngram_overlap'
+  kind        check_kind not null,             -- 'cefr' | 'ngram_overlap' | 'two_source' | 'word_match'
   score       numeric,                         -- CEFR 점수 or 중복률(%)
   passed      boolean not null,
   detail      jsonb,                           -- 세부(초과 어휘 목록 등)

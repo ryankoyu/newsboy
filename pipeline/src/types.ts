@@ -136,7 +136,7 @@ export interface RewriteResult {
 // [6] 품질 게이트 (gate) — maps to quality_checks
 // ---------------------------------------------------------------------------
 
-export type CheckKind = "cefr" | "ngram_overlap" | "two_source";
+export type CheckKind = "cefr" | "ngram_overlap" | "two_source" | "word_match";
 
 export interface QualityCheckResult {
   kind: CheckKind;

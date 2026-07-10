@@ -1,14 +1,15 @@
 /**
  * [6] 품질 게이트 (자동, 불합격 시 재작성 루프) — a1-architecture.md §2 [6].
  *
- * Runs 6a (CEFR), 6b (n-gram overlap), 6c (2-source) for each level's draft.
- * On failure, feeds back exactly which check failed and re-invokes the
- * rewrite for that level only (news-sourcing-strategy §4, a1 §3.2: "게이트
- * 불합격 시 어느 지표가 초과했는지를 다음 프롬프트에 피드백"). Capped at
- * MAX_REWRITE_ATTEMPTS; if still failing, the version is flagged
- * `passed: false` and left for human review at stage [7] rather than
- * silently publishing an over-band or overlapping text (a1 §2 [6]: "초과 시
- * 사람 검수로 보류 플래그").
+ * Runs 6a (CEFR), 6b (n-gram overlap), 6c (2-source), 6d (word-body match)
+ * for each level's draft. On failure, feeds back exactly which check failed
+ * and re-invokes the rewrite for that level only (news-sourcing-strategy §4,
+ * a1 §3.2: "게이트 불합격 시 어느 지표가 초과했는지를 다음 프롬프트에
+ * 피드백"). Capped at MAX_REWRITE_ATTEMPTS; if still failing, the version is
+ * flagged `passed: false` and left for human review at stage [7] rather than
+ * silently publishing an over-band, overlapping, or unclickable-word text
+ * (a1 §2 [6]: "초과 시 사람 검수로 보류 플래그"; design-decisions.md §4.6:
+ * "단어-본문 일치를 파이프라인이 보장한다").
  */
 
 import type {
@@ -23,6 +24,7 @@ import type { LLMProvider } from "../llm/provider.js";
 import { checkCefr } from "../gates/cefr.js";
 import { checkNgramOverlap } from "../gates/ngram.js";
 import { checkTwoSourceRule } from "../gates/twoSource.js";
+import { checkWordMatch } from "../gates/wordMatch.js";
 
 export const MAX_REWRITE_ATTEMPTS = 3;
 
@@ -50,6 +52,7 @@ export async function gateVersion(
     const cefrResult = await checkCefr(currentVersion.content, currentVersion.level, llm);
     const ngramResult = checkNgramOverlap(currentVersion.content, sourceItems);
     const twoSourceResult = checkTwoSourceRule(facts);
+    const wordMatchResult = checkWordMatch(currentVersion.content, currentVersion.words);
 
     const checks: QualityCheckResult[] = [
       {
@@ -73,6 +76,13 @@ export async function gateVersion(
         passed: twoSourceResult.passed,
         detail: twoSourceResult.detail,
       },
+      {
+        kind: "word_match",
+        level: currentVersion.level,
+        score: null,
+        passed: wordMatchResult.passed,
+        detail: { ...wordMatchResult.detail, unmatchedTerms: wordMatchResult.unmatchedTerms },
+      },
     ];
 
     const allPassed = checks.every((c) => c.passed);
@@ -90,7 +100,8 @@ export async function gateVersion(
       };
     }
 
-    // Retry only the failing dimensions (CEFR/n-gram) via targeted feedback.
+    // Retry the failing dimensions (CEFR/n-gram/word-match) via targeted
+    // feedback. two_source is excluded — it can't be fixed by a rewrite.
     const feedback = buildFeedback(checks.filter((c) => c.kind !== "two_source"));
     const rewritten = await llm.rewrite({
       eventId,

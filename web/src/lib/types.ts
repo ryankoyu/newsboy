@@ -24,7 +24,7 @@ export type ArticleStatus =
 
 export type EditionStatus = "draft" | "published";
 
-export type CheckKind = "cefr" | "ngram_overlap";
+export type CheckKind = "cefr" | "ngram_overlap" | "two_source" | "word_match";
 
 export type FetchMethod = "full_text" | "search_summary";
 

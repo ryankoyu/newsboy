@@ -42,6 +42,14 @@ export interface SessionStore {
   hasOnboarded(): boolean;
   setOnboarded(done: boolean): void;
 
+  /**
+   * Has the user dismissed the non-intrusive home "1분 레벨 진단하기" banner
+   * (design-decisions.md §4.6 — onboarding is never forced; home is
+   * immediately viewable, with a dismissible banner nudging level setup)?
+   */
+  hasDismissedOnboardingBanner(): boolean;
+  dismissOnboardingBanner(): void;
+
   /** Bookmarked article ids (Saved tab). */
   getBookmarks(): string[];
   isBookmarked(articleId: string): boolean;
@@ -79,6 +87,7 @@ interface PersistedShape {
   fontSize: ReadingScale;
   theme: ThemePref;
   onboarded: boolean;
+  onboardingBannerDismissed: boolean;
   bookmarks: string[];
   readArticles: string[];
   seenWords: string[];
@@ -91,6 +100,7 @@ const DEFAULTS: PersistedShape = {
   fontSize: "M",
   theme: "system",
   onboarded: false,
+  onboardingBannerDismissed: false,
   bookmarks: [],
   readArticles: [],
   seenWords: [],
@@ -165,6 +175,15 @@ export const localSessionStore: SessionStore = {
   setOnboarded(done) {
     const s = load();
     s.onboarded = done;
+    save(s);
+  },
+
+  hasDismissedOnboardingBanner() {
+    return load().onboardingBannerDismissed;
+  },
+  dismissOnboardingBanner() {
+    const s = load();
+    s.onboardingBannerDismissed = true;
     save(s);
   },
 
