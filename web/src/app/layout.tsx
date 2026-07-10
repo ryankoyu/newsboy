@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Lora } from "next/font/google";
+import { AppShell } from "@/components/AppShell";
 import "./globals.css";
 
 // 영문 학습 본문용 세리프 (a3-ui-ux.md §0 — --font-en)
@@ -27,8 +28,17 @@ export default function RootLayout({
     <html lang="ko" className={`${lora.variable} h-full antialiased`}>
       <head>
         <link rel="stylesheet" href={PRETENDARD_CDN_URL} />
+        {/* Apply saved theme before first paint to avoid a light/dark flash.
+            Reads the same key sessionStore uses (src/lib/session.ts). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var s=JSON.parse(localStorage.getItem("briefly:session:v1")||"{}");if(s.theme==="dark"||s.theme==="light"){document.documentElement.setAttribute("data-theme",s.theme);}}catch(e){}`,
+          }}
+        />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AppShell>{children}</AppShell>
+      </body>
     </html>
   );
 }

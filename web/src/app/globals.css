@@ -181,3 +181,171 @@ body {
   color: var(--color-text);
   font-family: var(--font-ui);
 }
+
+* {
+  box-sizing: border-box;
+}
+
+/* ===== Focus visibility (a3-ui-ux.md §4-1) ===== */
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+/* ===== Skeleton shimmer (§3-4) ===== */
+.briefly-skeleton {
+  position: relative;
+  overflow: hidden;
+}
+.briefly-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-border) 50%,
+    transparent
+  );
+  animation: briefly-shimmer 1.6s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .briefly-skeleton::after {
+    animation: none;
+  }
+}
+@keyframes briefly-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ===== Clickable word (§1-4, §3-2) ===== */
+.briefly-word {
+  border-radius: 3px;
+  transition: background var(--dur-fast) var(--ease);
+  cursor: pointer;
+  padding: 0 1px;
+}
+.briefly-word:hover,
+.briefly-word:focus-visible {
+  background: var(--color-accent-soft);
+}
+.briefly-word[data-seen="true"] {
+  border-bottom: 1px dotted var(--color-text-muted);
+}
+
+/* ===== Article body fade transition (§3-1) ===== */
+.briefly-article-body {
+  animation: briefly-fade-in var(--dur-base) var(--ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .briefly-article-body {
+    animation: none;
+  }
+}
+@keyframes briefly-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Bottom sheet / popover motion (§2-3) ===== */
+@keyframes briefly-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes briefly-dim-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .briefly-sheet {
+    animation: none !important;
+  }
+  .briefly-dim {
+    animation: none !important;
+  }
+}
+
+/* Hide scrollbar for horizontal chip rows while keeping scroll usable */
+.briefly-hscroll {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ===== Responsive nav (a3-ui-ux.md §4-2) =====
+   Mobile (<1024px): bottom tab bar, no side nav.
+   Desktop (>=1024px): side nav, no bottom tab bar. */
+.briefly-sidenav {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .briefly-tabbar {
+    display: none;
+  }
+  .briefly-sidenav {
+    display: flex;
+  }
+}
+
+.briefly-shell-content {
+  padding-bottom: calc(var(--tabbar-h) + var(--sp-4));
+}
+@media (min-width: 1024px) {
+  .briefly-shell-content {
+    padding-bottom: 0;
+  }
+}
+
+.briefly-shell-desktop {
+  display: flex;
+  max-width: var(--page-max);
+  margin: 0 auto;
+}
+.briefly-shell-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Card hover (desktop only, §1-4) */
+@media (min-width: 1024px) {
+  .briefly-article-card:hover {
+    box-shadow: var(--shadow-pop);
+    transform: translateY(-2px);
+  }
+}
+.briefly-article-card:active {
+  transform: scale(0.99);
+}
+
+.briefly-sources a:hover {
+  color: var(--color-link-hover) !important;
+  text-decoration: underline !important;
+}
+
