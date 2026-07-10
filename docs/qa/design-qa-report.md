@@ -95,3 +95,19 @@
 4. **M2**: 데스크톱에서 AppHeader의 로고를 숨기거나 사이드바 로고와 역할 분리.
 
 > 코드는 수정하지 않았습니다(검수 전용). git 명령 미사용. dev 서버는 검수 후 종료.
+
+---
+
+## 재검증 (2026-07-10, 커밋 bcfa7ac 수정 반영 후)
+
+검증 방식: Q2가 촬영한 재검증 스크린샷 6장(reverify-*)을 메인 에이전트가 직접 판독. (Q2는 촬영 완료 후 세션 한도로 중단되어 보고서 작성은 메인 에이전트가 수행)
+
+| # | 항목 | 판정 | 근거 |
+|---|---|---|---|
+| 1 | 반응형 네비 배타 렌더링 | ✅ 통과 | reverify-home-mobile.png(하단 탭바만) / reverify-home-desktop.png(사이드바만) |
+| 2 | 홈 즉시 열람 + 레벨 진단 배너 | ✅ 통과 | 리다이렉트 없이 홈 렌더, 상단 "📊 1분 레벨 진단하기" 배너 + 닫기(×). reverify-home-banner-closed.png에서 닫힘 상태 확인 |
+| 3 | 데스크톱 로고 이중 노출 | ✅ 통과 | reverify-home-desktop.png — 로고는 사이드바에만, 콘텐츠 헤더엔 아이콘만 |
+| 4 | 단어 클릭 → 사전 | ✅ 통과 | reverify-dict-B2-mobile.png — B2 본문 "workforce" 밑줄 표시 + bottom-sheet(뜻·발음·예문·단어장 저장). A2는 예상대로 본문 매칭 0건이나 "Words in this story" 폴백 정상, 다단어 "lay off" 항목 시트 열림(reverify-a2-wordlist-fallback.png) |
+
+**결론: 🔴 2건 포함 지적 4건 전부 해소. MVP 화면 QA 통과.**
+잔여 참고: A2 본문 내 클릭 단어는 시드 데이터 한계(실제 파이프라인에서는 word_match 게이트가 단어-본문 일치를 보장).
