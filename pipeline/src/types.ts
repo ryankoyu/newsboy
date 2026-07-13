@@ -117,6 +117,14 @@ export interface WordEntry {
   example: string;
   pronunciation: string;
   sortOrder: number;
+  /**
+   * design-decisions.md §4.8-3/4: marks a hard-but-essential word the
+   * rewrite deliberately kept (rather than avoiding it to hit the CEFR
+   * band) so the article's core information isn't lost. Rendered inline
+   * as a small ruby-style gloss in the web app. 0-2 per level, optional —
+   * absent for ordinary curated words.
+   */
+  isKey?: boolean;
 }
 
 export interface ArticleVersionDraft {

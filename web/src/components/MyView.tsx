@@ -313,16 +313,30 @@ function VocabDrawer({
               >
                 {w.term}
               </span>
-              <span
-                lang="ko"
-                style={{
-                  fontFamily: "var(--font-ui)",
-                  fontSize: "var(--fs-sm)",
-                  color: "var(--color-text-secondary)",
-                }}
-              >
-                {w.meaning_ko}
-              </span>
+              {w.meaning_ko ? (
+                <span
+                  lang="ko"
+                  style={{
+                    fontFamily: "var(--font-ui)",
+                    fontSize: "var(--fs-sm)",
+                    color: "var(--color-text-secondary)",
+                  }}
+                >
+                  {w.meaning_ko}
+                </span>
+              ) : (
+                <span
+                  lang="ko"
+                  style={{
+                    fontFamily: "var(--font-ui)",
+                    fontSize: "var(--fs-sm)",
+                    color: "var(--color-text-muted)",
+                    fontStyle: "italic",
+                  }}
+                >
+                  뜻 미등록
+                </span>
+              )}
             </span>
             <button
               type="button"

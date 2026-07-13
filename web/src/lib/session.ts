@@ -85,7 +85,13 @@ export interface SessionStore {
 
 export interface SavedWordEntry {
   term: string;
-  meaning_ko: string;
+  /**
+   * null/undefined = "뜻 미등록" (design-decisions.md §4.8-1): the word was
+   * saved from a card with no dictionary entry yet. Never fabricate a
+   * meaning to fill this in — it stays unset until a real dictionary/LLM
+   * lookup backfills it later.
+   */
+  meaning_ko: string | null;
 }
 
 export interface SavedSentenceEntry {

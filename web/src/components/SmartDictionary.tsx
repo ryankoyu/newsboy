@@ -12,11 +12,18 @@ import { useSession } from "@/lib/useSession";
  *
  * `anchorRect` positions the desktop popover; on mobile it's ignored and the
  * sheet always docks to the bottom.
+ *
+ * design-decisions.md §4.8-1 ("모든 단어 클릭 가능"): a word with no curated
+ * dictionary entry (not in the article's Word[] list) still opens this same
+ * component with a minimal entry — meaning_ko: null. We never invent a
+ * meaning; the UI shows "뜻 준비 중" instead and offers Save so the word
+ * lands in My Vocabulary marked "뜻 미등록" until a real dictionary/LLM
+ * lookup backfills it later.
  */
 export interface DictionaryEntry {
   term: string;
   pronunciation: string | null;
-  meaning_ko: string;
+  meaning_ko: string | null;
   example: string | null;
 }
 
@@ -53,8 +60,10 @@ export function SmartDictionary({
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose, returnFocusRef]);
 
+  const hasMeaning = Boolean(entry.meaning_ko);
+
   function handleToggleSave() {
-    session.toggleSavedWord({ term: entry.term, meaning_ko: entry.meaning_ko });
+    session.toggleSavedWord({ term: entry.term, meaning_ko: entry.meaning_ko ?? null });
     refresh();
   }
 
@@ -153,17 +162,32 @@ export function SmartDictionary({
         }}
       />
 
-      <p
-        lang="ko"
-        style={{
-          fontFamily: "var(--font-ui)",
-          fontSize: "var(--fs-ui)",
-          color: "var(--color-text)",
-          margin: 0,
-        }}
-      >
-        {entry.meaning_ko}
-      </p>
+      {hasMeaning ? (
+        <p
+          lang="ko"
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontSize: "var(--fs-ui)",
+            color: "var(--color-text)",
+            margin: 0,
+          }}
+        >
+          {entry.meaning_ko}
+        </p>
+      ) : (
+        <p
+          lang="ko"
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontSize: "var(--fs-ui)",
+            color: "var(--color-text-muted)",
+            fontStyle: "italic",
+            margin: 0,
+          }}
+        >
+          뜻 준비 중이에요. 저장해두면 사전이 업데이트될 때 알려드릴게요.
+        </p>
+      )}
 
       {entry.example && (
         <div style={{ marginTop: "var(--sp-4)" }}>
@@ -209,7 +233,7 @@ export function SmartDictionary({
           fontWeight: 600,
         }}
       >
-        {saved ? "✓ 내 단어장에 저장됨" : "＋ 내 단어장에 저장"}
+        {saved ? "저장됨 ✓" : "단어장에 저장"}
       </button>
     </div>
   );

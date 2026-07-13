@@ -131,8 +131,17 @@ export class AnthropicLLMProvider implements LLMProvider {
       "level's version — a curated word the reader cannot find and click in the text is a " +
       "defect. If fewer than 5 in-text words are suitable, return fewer rather than inventing " +
       "one that isn't in the body. " +
+      "CRITICAL — do not lose core information through vocabulary avoidance: simplifying for a " +
+      "lower CEFR level must never mean dropping the load-bearing 'what' of who-did-what (e.g. " +
+      "rewriting a semiconductor export story for A2 must still say semiconductors, not just " +
+      "'products'). If a fact genuinely cannot be expressed without a word above this level's " +
+      "normal vocabulary, KEEP that word in the text rather than deleting the information, and " +
+      "mark it in `words` with \"isKey\": true (0-2 such words per level — only ones that are " +
+      "both hard for this level AND essential to understanding the article; do not overuse). " +
+      "Ordinary curated words should omit isKey or set it to false. " +
       'Respond with strict JSON only: {"title": "...", "content": "...", "wordCount": 0, ' +
-      '"words": [{"term": "...", "meaningKo": "...", "example": "...", "pronunciation": "...", "sortOrder": 0}]}.' +
+      '"words": [{"term": "...", "meaningKo": "...", "example": "...", "pronunciation": "...", ' +
+      '"sortOrder": 0, "isKey": false}]}.' +
       (input.feedback ? ` Previous attempt failed a quality gate: ${input.feedback}. Fix this specifically.` : "");
     const user = JSON.stringify({ facts: input.facts, category: input.category });
     const text = await this.complete("opus", system, user);

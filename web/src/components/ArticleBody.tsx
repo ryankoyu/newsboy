@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { CefrLevel, Word } from "@/lib/types";
-import { SmartDictionary } from "@/components/SmartDictionary";
+import { SmartDictionary, type DictionaryEntry } from "@/components/SmartDictionary";
 import { SentenceActionPopover } from "@/components/SentenceActionPopover";
 import { useSession } from "@/lib/useSession";
 import {
@@ -45,6 +45,23 @@ import {
  * findMatchedRuns, etc.) live in src/lib/wordMatcher.ts so they can be unit
  * tested without rendering React (see src/lib/wordMatcher.test.ts).
  *
+ * ALL words clickable (design-decisions.md §4.8-1): a word token that isn't
+ * part of a curated Word[] match is still wrapped in ClickableWordToken —
+ * `entry` is null for it. Clicking opens the same SmartDictionary component
+ * with a minimal entry (term only, meaning_ko: null) — never a fabricated
+ * meaning. SmartDictionary shows "뜻 준비 중" and still offers Save, so the
+ * word can land in My Vocabulary marked "뜻 미등록" (per session.ts
+ * SavedWordEntry.meaning_ko: string | null).
+ *
+ * Key-word inline gloss / "ruby" (design-decisions.md §4.8-3): a curated
+ * Word with isKey === true gets a small Korean gloss rendered under its
+ * FIRST occurrence across the whole article body (not every occurrence —
+ * repeating it would clutter the reading flow and fight the 1.7 line-height
+ * budget). Subsequent occurrences render as a normal clickable word. Uses
+ * native <ruby>/<rt> so no extra layout engine is needed and the browser
+ * handles the stacked-glyph positioning; sized down via --fs-xs and kept to
+ * the accent-muted color so it doesn't compete with the English text.
+ *
  * Sentence save (design-decisions.md §4.7 item 2): tapping anywhere in a
  * sentence's non-word area opens a small "문장 저장 / 저장 해제" popover.
  * Word clicks take priority — ClickableWordToken's onClick calls
@@ -67,7 +84,7 @@ export function ArticleBody({
 }) {
   const { session, refresh } = useSession();
   const [active, setActive] = useState<{
-    word: Word;
+    word: Word | DictionaryEntry;
     rect: DOMRect | null;
     ref: React.RefObject<HTMLElement | null>;
   } | null>(null);
@@ -81,14 +98,16 @@ export function ArticleBody({
   const sequences = buildWordSequences(words);
 
   function handleWordClick(
-    entry: Word,
+    entry: Word | null,
     text: string,
     el: HTMLElement,
     refObj: React.RefObject<HTMLElement | null>
   ) {
     session.markWordSeen(text);
     refresh();
-    setActive({ word: entry, rect: el.getBoundingClientRect(), ref: refObj });
+    const dictEntry: Word | DictionaryEntry =
+      entry ?? { term: text, pronunciation: null, meaning_ko: null, example: null };
+    setActive({ word: dictEntry, rect: el.getBoundingClientRect(), ref: refObj });
   }
 
   function handleSentenceClick(
@@ -109,6 +128,14 @@ export function ArticleBody({
     });
     refresh();
   }
+
+  // Tracks which curated (isKey) word ids have already shown their inline
+  // gloss, across the WHOLE body — not per-sentence — so only the article's
+  // first occurrence of each key word gets the ruby annotation (§4.8-3).
+  // Recreated fresh on every render, which is correct here: the level
+  // switch remounts ArticleBody via `key={version.id}` in ArticleViewer, and
+  // within a single render pass this Set only needs to dedupe once anyway.
+  const shownKeyWordIds = new Set<string>();
 
   return (
     <div ref={containerRef}>
@@ -134,6 +161,8 @@ export function ArticleBody({
                 .join("");
               const seen = session.isWordSeen(text);
               const wordSaved = session.isWordSaved(text);
+              const showKeyGloss = Boolean(run.entry.isKey) && !shownKeyWordIds.has(run.entry.id);
+              if (showKeyGloss) shownKeyWordIds.add(run.entry.id);
               rendered.push(
                 <ClickableWordToken
                   key={tIdx}
@@ -141,6 +170,7 @@ export function ArticleBody({
                   entry={run.entry}
                   seen={seen}
                   saved={wordSaved}
+                  keyGloss={showKeyGloss ? run.entry.meaning_ko : null}
                   onActivate={handleWordClick}
                 />,
               );
@@ -148,7 +178,25 @@ export function ArticleBody({
               continue;
             }
             if (!insideRun.has(tIdx)) {
-              rendered.push(<span key={tIdx}>{tok.text}</span>);
+              if (tok.isWord) {
+                // §4.8-1: every word is clickable, even without a curated
+                // dictionary entry. entry=null -> minimal "뜻 준비 중" card.
+                const seen = session.isWordSeen(tok.text);
+                const wordSaved = session.isWordSaved(tok.text);
+                rendered.push(
+                  <ClickableWordToken
+                    key={tIdx}
+                    text={tok.text}
+                    entry={null}
+                    seen={seen}
+                    saved={wordSaved}
+                    keyGloss={null}
+                    onActivate={handleWordClick}
+                  />,
+                );
+              } else {
+                rendered.push(<span key={tIdx}>{tok.text}</span>);
+              }
             }
             tIdx += 1;
           }
@@ -247,25 +295,50 @@ function SentenceParagraph({
   );
 }
 
+/**
+ * `entry` is null for a word with no curated dictionary match — it's still
+ * fully clickable (§4.8-1), just opens the minimal "뜻 준비 중" card instead
+ * of the full Smart Dictionary entry (see handleWordClick in ArticleBody).
+ *
+ * `keyGloss` (§4.8-3): non-null only for the FIRST occurrence of an isKey
+ * curated word. Renders a native <ruby>/<rt> stack so the Korean meaning
+ * sits in small text directly under the English word, without disrupting
+ * the surrounding line's baseline/height budget (ruby annotations reserve
+ * their own line-box above the base text without stretching --lh-body for
+ * neighboring lines that have no ruby).
+ */
 function ClickableWordToken({
   text,
   entry,
   seen,
   saved,
+  keyGloss,
   onActivate,
 }: {
   text: string;
-  entry: Word;
+  entry: Word | null;
   seen: boolean;
   saved: boolean;
+  keyGloss?: string | null;
   onActivate: (
-    entry: Word,
+    entry: Word | null,
     text: string,
     el: HTMLElement,
     ref: React.RefObject<HTMLElement | null>
   ) => void;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
+  const hasGloss = Boolean(keyGloss);
+
+  const inner = hasGloss ? (
+    <ruby className="briefly-word-ruby">
+      {text}
+      <rt lang="ko">{keyGloss}</rt>
+    </ruby>
+  ) : (
+    text
+  );
+
   return (
     <span
       ref={ref}
@@ -274,7 +347,10 @@ function ClickableWordToken({
       className="briefly-word"
       data-seen={seen}
       data-saved={saved}
-      aria-label={`${text}, 뜻 보기${saved ? " (저장한 단어)" : ""}`}
+      data-has-entry={entry != null}
+      aria-label={`${text}, 뜻 보기${saved ? " (저장한 단어)" : ""}${
+        hasGloss ? `, 핵심 단어, 뜻: ${keyGloss}` : ""
+      }`}
       onClick={(e) => {
         e.stopPropagation();
         if (ref.current) onActivate(entry, text, ref.current, ref);
@@ -287,7 +363,7 @@ function ClickableWordToken({
         }
       }}
     >
-      {text}
+      {inner}
     </span>
   );
 }

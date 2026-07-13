@@ -127,6 +127,14 @@ export interface Word {
   example: string | null;
   pronunciation: string | null;
   sort_order: number;
+  /**
+   * design-decisions.md §4.8-3: marks a word as "hard but essential" for
+   * understanding the article. At most rendered inline once (first
+   * occurrence in the body) with a small ruby-style Korean gloss under it.
+   * Optional — older seed data won't have this field, and the UI must not
+   * error or show a ruby when it's absent/false (task constraint #6).
+   */
+  isKey?: boolean;
 }
 
 // NOTE: Quiz / QuizOption types intentionally omitted — quizzes are out of

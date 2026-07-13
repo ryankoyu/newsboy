@@ -187,12 +187,17 @@ export class MockLLMProvider implements LLMProvider {
 
     const wordCount = content.split(/\s+/).filter(Boolean).length;
 
+    // isKey is always false in mock output: the mock does no real CEFR/
+    // vocabulary judgment, so it can't honestly decide "hard but essential"
+    // (design-decisions.md §4.8-4). Field is present so downstream code
+    // (gate/storage/UI) is exercised against the real shape either way.
     const words: WordEntry[] = usable.slice(0, 5).map((f, idx) => ({
       term: (f.statement.split(/\s+/).find((w) => w.length > 6) ?? "development").replace(/[^a-zA-Z]/g, "").toLowerCase(),
       meaningKo: "[mock] 사전 미연동 — 실제 뜻은 사전 API로 검증 필요",
       example: f.statement,
       pronunciation: "[mock-ipa]",
       sortOrder: idx,
+      isKey: false,
     }));
 
     const titleSeed = factLines[0] ?? "Today's top story";

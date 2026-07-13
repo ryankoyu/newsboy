@@ -15,7 +15,8 @@
     "meaning_ko": "정착민",
     "example": "There, armed Israeli settlers stopped his car.",
     "pronunciation": "/ˈsetlərz/",
-    "sort_order": 2
+    "sort_order": 2,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-1-a2-3",
@@ -51,7 +52,8 @@
     "meaning_ko": "억류된, 붙잡힌",
     "example": "The US congressman Ro Khanna says he was detained during a recent visit to the occupied West Bank.",
     "pronunciation": "/dɪˈteɪnd/",
-    "sort_order": 1
+    "sort_order": 1,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-1-b1-2",
@@ -168,7 +170,8 @@
     "meaning_ko": "동맹, 협력자",
     "example": "But later he became a close ally of Trump.",
     "pronunciation": "/ˈælaɪ/",
-    "sort_order": 4
+    "sort_order": 4,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-2-a2-5",
@@ -285,7 +288,8 @@
     "meaning_ko": "넘어짐, 낙상",
     "example": "He said he had a fall.",
     "pronunciation": "/fɔːl/",
-    "sort_order": 2
+    "sort_order": 2,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-3-a2-3",
@@ -299,27 +303,37 @@
   {
     "id": "word-2026-07-13-3-a2-4",
     "version_id": "version-2026-07-13-3-a2",
+    "term": "pneumonia",
+    "meaning_ko": "폐렴 (폐에 생기는 병)",
+    "example": "He was also sick with mild pneumonia, a lung illness.",
+    "pronunciation": "/njuːˈmoʊniə/",
+    "sort_order": 4,
+    "isKey": true
+  },
+  {
+    "id": "word-2026-07-13-3-a2-5",
+    "version_id": "version-2026-07-13-3-a2",
     "term": "sick",
     "meaning_ko": "아픈",
     "example": "He was also sick with mild pneumonia, a lung illness.",
     "pronunciation": "/sɪk/",
-    "sort_order": 4
+    "sort_order": 5
   },
   {
-    "id": "word-2026-07-13-3-a2-5",
+    "id": "word-2026-07-13-3-a2-6",
     "version_id": "version-2026-07-13-3-a2",
     "term": "strength",
     "meaning_ko": "힘, 기력",
     "example": "McConnell said he is getting his strength back now.",
     "pronunciation": "/strɛŋθ/",
-    "sort_order": 5
+    "sort_order": 6
   },
   {
     "id": "word-2026-07-13-3-b1-1",
     "version_id": "version-2026-07-13-3-b1",
     "term": "silence",
     "meaning_ko": "침묵",
-    "example": "McConnell Breaks Silence: A Fall and Pneumonia Kept Him Away",
+    "example": "That, he suggested, was one reason for his long silence.",
     "pronunciation": "/ˈsaɪləns/",
     "sort_order": 1
   },
@@ -434,65 +448,76 @@
   {
     "id": "word-2026-07-13-4-a2-4",
     "version_id": "version-2026-07-13-4-a2",
-    "term": "record",
-    "meaning_ko": "기록",
-    "example": "The old record was 28.6 billion dollars, and Korea passed it.",
-    "pronunciation": "/ˈrɛkɔːrd/",
-    "sort_order": 4
+    "term": "semiconductors",
+    "meaning_ko": "반도체 (컴퓨터·전자기기의 핵심 부품)",
+    "example": "The main reason was semiconductors.",
+    "pronunciation": "/ˌsɛmikənˈdʌktərz/",
+    "sort_order": 4,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-4-a2-5",
     "version_id": "version-2026-07-13-4-a2",
-    "term": "chips",
-    "meaning_ko": "(반도체) 칩",
-    "example": "The main reason was computer chips.",
-    "pronunciation": "/tʃɪps/",
+    "term": "record",
+    "meaning_ko": "기록",
+    "example": "The old record was 28.6 billion dollars, and Korea passed it.",
+    "pronunciation": "/ˈrɛkɔːrd/",
     "sort_order": 5
   },
   {
     "id": "word-2026-07-13-4-b1-1",
     "version_id": "version-2026-07-13-4-b1",
-    "term": "surge",
-    "meaning_ko": "급증, 급등",
+    "term": "semiconductor",
+    "meaning_ko": "반도체 (컴퓨터·전자기기의 핵심 부품)",
     "example": "The main reason for this strong result was a surge in semiconductor shipments.",
-    "pronunciation": "/sɜːrdʒ/",
-    "sort_order": 1
+    "pronunciation": "/ˌsɛmikənˈdʌktər/",
+    "sort_order": 1,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-4-b1-2",
     "version_id": "version-2026-07-13-4-b1",
-    "term": "shipments",
-    "meaning_ko": "수송(품), 출하",
-    "example": "In those 10 days, the country's outbound shipments reached $29.8 billion.",
-    "pronunciation": "/ˈʃɪpmənts/",
+    "term": "surge",
+    "meaning_ko": "급증, 급등",
+    "example": "The main reason for this strong result was a surge in semiconductor shipments.",
+    "pronunciation": "/sɜːrdʒ/",
     "sort_order": 2
   },
   {
     "id": "word-2026-07-13-4-b1-3",
     "version_id": "version-2026-07-13-4-b1",
-    "term": "tripled",
-    "meaning_ko": "세 배가 되었다",
-    "example": "Chip exports nearly tripled to $11.2 billion, providing most of the momentum behind the increase.",
-    "pronunciation": "/ˈtrɪpld/",
+    "term": "shipments",
+    "meaning_ko": "수송(품), 출하",
+    "example": "In those 10 days, the country's outbound shipments reached $29.8 billion.",
+    "pronunciation": "/ˈʃɪpmənts/",
     "sort_order": 3
   },
   {
     "id": "word-2026-07-13-4-b1-4",
     "version_id": "version-2026-07-13-4-b1",
-    "term": "surplus",
-    "meaning_ko": "흑자, 잉여",
-    "example": "Even so, the country still enjoyed a trade surplus of $6.4 billion for the period.",
-    "pronunciation": "/ˈsɜːrpləs/",
+    "term": "tripled",
+    "meaning_ko": "세 배가 되었다",
+    "example": "Chip exports nearly tripled to $11.2 billion, providing most of the momentum behind the increase.",
+    "pronunciation": "/ˈtrɪpld/",
     "sort_order": 4
   },
   {
     "id": "word-2026-07-13-4-b1-5",
     "version_id": "version-2026-07-13-4-b1",
+    "term": "surplus",
+    "meaning_ko": "흑자, 잉여",
+    "example": "Even so, the country still enjoyed a trade surplus of $6.4 billion for the period.",
+    "pronunciation": "/ˈsɜːrpləs/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-4-b1-6",
+    "version_id": "version-2026-07-13-4-b1",
     "term": "demand",
     "meaning_ko": "수요",
     "example": "The figures suggest that global demand for Korean technology remains very strong.",
     "pronunciation": "/dɪˈmænd/",
-    "sort_order": 5
+    "sort_order": 6
   },
   {
     "id": "word-2026-07-13-4-b2-1",
@@ -542,47 +567,57 @@
   {
     "id": "word-2026-07-13-5-a2-1",
     "version_id": "version-2026-07-13-5-a2",
-    "term": "market",
-    "meaning_ko": "시장 (주식이 사고 팔리는 곳)",
-    "example": "South Korea's main stock market had a very bad week in July 2026.",
-    "pronunciation": "/ˈmɑːrkɪt/",
-    "sort_order": 1
+    "term": "bear market",
+    "meaning_ko": "약세장 (주가가 20% 넘게 크게 떨어진 시장)",
+    "example": "When a market drops this much, people call it a \"bear market.\"",
+    "pronunciation": "/ber ˈmɑːrkɪt/",
+    "sort_order": 1,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-5-a2-2",
     "version_id": "version-2026-07-13-5-a2",
-    "term": "fell",
-    "meaning_ko": "떨어졌다 (fall의 과거형)",
-    "example": "The market fell more than 20 percent from its highest point in June.",
-    "pronunciation": "/fel/",
+    "term": "market",
+    "meaning_ko": "시장 (주식이 사고 팔리는 곳)",
+    "example": "South Korea's main stock market had a very bad week in July 2026.",
+    "pronunciation": "/ˈmɑːrkɪt/",
     "sort_order": 2
   },
   {
     "id": "word-2026-07-13-5-a2-3",
     "version_id": "version-2026-07-13-5-a2",
-    "term": "shares",
-    "meaning_ko": "주식",
-    "example": "Their shares dropped a lot in just a few days.",
-    "pronunciation": "/ʃerz/",
+    "term": "fell",
+    "meaning_ko": "떨어졌다 (fall의 과거형)",
+    "example": "The market fell more than 20 percent from its highest point in June.",
+    "pronunciation": "/fel/",
     "sort_order": 3
   },
   {
     "id": "word-2026-07-13-5-a2-4",
     "version_id": "version-2026-07-13-5-a2",
-    "term": "worried",
-    "meaning_ko": "걱정하는",
-    "example": "People are worried that big tech firms may spend less money on AI chips.",
-    "pronunciation": "/ˈwɜːrid/",
+    "term": "shares",
+    "meaning_ko": "주식",
+    "example": "Their shares dropped a lot in just a few days.",
+    "pronunciation": "/ʃerz/",
     "sort_order": 4
   },
   {
     "id": "word-2026-07-13-5-a2-5",
     "version_id": "version-2026-07-13-5-a2",
+    "term": "worried",
+    "meaning_ko": "걱정하는",
+    "example": "People are worried that big tech firms may spend less money on AI chips.",
+    "pronunciation": "/ˈwɜːrid/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-5-a2-6",
+    "version_id": "version-2026-07-13-5-a2",
     "term": "profits",
     "meaning_ko": "이익, 수익",
     "example": "The strange thing is that the chip companies still made big profits.",
     "pronunciation": "/ˈprɑːfɪts/",
-    "sort_order": 5
+    "sort_order": 6
   },
   {
     "id": "word-2026-07-13-5-b1-1",
@@ -591,7 +626,8 @@
     "meaning_ko": "약세장 (주가가 크게 떨어지는 시장)",
     "example": "A market is called a \"bear market\" when it drops more than 20 percent from a recent high, and the Kospi index did exactly that after peaking in June.",
     "pronunciation": "/ber ˈmɑːrkɪt/",
-    "sort_order": 1
+    "sort_order": 1,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-5-b1-2",
@@ -690,7 +726,8 @@
     "meaning_ko": "기능",
     "example": "One feature is \"infinite scroll,\" where the page never ends.",
     "pronunciation": "/ˈfiːtʃər/",
-    "sort_order": 2
+    "sort_order": 2,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-6-a2-3",
@@ -735,7 +772,8 @@
     "meaning_ko": "강박적인, 자제하기 힘든",
     "example": "In preliminary findings published on July 10, 2026, the Commission said the two apps use an addictive design that pushes people into compulsive use.",
     "pronunciation": "/kəmˈpʌlsɪv/",
-    "sort_order": 2
+    "sort_order": 2,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-6-b1-3",
@@ -816,7 +854,8 @@
     "meaning_ko": "부스터, 로켓의 아래쪽 큰 부분(추진체)",
     "example": "A booster is the big bottom part of a rocket.",
     "pronunciation": "/ˈbuːstər/",
-    "sort_order": 1
+    "sort_order": 1,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-7-a2-2",
@@ -861,7 +900,8 @@
     "meaning_ko": "회수하다, 되찾다",
     "example": "On July 10, 2026, a Chinese space company recovered a rocket booster for the very first time.",
     "pronunciation": "/rɪˈkʌvər/",
-    "sort_order": 1
+    "sort_order": 1,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-7-b1-2",
@@ -1032,7 +1072,8 @@
     "meaning_ko": "협업, 콜라보",
     "example": "This kind of collaboration links streetwear fashion with sports fandom.",
     "pronunciation": "/kəˌlæbəˈreɪʃn/",
-    "sort_order": 5
+    "sort_order": 5,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-8-b2-1",
@@ -1140,7 +1181,8 @@
     "meaning_ko": "화염, 큰 불",
     "example": "Officials said that at least 27 people were killed in the blaze.",
     "pronunciation": "/bleɪz/",
-    "sort_order": 2
+    "sort_order": 2,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-9-b1-3",
@@ -1293,7 +1335,8 @@
     "meaning_ko": "휴전, 정전",
     "example": "In June, the two sides agreed to a ceasefire to stop the violence.",
     "pronunciation": "/ˈsiːsfaɪər/",
-    "sort_order": 4
+    "sort_order": 4,
+    "isKey": true
   },
   {
     "id": "word-2026-07-13-10-b1-5",
