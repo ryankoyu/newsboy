@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { slugify } from "./run.js";
+import { articleStatusForGatedVersions, slugify } from "./run.js";
+import type { GatedVersion, QualityCheckResult } from "../types.js";
 
 describe("slugify", () => {
   it("produces a lowercase, hyphenated slug with the rank suffix appended", () => {
@@ -32,5 +33,44 @@ describe("slugify", () => {
     // base is capped at 60 chars before the rank suffix is appended.
     const base = slug.slice(0, slug.lastIndexOf("-1"));
     expect(base.length).toBeLessThanOrEqual(60);
+  });
+});
+
+describe("articleStatusForGatedVersions", () => {
+  function check(kind: QualityCheckResult["kind"], passed: boolean): QualityCheckResult {
+    return { kind, level: "A2", score: null, passed, detail: {} };
+  }
+
+  function gatedVersion(checks: QualityCheckResult[]): GatedVersion {
+    return {
+      version: { level: "A2", title: "t", content: "c", wordCount: 2, words: [] },
+      checks,
+      passed: checks.every((c) => c.passed),
+      rewriteAttempts: 1,
+    };
+  }
+
+  it("returns 'review' when every version's two_source check passed", () => {
+    const versions = [
+      gatedVersion([check("cefr", true), check("ngram_overlap", true), check("two_source", true), check("word_match", true)]),
+      gatedVersion([check("cefr", true), check("ngram_overlap", true), check("two_source", true), check("word_match", true)]),
+    ];
+    expect(articleStatusForGatedVersions(versions)).toBe("review");
+  });
+
+  it("returns 'held' when even ONE version's two_source check failed, regardless of the others", () => {
+    const versions = [
+      gatedVersion([check("cefr", true), check("ngram_overlap", true), check("two_source", true), check("word_match", true)]),
+      gatedVersion([check("cefr", true), check("ngram_overlap", true), check("two_source", false), check("word_match", true)]),
+      gatedVersion([check("cefr", true), check("ngram_overlap", true), check("two_source", true), check("word_match", true)]),
+    ];
+    expect(articleStatusForGatedVersions(versions)).toBe("held");
+  });
+
+  it("returns 'review' (not 'held') for non-two_source failures — those flag per-version, not article-wide", () => {
+    const versions = [
+      gatedVersion([check("cefr", false), check("ngram_overlap", true), check("two_source", true), check("word_match", true)]),
+    ];
+    expect(articleStatusForGatedVersions(versions)).toBe("review");
   });
 });

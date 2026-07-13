@@ -15,7 +15,15 @@ export type ArticleStatus =
   | "review"
   | "approved"
   | "published"
-  | "rejected";
+  | "rejected"
+  /**
+   * Post-rewrite two-source gate failure (gate.ts checkTwoSourceRule) that
+   * survived MAX_REWRITE_ATTEMPTS retries. Flags the WHOLE article for human
+   * review — never publish any of its 3 CEFR versions individually, since the
+   * provenance problem is shared across all of them (same `facts` array).
+   * See news-sourcing-strategy.md §2 rule #2 / gate 6c.
+   */
+  | "held";
 
 export type CategorySlug =
   | "world"
@@ -159,12 +167,36 @@ export interface BackfillLogEntry {
   filledByClusterId: string | null;
 }
 
+/**
+ * One extract-stage replacement: a selected event turned out to have fewer
+ * than MIN_USABLE_FACTS_TO_REWRITE two-source-confirmed facts after
+ * extraction, so it was pulled before any rewrite call and swapped for the
+ * next-best `heldBack` candidate in the same category (run.ts
+ * replaceLowUsableFactEvents). Distinct from BackfillLogEntry, which happens
+ * at *selection* time on raw outletCount — this happens at *extract* time on
+ * actual fact-level corroboration, which can only be known after extraction.
+ */
+export interface ExtractReplacementLogEntry {
+  slotIndex: number; // rankInEdition of the slot being replaced
+  category: CategorySlug;
+  droppedClusterId: string;
+  droppedTitle: string;
+  usableFactCount: number;
+  minUsableFactsRequired: number;
+  replacedByClusterId: string | null;
+  replacedByTitle: string | null;
+  /** Present when no admissible replacement existed and the slot was left empty. */
+  reason?: string;
+}
+
 export interface SelectionReport {
   editionDate: string;
   generatedAt: string;
   quota: Record<CategorySlug, number>;
   candidates: CandidateReportEntry[];
   backfills: BackfillLogEntry[];
+  /** Populated after extraction — see ExtractReplacementLogEntry doc comment. Empty at selection time. */
+  extractReplacements?: ExtractReplacementLogEntry[];
   finalOrder: string[]; // cluster ids, rank 1..10
   limitations: string[];
 }

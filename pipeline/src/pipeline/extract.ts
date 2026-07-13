@@ -44,3 +44,14 @@ export async function extractFacts(
     facts: enforceTwoSourceRule(rawFacts),
   };
 }
+
+/**
+ * Number of facts that survived enforceTwoSourceRule with `usedInText: true`
+ * — i.e. the facts a rewrite is actually allowed to build load-bearing prose
+ * from. Exported so run.ts can decide, BEFORE spending a rewrite call,
+ * whether an event has enough corroborated material to be worth writing at
+ * all (top10-curation.md / news-sourcing-strategy.md §2 rule #2).
+ */
+export function usableFactCount(facts: ExtractedFact[]): number {
+  return facts.filter((f) => f.usedInText).length;
+}

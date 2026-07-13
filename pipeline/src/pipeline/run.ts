@@ -31,7 +31,7 @@ import type { SourceConfig } from "../types.js";
 import { collect } from "./collect.js";
 import { clusterEvents } from "./cluster.js";
 import { selectTop10 } from "./selectTop10.js";
-import { extractFacts } from "./extract.js";
+import { resolveUsableEvents, MIN_USABLE_FACTS_TO_REWRITE } from "./replaceLowUsableFacts.js";
 import { generateAndGateAll } from "./generate.js";
 import type { EventToGenerate } from "./generate.js";
 import { UsageLedger } from "../llm/cost.js";
@@ -76,6 +76,24 @@ export function slugify(title: string, rankInEdition: number): string {
       .replace(/\s+/g, "-")
       .slice(0, 60) || `article-${randomUUID().slice(0, 8)}`;
   return `${base}-${rankInEdition}`;
+}
+
+/**
+ * Article-level status derived from a set of gated versions: if ANY version
+ * failed its two_source check post-rewrite, the whole article is 'held' for
+ * human review — not just that one version. gate.ts's two_source check
+ * operates on `facts`, which are SHARED across all 3 CEFR levels (extraction
+ * is level-agnostic), so a two_source failure is a provenance problem with
+ * the underlying facts, not a per-level rewrite quality issue; flagging only
+ * the failing version would leave the other 2 levels publishable even
+ * though they were built from the same unconfirmed facts
+ * (news-sourcing-strategy.md §2 rule #2, 2026-07-14 two-source bypass fix).
+ */
+export function articleStatusForGatedVersions(gatedVersions: GatedVersion[]): "review" | "held" {
+  const twoSourceFailed = gatedVersions.some((g) =>
+    g.checks.some((c) => c.kind === "two_source" && !c.passed),
+  );
+  return twoSourceFailed ? "held" : "review";
 }
 
 function todayISODate(): string {
@@ -149,24 +167,43 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
       ? top10.selected.slice(0, options.maxArticles)
       : top10.selected;
 
-    // [4] 사실 추출 (per event — cheap, unaffected by the batch/combined
-    // optimization below, which targets [5]-[6]).
+    // [4] 사실 추출 (per event) + 재작성 전 usable-fact 차단.
+    //
+    // FIX (2026-07-14 two-source bypass incident): extraction alone isn't
+    // enough — an event can pass selectTop10's raw outletCount gate yet
+    // extract down to <2-source-confirmed facts (see
+    // replaceLowUsableFacts.ts doc comment for the incident's root cause).
+    // resolveUsableEvents() extracts each selected event and, when an event
+    // comes back with fewer than MIN_USABLE_FACTS_TO_REWRITE usable facts,
+    // swaps it for the next-best same-category `heldBack` candidate BEFORE
+    // any rewrite call is made — rewrite is the expensive stage, so failing
+    // here is far cheaper than failing at the two_source gate after a full
+    // 3-level draft has already been generated.
     const articles: PipelineArticle[] = [];
 
     const extractStart = new Date().toISOString();
     let totalFactsExtracted = 0;
     let totalFactsUsedInText = 0;
     const eventsToGenerate: EventToGenerate[] = [];
+    // Resolved events may differ from top10.selected (dropped-and-replaced
+    // slots) — this is the map generate/gate and article assembly use below,
+    // NOT the original top10.selected list.
+    let resolvedEventsById = new Map<string, SelectedEvent>();
 
     try {
-      for (const event of eventsToProcess) {
-        const { facts } = await extractFacts(event, options.llm);
+      const { resolved, log: replacementLog } = await resolveUsableEvents(
+        eventsToProcess,
+        top10.heldBack,
+        options.llm,
+        log,
+      );
+
+      resolvedEventsById = new Map(resolved.map((r) => [r.event.id, r.event]));
+
+      for (const { event, facts } of resolved) {
         const usableCount = facts.filter((f) => f.usedInText).length;
         totalFactsExtracted += facts.length;
         totalFactsUsedInText += usableCount;
-        log(
-          `[pipeline] event="${event.title.slice(0, 50)}" facts=${facts.length} usable=${usableCount}`,
-        );
         eventsToGenerate.push({
           eventId: event.id,
           category: event.category,
@@ -174,6 +211,13 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
           sourceItems: event.items,
         });
       }
+
+      if (replacementLog.length > 0) {
+        log(
+          `[pipeline] extract-stage replacements: ${replacementLog.length} slot(s) affected (see pipeline_run 'extract' stage detail for the full log)`,
+        );
+      }
+
       run.stages.push({
         stage: "extract",
         startedAt: extractStart,
@@ -181,8 +225,14 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
         ok: true,
         detail: {
           eventsProcessed: eventsToProcess.length,
+          eventsResolved: resolved.length,
           factsExtracted: totalFactsExtracted,
           factsUsedInText: totalFactsUsedInText,
+          minUsableFactsRequired: MIN_USABLE_FACTS_TO_REWRITE,
+          // Full audit trail of every drop/replace/empty-slot decision made
+          // by resolveUsableEvents — this is the "pipeline_runs 기록"
+          // required by the two-source bypass fix.
+          extractReplacements: replacementLog,
         },
       });
     } catch (err) {
@@ -210,7 +260,12 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
     // per-event standard calls (see pipeline/generate.ts + llm/batch.ts).
     const rewriteStart = new Date().toISOString();
     let gateFailures = 0;
-    const eventById = new Map(eventsToProcess.map((e) => [e.id, e]));
+    // Uses resolvedEventsById (post-replacement), NOT eventsToProcess — a
+    // slot whose original event was dropped for insufficient corroboration
+    // must resolve to its REPLACEMENT event here, or article assembly below
+    // would silently reattach the dropped event's metadata (title/sources)
+    // to the replacement's generated facts/content.
+    const eventById = resolvedEventsById;
 
     try {
       const drafts = await generateAndGateAll(eventsToGenerate, {
@@ -263,7 +318,10 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
           category: event.category,
           rankInEdition: event.rankInEdition,
           // status='review' — human approval happens in web/ admin, never here.
-          status: "review",
+          // status='held' — same human-review destination, but distinctly
+          // flagged: this article failed 2-source corroboration post-rewrite
+          // and must never be auto-published even partially.
+          status: articleStatusForGatedVersions(gatedVersions),
           eventSummary: event.title,
           sources: event.items.map((i) => ({
             url: i.url,

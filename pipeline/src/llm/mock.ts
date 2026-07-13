@@ -146,8 +146,28 @@ export class MockLLMProvider implements LLMProvider {
    * the same shape of output from the same facts.
    */
   private renderLevel(facts: ExtractedFact[], level: CefrLevel): RewriteOutput {
+    // NOTE (2026-07-14 two-source bypass fix): this used to fall back to
+    // ALL facts (including single-source ones) when `usable` was empty,
+    // which meant a rewrite could be built entirely out of facts the
+    // two-source rule had just excluded. run.ts now refuses to call rewrite
+    // at all when an event has too few usable facts (see
+    // MIN_USABLE_FACTS_TO_REWRITE / replaceLowUsableFactEvents), so this
+    // path should be unreachable in practice — but the mock must still never
+    // silently launder single-source facts into "load-bearing" prose if it
+    // is reached, so it renders an explicit placeholder instead of a normal
+    // article body.
     const usable = facts.filter((f) => f.usedInText);
-    const factLines = (usable.length > 0 ? usable : facts).map((f) => f.statement);
+    if (usable.length === 0) {
+      const content =
+        "This story could not be corroborated by two or more independent sources and was not written.";
+      return {
+        title: "[Mock] Insufficient corroboration",
+        content,
+        wordCount: content.split(/\s+/).filter(Boolean).length,
+        words: [],
+      };
+    }
+    const factLines = usable.map((f) => f.statement);
 
     const wordTargets: Record<string, number> = { A2: 165, B1: 300, B2: 480 };
     const target = wordTargets[level];
