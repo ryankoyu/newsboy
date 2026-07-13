@@ -75,7 +75,12 @@ function getArticleBodyText(container: HTMLElement): string {
 }
 
 describe("ArticleViewer", () => {
-  const article = buildSeedArticle("article-meta-layoffs");
+  // Use the rank-1 seed article rather than a hardcoded id, so this test
+  // keeps working across edition swaps (task: derive from seed, not hardcode).
+  const firstArticleId = [...articles].sort(
+    (a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0)
+  )[0].id;
+  const article = buildSeedArticle(firstArticleId);
   const wordsByVersion = buildWordsByVersion(article);
 
   it("renders the A2 body by default and switches body content when the level changes", async () => {

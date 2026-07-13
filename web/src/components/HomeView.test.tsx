@@ -48,7 +48,7 @@ beforeEach(() => {
 });
 
 describe("HomeView", () => {
-  it("renders the 2 seeded articles plus a 'coming soon' slot for the remaining 8 of Top 10", async () => {
+  it("renders the seeded Top 10 articles with no 'coming soon' slot remaining", async () => {
     const edition = buildSeedEdition();
     render(<HomeView edition={edition} />);
 
@@ -57,21 +57,28 @@ describe("HomeView", () => {
       expect(screen.getByRole("main")).toBeInTheDocument();
     });
 
-    const version = articleVersionsJson.find(
-      (v) => v.article_id === "article-meta-layoffs" && v.level === "A2"
+    // The seed edition has a full Top 10, so every rank-1 A2 version title
+    // (and the last one) should render, and no "coming soon" slot remains.
+    const sortedArticles = [...articles].sort(
+      (a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0)
     );
-    expect(version).toBeTruthy();
+    expect(sortedArticles).toHaveLength(10);
+
+    const firstVersion = articleVersionsJson.find(
+      (v) => v.article_id === sortedArticles[0].id && v.level === "A2"
+    );
+    expect(firstVersion).toBeTruthy();
     await waitFor(() => {
-      expect(screen.getByText(version!.title)).toBeInTheDocument();
+      expect(screen.getByText(firstVersion!.title)).toBeInTheDocument();
     });
 
-    const worldCupVersion = articleVersionsJson.find(
-      (v) => v.article_id === "article-norway-brazil" && v.level === "A2"
+    const lastVersion = articleVersionsJson.find(
+      (v) => v.article_id === sortedArticles[sortedArticles.length - 1].id && v.level === "A2"
     );
-    expect(screen.getByText(worldCupVersion!.title)).toBeInTheDocument();
+    expect(screen.getByText(lastVersion!.title)).toBeInTheDocument();
 
-    // 2 real articles + 8 missing slots out of Top 10.
-    expect(screen.getByText(/나머지 8개 기사는 준비 중이에요/)).toBeInTheDocument();
+    // 10 real articles fill the Top 10, so no "coming soon" slot should render.
+    expect(screen.queryByText(/기사는 준비 중이에요/)).not.toBeInTheDocument();
   });
 
   it("renders the empty state when there is no edition", async () => {

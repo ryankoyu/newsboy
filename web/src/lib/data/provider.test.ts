@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { dataProvider, estimateReadingMinutes } from "@/lib/data";
+import editionsJson from "@/lib/data/seed/editions.json";
+import articlesJson from "@/lib/data/seed/articles.json";
+
+const seedEdition = editionsJson[0];
+const seedArticleCount = articlesJson.length;
+const firstSeedArticle = [...articlesJson].sort(
+  (a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0)
+)[0];
 
 describe("estimateReadingMinutes", () => {
   it("uses 90wpm for A2", () => {
@@ -41,9 +49,8 @@ describe("seedDataProvider (via dataProvider) — seed loading", () => {
   it("getLatestEdition returns the single seeded edition with its articles resolved", async () => {
     const edition = await dataProvider.getLatestEdition();
     expect(edition).not.toBeNull();
-    expect(edition?.edition_date).toBe("2026-07-10");
-    // R3 only produced 2 fully worked article examples (seed-provider.ts note).
-    expect(edition?.articles).toHaveLength(2);
+    expect(edition?.edition_date).toBe(seedEdition.edition_date);
+    expect(edition?.articles).toHaveLength(seedArticleCount);
   });
 
   it("getEditionByDate returns null for an unknown date", async () => {
@@ -52,9 +59,9 @@ describe("seedDataProvider (via dataProvider) — seed loading", () => {
   });
 
   it("getEditionByDate returns the matching edition for a known date", async () => {
-    const edition = await dataProvider.getEditionByDate("2026-07-10");
+    const edition = await dataProvider.getEditionByDate(seedEdition.edition_date);
     expect(edition).not.toBeNull();
-    expect(edition?.articles.length).toBe(2);
+    expect(edition?.articles.length).toBe(seedArticleCount);
   });
 
   it("articles within an edition are sorted by rank_in_edition", async () => {
@@ -65,7 +72,7 @@ describe("seedDataProvider (via dataProvider) — seed loading", () => {
   });
 
   it("getArticleBySlug resolves a known article with versions/sources/facts/category", async () => {
-    const article = await dataProvider.getArticleBySlug("meta-ai-layoffs-2026");
+    const article = await dataProvider.getArticleBySlug(firstSeedArticle.slug);
     expect(article).not.toBeNull();
     expect(article?.versions.length).toBeGreaterThan(0);
     expect(article?.category).not.toBeNull();
@@ -77,7 +84,7 @@ describe("seedDataProvider (via dataProvider) — seed loading", () => {
   });
 
   it("getWordsForVersion returns words for a level, sorted by sort_order", async () => {
-    const article = await dataProvider.getArticleBySlug("meta-ai-layoffs-2026");
+    const article = await dataProvider.getArticleBySlug(firstSeedArticle.slug);
     const a2Version = article?.versions.find((v) => v.level === "A2");
     expect(a2Version).toBeTruthy();
 

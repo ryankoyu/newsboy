@@ -1,37 +1,1352 @@
 [
-  { "id": "word-meta-a2-1", "version_id": "version-meta-a2", "term": "lay off", "meaning_ko": "(경영상) 해고하다, 정리해고하다", "example": "The factory had to lay off 200 workers last year.", "pronunciation": "LAY-off (동사는 두 단어, 명사는 layoff 한 단어: LAY-off)", "sort_order": 1 },
-  { "id": "word-meta-a2-2", "version_id": "version-meta-a2", "term": "workforce", "meaning_ko": "(한 조직의) 전체 직원, 노동력", "example": "Half of the company's workforce works from home.", "pronunciation": "WORK-forss", "sort_order": 2 },
-  { "id": "word-meta-a2-3", "version_id": "version-meta-a2", "term": "restructuring", "meaning_ko": "(조직) 구조조정, 개편", "example": "The restructuring created three new teams.", "pronunciation": "ree-STRUCK-cher-ing", "sort_order": 3 },
-  { "id": "word-meta-a2-4", "version_id": "version-meta-a2", "term": "reassign", "meaning_ko": "(다른 일·자리로) 재배치하다", "example": "She was reassigned to the marketing team.", "pronunciation": "ree-uh-SINE", "sort_order": 4 },
-  { "id": "word-meta-a2-5", "version_id": "version-meta-a2", "term": "acknowledge", "meaning_ko": "인정하다, 시인하다", "example": "He acknowledged that the plan was too slow.", "pronunciation": "ak-NOL-ij (첫 k는 발음, 두 번째 위치의 -ledge는 '리지')", "sort_order": 5 },
-
-  { "id": "word-meta-b1-1", "version_id": "version-meta-b1", "term": "lay off", "meaning_ko": "(경영상) 해고하다, 정리해고하다", "example": "The factory had to lay off 200 workers last year.", "pronunciation": "LAY-off (동사는 두 단어, 명사는 layoff 한 단어: LAY-off)", "sort_order": 1 },
-  { "id": "word-meta-b1-2", "version_id": "version-meta-b1", "term": "workforce", "meaning_ko": "(한 조직의) 전체 직원, 노동력", "example": "Half of the company's workforce works from home.", "pronunciation": "WORK-forss", "sort_order": 2 },
-  { "id": "word-meta-b1-3", "version_id": "version-meta-b1", "term": "restructuring", "meaning_ko": "(조직) 구조조정, 개편", "example": "The restructuring created three new teams.", "pronunciation": "ree-STRUCK-cher-ing", "sort_order": 3 },
-  { "id": "word-meta-b1-4", "version_id": "version-meta-b1", "term": "reassign", "meaning_ko": "(다른 일·자리로) 재배치하다", "example": "She was reassigned to the marketing team.", "pronunciation": "ree-uh-SINE", "sort_order": 4 },
-  { "id": "word-meta-b1-5", "version_id": "version-meta-b1", "term": "acknowledge", "meaning_ko": "인정하다, 시인하다", "example": "He acknowledged that the plan was too slow.", "pronunciation": "ak-NOL-ij (첫 k는 발음, 두 번째 위치의 -ledge는 '리지')", "sort_order": 5 },
-
-  { "id": "word-meta-b2-1", "version_id": "version-meta-b2", "term": "lay off", "meaning_ko": "(경영상) 해고하다, 정리해고하다", "example": "The factory had to lay off 200 workers last year.", "pronunciation": "LAY-off (동사는 두 단어, 명사는 layoff 한 단어: LAY-off)", "sort_order": 1 },
-  { "id": "word-meta-b2-2", "version_id": "version-meta-b2", "term": "workforce", "meaning_ko": "(한 조직의) 전체 직원, 노동력", "example": "Half of the company's workforce works from home.", "pronunciation": "WORK-forss", "sort_order": 2 },
-  { "id": "word-meta-b2-3", "version_id": "version-meta-b2", "term": "restructuring", "meaning_ko": "(조직) 구조조정, 개편", "example": "The restructuring created three new teams.", "pronunciation": "ree-STRUCK-cher-ing", "sort_order": 3 },
-  { "id": "word-meta-b2-4", "version_id": "version-meta-b2", "term": "reassign", "meaning_ko": "(다른 일·자리로) 재배치하다", "example": "She was reassigned to the marketing team.", "pronunciation": "ree-uh-SINE", "sort_order": 4 },
-  { "id": "word-meta-b2-5", "version_id": "version-meta-b2", "term": "acknowledge", "meaning_ko": "인정하다, 시인하다", "example": "He acknowledged that the plan was too slow.", "pronunciation": "ak-NOL-ij (첫 k는 발음, 두 번째 위치의 -ledge는 '리지')", "sort_order": 5 },
-
-  { "id": "word-wc-a2-1", "version_id": "version-wc-a2", "term": "upset (n.)", "meaning_ko": "(스포츠) 이변, 예상 밖의 결과", "example": "The small team's win was a huge upset.", "pronunciation": "명사는 UP-set (앞 강세), 동사는 up-SET", "sort_order": 1 },
-  { "id": "word-wc-a2-2", "version_id": "version-wc-a2", "term": "stun", "meaning_ko": "깜짝 놀라게 하다, 충격을 주다", "example": "Their late goal stunned the home crowd.", "pronunciation": "스턴 (stun) — 짧은 '어' 소리", "sort_order": 2 },
-  { "id": "word-wc-a2-3", "version_id": "version-wc-a2", "term": "striker", "meaning_ko": "(축구) 공격수, 스트라이커", "example": "The striker scored twice in one game.", "pronunciation": "STRY-ker", "sort_order": 3 },
-  { "id": "word-wc-a2-4", "version_id": "version-wc-a2", "term": "penalty", "meaning_ko": "(축구) 페널티킥, 벌칙", "example": "He scored from the penalty in the last minute.", "pronunciation": "PEN-uhl-tee", "sort_order": 4 },
-  { "id": "word-wc-a2-5", "version_id": "version-wc-a2", "term": "era", "meaning_ko": "시대, 시기", "example": "This win marks the start of a new era.", "pronunciation": "EER-uh 또는 AIR-uh (둘 다 쓰임)", "sort_order": 5 },
-
-  { "id": "word-wc-b1-1", "version_id": "version-wc-b1", "term": "upset (n.)", "meaning_ko": "(스포츠) 이변, 예상 밖의 결과", "example": "The small team's win was a huge upset.", "pronunciation": "명사는 UP-set (앞 강세), 동사는 up-SET", "sort_order": 1 },
-  { "id": "word-wc-b1-2", "version_id": "version-wc-b1", "term": "stun", "meaning_ko": "깜짝 놀라게 하다, 충격을 주다", "example": "Their late goal stunned the home crowd.", "pronunciation": "스턴 (stun) — 짧은 '어' 소리", "sort_order": 2 },
-  { "id": "word-wc-b1-3", "version_id": "version-wc-b1", "term": "striker", "meaning_ko": "(축구) 공격수, 스트라이커", "example": "The striker scored twice in one game.", "pronunciation": "STRY-ker", "sort_order": 3 },
-  { "id": "word-wc-b1-4", "version_id": "version-wc-b1", "term": "penalty", "meaning_ko": "(축구) 페널티킥, 벌칙", "example": "He scored from the penalty in the last minute.", "pronunciation": "PEN-uhl-tee", "sort_order": 4 },
-  { "id": "word-wc-b1-5", "version_id": "version-wc-b1", "term": "era", "meaning_ko": "시대, 시기", "example": "This win marks the start of a new era.", "pronunciation": "EER-uh 또는 AIR-uh (둘 다 쓰임)", "sort_order": 5 },
-
-  { "id": "word-wc-b2-1", "version_id": "version-wc-b2", "term": "upset (n.)", "meaning_ko": "(스포츠) 이변, 예상 밖의 결과", "example": "The small team's win was a huge upset.", "pronunciation": "명사는 UP-set (앞 강세), 동사는 up-SET", "sort_order": 1 },
-  { "id": "word-wc-b2-2", "version_id": "version-wc-b2", "term": "stun", "meaning_ko": "깜짝 놀라게 하다, 충격을 주다", "example": "Their late goal stunned the home crowd.", "pronunciation": "스턴 (stun) — 짧은 '어' 소리", "sort_order": 2 },
-  { "id": "word-wc-b2-3", "version_id": "version-wc-b2", "term": "striker", "meaning_ko": "(축구) 공격수, 스트라이커", "example": "The striker scored twice in one game.", "pronunciation": "STRY-ker", "sort_order": 3 },
-  { "id": "word-wc-b2-4", "version_id": "version-wc-b2", "term": "penalty", "meaning_ko": "(축구) 페널티킥, 벌칙", "example": "He scored from the penalty in the last minute.", "pronunciation": "PEN-uhl-tee", "sort_order": 4 },
-  { "id": "word-wc-b2-5", "version_id": "version-wc-b2", "term": "era", "meaning_ko": "시대, 시기", "example": "This win marks the start of a new era.", "pronunciation": "EER-uh 또는 AIR-uh (둘 다 쓰임)", "sort_order": 5 }
+  {
+    "id": "word-2026-07-13-1-a2-1",
+    "version_id": "version-2026-07-13-1-a2",
+    "term": "congressman",
+    "meaning_ko": "(미국) 하원 의원",
+    "example": "Ro Khanna is a US congressman from California.",
+    "pronunciation": "/ˈkɒŋɡrəsmən/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-1-a2-2",
+    "version_id": "version-2026-07-13-1-a2",
+    "term": "settlers",
+    "meaning_ko": "정착민",
+    "example": "There, armed Israeli settlers stopped his car.",
+    "pronunciation": "/ˈsetlərz/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-1-a2-3",
+    "version_id": "version-2026-07-13-1-a2",
+    "term": "soldiers",
+    "meaning_ko": "군인들",
+    "example": "Then Israeli soldiers came to the same place.",
+    "pronunciation": "/ˈsoʊldʒərz/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-1-a2-4",
+    "version_id": "version-2026-07-13-1-a2",
+    "term": "embassy",
+    "meaning_ko": "대사관",
+    "example": "In the end, someone called the US embassy.",
+    "pronunciation": "/ˈembəsi/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-1-a2-5",
+    "version_id": "version-2026-07-13-1-a2",
+    "term": "block",
+    "meaning_ko": "막다, 차단하다",
+    "example": "The army says its soldiers did not block the road.",
+    "pronunciation": "/blɒk/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-1-b1-1",
+    "version_id": "version-2026-07-13-1-b1",
+    "term": "detained",
+    "meaning_ko": "억류된, 붙잡힌",
+    "example": "The US congressman Ro Khanna says he was detained during a recent visit to the occupied West Bank.",
+    "pronunciation": "/dɪˈteɪnd/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-1-b1-2",
+    "version_id": "version-2026-07-13-1-b1",
+    "term": "occupied",
+    "meaning_ko": "점령된",
+    "example": "The US congressman Ro Khanna says he was detained during a recent visit to the occupied West Bank.",
+    "pronunciation": "/ˈɒkjupaɪd/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-1-b1-3",
+    "version_id": "version-2026-07-13-1-b1",
+    "term": "vehicle",
+    "meaning_ko": "차량",
+    "example": "According to his account, armed Israeli settlers stopped his vehicle first and refused to let his group pass.",
+    "pronunciation": "/ˈviːɪkəl/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-1-b1-4",
+    "version_id": "version-2026-07-13-1-b1",
+    "term": "released",
+    "meaning_ko": "풀려난, 석방된",
+    "example": "His group was only released after calls were made to the US embassy in Jerusalem.",
+    "pronunciation": "/rɪˈliːst/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-1-b1-5",
+    "version_id": "version-2026-07-13-1-b1",
+    "term": "disperse",
+    "meaning_ko": "해산시키다, 흩어지게 하다",
+    "example": "The military said its troops dispersed the civilians and reopened the blocked road.",
+    "pronunciation": "/dɪˈspɜːrs/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-1-b2-1",
+    "version_id": "version-2026-07-13-1-b2",
+    "term": "confrontation",
+    "meaning_ko": "대치, 충돌",
+    "example": "The confrontation happened near the Palestinian village of Khirbet Zanuta, in the hills of the southern West Bank.",
+    "pronunciation": "/ˌkɒnfrənˈteɪʃən/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-1-b2-2",
+    "version_id": "version-2026-07-13-1-b2",
+    "term": "occupation",
+    "meaning_ko": "(군사) 점령",
+    "example": "He has framed his own experience as a small window onto the far harder reality that Palestinians face under occupation.",
+    "pronunciation": "/ˌɒkjuˈpeɪʃən/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-1-b2-3",
+    "version_id": "version-2026-07-13-1-b2",
+    "term": "markedly",
+    "meaning_ko": "현저하게, 뚜렷하게",
+    "example": "The Israel Defense Forces have offered a markedly different version of events.",
+    "pronunciation": "/ˈmɑːrkɪdli/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-1-b2-4",
+    "version_id": "version-2026-07-13-1-b2",
+    "term": "denial",
+    "meaning_ko": "부인, 부정",
+    "example": "That denial sits directly against Khanna's claim that the soldiers stood by while settlers held his group.",
+    "pronunciation": "/dɪˈnaɪəl/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-1-b2-5",
+    "version_id": "version-2026-07-13-1-b2",
+    "term": "contested",
+    "meaning_ko": "논란이 되는, 다툼이 있는",
+    "example": "For now, with two flatly opposed accounts on the record, the full truth of the encounter remains contested.",
+    "pronunciation": "/kənˈtestɪd/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-2-a2-1",
+    "version_id": "version-2026-07-13-2-a2",
+    "term": "senator",
+    "meaning_ko": "상원 의원",
+    "example": "Lindsey Graham was a US senator from South Carolina.",
+    "pronunciation": "/ˈsenətər/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-2-a2-2",
+    "version_id": "version-2026-07-13-2-a2",
+    "term": "illness",
+    "meaning_ko": "병, 질환",
+    "example": "His office said he had a sudden illness.",
+    "pronunciation": "/ˈɪlnəs/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-2-a2-3",
+    "version_id": "version-2026-07-13-2-a2",
+    "term": "heart",
+    "meaning_ko": "심장",
+    "example": "Doctors said the cause was a heart problem.",
+    "pronunciation": "/hɑːrt/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-2-a2-4",
+    "version_id": "version-2026-07-13-2-a2",
+    "term": "ally",
+    "meaning_ko": "동맹, 협력자",
+    "example": "But later he became a close ally of Trump.",
+    "pronunciation": "/ˈælaɪ/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-2-a2-5",
+    "version_id": "version-2026-07-13-2-a2",
+    "term": "governor",
+    "meaning_ko": "주지사",
+    "example": "The governor of South Carolina will pick a person for now.",
+    "pronunciation": "/ˈɡʌvərnər/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-2-b1-1",
+    "version_id": "version-2026-07-13-2-b1",
+    "term": "brief",
+    "meaning_ko": "짧은",
+    "example": "His office said he died after a brief and sudden illness.",
+    "pronunciation": "/briːf/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-2-b1-2",
+    "version_id": "version-2026-07-13-2-b1",
+    "term": "preliminary",
+    "meaning_ko": "예비의, 잠정적인",
+    "example": "Preliminary findings from the medical examiner pointed to a heart-related cause of death.",
+    "pronunciation": "/prɪˈlɪmɪneri/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-2-b1-3",
+    "version_id": "version-2026-07-13-2-b1",
+    "term": "critic",
+    "meaning_ko": "비판자",
+    "example": "Graham had once been a sharp critic of Donald Trump before the 2016 election.",
+    "pronunciation": "/ˈkrɪtɪk/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-2-b1-4",
+    "version_id": "version-2026-07-13-2-b1",
+    "term": "loyal",
+    "meaning_ko": "충성스러운",
+    "example": "Over time, however, he became one of Trump's most loyal supporters in the Senate.",
+    "pronunciation": "/ˈlɔɪəl/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-2-b1-5",
+    "version_id": "version-2026-07-13-2-b1",
+    "term": "tributes",
+    "meaning_ko": "추모의 말, 헌사",
+    "example": "News of his death sent shockwaves through Congress and drew tributes from many leaders.",
+    "pronunciation": "/ˈtrɪbjuːts/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-2-b2-1",
+    "version_id": "version-2026-07-13-2-b2",
+    "term": "recognisable",
+    "meaning_ko": "잘 알려진, 쉽게 알아볼 수 있는",
+    "example": "The death of Lindsey Graham has removed one of the most recognisable figures in the US Senate almost overnight.",
+    "pronunciation": "/ˈrekəɡnaɪzəbəl/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-2-b2-2",
+    "version_id": "version-2026-07-13-2-b2",
+    "term": "attributed",
+    "meaning_ko": "~의 원인으로 돌리다",
+    "example": "Preliminary findings from the District of Columbia medical examiner attributed his death to an aortic dissection linked to heart disease.",
+    "pronunciation": "/əˈtrɪbjuːtɪd/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-2-b2-3",
+    "version_id": "version-2026-07-13-2-b2",
+    "term": "consequential",
+    "meaning_ko": "중대한, 영향이 큰",
+    "example": "That shift made him a central figure in some of the Trump era's most consequential battles in the Senate.",
+    "pronunciation": "/ˌkɒnsɪˈkwenʃəl/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-2-b2-4",
+    "version_id": "version-2026-07-13-2-b2",
+    "term": "vacant",
+    "meaning_ko": "공석의, 비어 있는",
+    "example": "His death also creates an immediate practical problem, because his Senate seat is now vacant.",
+    "pronunciation": "/ˈveɪkənt/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-2-b2-5",
+    "version_id": "version-2026-07-13-2-b2",
+    "term": "succession",
+    "meaning_ko": "(자리의) 승계",
+    "example": "The coming weeks are likely to bring both public mourning and quiet manoeuvring over the succession.",
+    "pronunciation": "/səkˈseʃən/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-3-a2-1",
+    "version_id": "version-2026-07-13-3-a2",
+    "term": "senator",
+    "meaning_ko": "상원의원",
+    "example": "Mitch McConnell is a US senator.",
+    "pronunciation": "/ˈsɛnətər/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-3-a2-2",
+    "version_id": "version-2026-07-13-3-a2",
+    "term": "fall",
+    "meaning_ko": "넘어짐, 낙상",
+    "example": "He said he had a fall.",
+    "pronunciation": "/fɔːl/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-3-a2-3",
+    "version_id": "version-2026-07-13-3-a2",
+    "term": "hospital",
+    "meaning_ko": "병원",
+    "example": "The fall was bad, so he went to the hospital.",
+    "pronunciation": "/ˈhɒspɪtl/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-3-a2-4",
+    "version_id": "version-2026-07-13-3-a2",
+    "term": "sick",
+    "meaning_ko": "아픈",
+    "example": "He was also sick with mild pneumonia, a lung illness.",
+    "pronunciation": "/sɪk/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-3-a2-5",
+    "version_id": "version-2026-07-13-3-a2",
+    "term": "strength",
+    "meaning_ko": "힘, 기력",
+    "example": "McConnell said he is getting his strength back now.",
+    "pronunciation": "/strɛŋθ/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-3-b1-1",
+    "version_id": "version-2026-07-13-3-b1",
+    "term": "silence",
+    "meaning_ko": "침묵",
+    "example": "McConnell Breaks Silence: A Fall and Pneumonia Kept Him Away",
+    "pronunciation": "/ˈsaɪləns/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-3-b1-2",
+    "version_id": "version-2026-07-13-3-b1",
+    "term": "statement",
+    "meaning_ko": "성명, 공식 발표",
+    "example": "On Sunday, he released a statement to clear things up.",
+    "pronunciation": "/ˈsteɪtmənt/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-3-b1-3",
+    "version_id": "version-2026-07-13-3-b1",
+    "term": "revealed",
+    "meaning_ko": "밝혔다, 드러냈다",
+    "example": "He revealed that a fall had led to his time in hospital.",
+    "pronunciation": "/rɪˈviːld/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-3-b1-4",
+    "version_id": "version-2026-07-13-3-b1",
+    "term": "treated",
+    "meaning_ko": "치료받은",
+    "example": "On top of the fall, he was treated for mild pneumonia, a lung illness.",
+    "pronunciation": "/ˈtriːtɪd/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-3-b1-5",
+    "version_id": "version-2026-07-13-3-b1",
+    "term": "generation",
+    "meaning_ko": "세대",
+    "example": "He explained that people of his generation often find it hard to talk about growing older.",
+    "pronunciation": "/ˌdʒɛnəˈreɪʃn/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-3-b2-1",
+    "version_id": "version-2026-07-13-3-b2",
+    "term": "veteran",
+    "meaning_ko": "베테랑의, 노련한",
+    "example": "For weeks, Washington was full of questions about the health of Mitch McConnell, the veteran Republican senator from Kentucky.",
+    "pronunciation": "/ˈvɛtərən/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-3-b2-2",
+    "version_id": "version-2026-07-13-3-b2",
+    "term": "speculation",
+    "meaning_ko": "추측",
+    "example": "The 84-year-old had vanished from Congress, and his office had said very little, which only fueled the speculation.",
+    "pronunciation": "/ˌspɛkjuˈleɪʃn/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-3-b2-3",
+    "version_id": "version-2026-07-13-3-b2",
+    "term": "hospitalization",
+    "meaning_ko": "입원",
+    "example": "He revealed, for the first time, that a fall had led to his hospitalization.",
+    "pronunciation": "/ˌhɒspɪtəlaɪˈzeɪʃn/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-3-b2-4",
+    "version_id": "version-2026-07-13-3-b2",
+    "term": "vulnerability",
+    "meaning_ko": "취약함, 연약함",
+    "example": "People of his generation, he suggested, often hesitate to share the vulnerability that comes with growing older.",
+    "pronunciation": "/ˌvʌlnərəˈbɪləti/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-3-b2-5",
+    "version_id": "version-2026-07-13-3-b2",
+    "term": "recovery",
+    "meaning_ko": "회복",
+    "example": "His current term is set to end in early 2027, and for now his priority is clearly his recovery rather than his return.",
+    "pronunciation": "/rɪˈkʌvəri/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-4-a2-1",
+    "version_id": "version-2026-07-13-4-a2",
+    "term": "sold",
+    "meaning_ko": "팔았다 (sell의 과거형)",
+    "example": "In the first 10 days, it sold much more to other countries.",
+    "pronunciation": "/soʊld/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-4-a2-2",
+    "version_id": "version-2026-07-13-4-a2",
+    "term": "exports",
+    "meaning_ko": "수출(품)",
+    "example": "Its exports went up almost 54 percent from last year.",
+    "pronunciation": "/ˈɛkspɔːrts/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-4-a2-3",
+    "version_id": "version-2026-07-13-4-a2",
+    "term": "jump",
+    "meaning_ko": "급등, 갑작스러운 증가",
+    "example": "That is a very big jump.",
+    "pronunciation": "/dʒʌmp/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-4-a2-4",
+    "version_id": "version-2026-07-13-4-a2",
+    "term": "record",
+    "meaning_ko": "기록",
+    "example": "The old record was 28.6 billion dollars, and Korea passed it.",
+    "pronunciation": "/ˈrɛkɔːrd/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-4-a2-5",
+    "version_id": "version-2026-07-13-4-a2",
+    "term": "chips",
+    "meaning_ko": "(반도체) 칩",
+    "example": "The main reason was computer chips.",
+    "pronunciation": "/tʃɪps/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-4-b1-1",
+    "version_id": "version-2026-07-13-4-b1",
+    "term": "surge",
+    "meaning_ko": "급증, 급등",
+    "example": "The main reason for this strong result was a surge in semiconductor shipments.",
+    "pronunciation": "/sɜːrdʒ/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-4-b1-2",
+    "version_id": "version-2026-07-13-4-b1",
+    "term": "shipments",
+    "meaning_ko": "수송(품), 출하",
+    "example": "In those 10 days, the country's outbound shipments reached $29.8 billion.",
+    "pronunciation": "/ˈʃɪpmənts/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-4-b1-3",
+    "version_id": "version-2026-07-13-4-b1",
+    "term": "tripled",
+    "meaning_ko": "세 배가 되었다",
+    "example": "Chip exports nearly tripled to $11.2 billion, providing most of the momentum behind the increase.",
+    "pronunciation": "/ˈtrɪpld/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-4-b1-4",
+    "version_id": "version-2026-07-13-4-b1",
+    "term": "surplus",
+    "meaning_ko": "흑자, 잉여",
+    "example": "Even so, the country still enjoyed a trade surplus of $6.4 billion for the period.",
+    "pronunciation": "/ˈsɜːrpləs/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-4-b1-5",
+    "version_id": "version-2026-07-13-4-b1",
+    "term": "demand",
+    "meaning_ko": "수요",
+    "example": "The figures suggest that global demand for Korean technology remains very strong.",
+    "pronunciation": "/dɪˈmænd/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-4-b2-1",
+    "version_id": "version-2026-07-13-4-b2",
+    "term": "striking",
+    "meaning_ko": "눈에 띄는, 두드러진",
+    "example": "South Korea began July with a striking burst of export growth, according to fresh customs data.",
+    "pronunciation": "/ˈstraɪkɪŋ/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-4-b2-2",
+    "version_id": "version-2026-07-13-4-b2",
+    "term": "engine",
+    "meaning_ko": "원동력, 엔진",
+    "example": "The main engine behind the increase was a powerful rise in semiconductor shipments.",
+    "pronunciation": "/ˈɛndʒɪn/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-4-b2-3",
+    "version_id": "version-2026-07-13-4-b2",
+    "term": "appetite",
+    "meaning_ko": "욕구, 수요",
+    "example": "This reflects the huge global appetite for the advanced chips used in artificial intelligence and other technologies.",
+    "pronunciation": "/ˈæpɪtaɪt/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-4-b2-4",
+    "version_id": "version-2026-07-13-4-b2",
+    "term": "robust",
+    "meaning_ko": "탄탄한, 견고한",
+    "example": "Together, these numbers point to robust demand for Korean-made goods at the start of the summer.",
+    "pronunciation": "/roʊˈbʌst/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-4-b2-5",
+    "version_id": "version-2026-07-13-4-b2",
+    "term": "snapshot",
+    "meaning_ko": "단면, 스냅샷",
+    "example": "Even so, the early data offer an encouraging snapshot of how Korea's export machine is performing.",
+    "pronunciation": "/ˈsnæpʃɒt/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-5-a2-1",
+    "version_id": "version-2026-07-13-5-a2",
+    "term": "market",
+    "meaning_ko": "시장 (주식이 사고 팔리는 곳)",
+    "example": "South Korea's main stock market had a very bad week in July 2026.",
+    "pronunciation": "/ˈmɑːrkɪt/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-5-a2-2",
+    "version_id": "version-2026-07-13-5-a2",
+    "term": "fell",
+    "meaning_ko": "떨어졌다 (fall의 과거형)",
+    "example": "The market fell more than 20 percent from its highest point in June.",
+    "pronunciation": "/fel/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-5-a2-3",
+    "version_id": "version-2026-07-13-5-a2",
+    "term": "shares",
+    "meaning_ko": "주식",
+    "example": "Their shares dropped a lot in just a few days.",
+    "pronunciation": "/ʃerz/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-5-a2-4",
+    "version_id": "version-2026-07-13-5-a2",
+    "term": "worried",
+    "meaning_ko": "걱정하는",
+    "example": "People are worried that big tech firms may spend less money on AI chips.",
+    "pronunciation": "/ˈwɜːrid/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-5-a2-5",
+    "version_id": "version-2026-07-13-5-a2",
+    "term": "profits",
+    "meaning_ko": "이익, 수익",
+    "example": "The strange thing is that the chip companies still made big profits.",
+    "pronunciation": "/ˈprɑːfɪts/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-5-b1-1",
+    "version_id": "version-2026-07-13-5-b1",
+    "term": "bear market",
+    "meaning_ko": "약세장 (주가가 크게 떨어지는 시장)",
+    "example": "A market is called a \"bear market\" when it drops more than 20 percent from a recent high, and the Kospi index did exactly that after peaking in June.",
+    "pronunciation": "/ber ˈmɑːrkɪt/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-5-b1-2",
+    "version_id": "version-2026-07-13-5-b1",
+    "term": "selloff",
+    "meaning_ko": "투매, 대량 매도 (주식을 서둘러 파는 것)",
+    "example": "The main reason was a sharp selloff in the country's two giant chipmakers, Samsung Electronics and SK hynix.",
+    "pronunciation": "/ˈseˌlɔːf/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-5-b1-3",
+    "version_id": "version-2026-07-13-5-b1",
+    "term": "tumbled",
+    "meaning_ko": "급락했다",
+    "example": "Their shares tumbled over just a few trading days, and because these two firms now make up around half of the entire market, their fall pulled the whole index down with them.",
+    "pronunciation": "/ˈtʌmbld/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-5-b1-4",
+    "version_id": "version-2026-07-13-5-b1",
+    "term": "dependence",
+    "meaning_ko": "의존, 의존도",
+    "example": "At the end of the previous year, the pair had accounted for only about a quarter of the market, so the country's dependence on chips has grown quickly.",
+    "pronunciation": "/dɪˈpendəns/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-5-b1-5",
+    "version_id": "version-2026-07-13-5-b1",
+    "term": "listing",
+    "meaning_ko": "상장 (주식을 시장에 올리는 것)",
+    "example": "Only days before the drop, SK hynix had raised 26.5 billion dollars by listing new shares in the United States.",
+    "pronunciation": "/ˈlɪstɪŋ/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-5-b2-1",
+    "version_id": "version-2026-07-13-5-b2",
+    "term": "benchmark",
+    "meaning_ko": "기준이 되는 (대표) 지수",
+    "example": "On one hand, the benchmark Kospi index slid into a bear market, falling more than 20 percent from the record high it had reached in June.",
+    "pronunciation": "/ˈbentʃmɑːrk/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-5-b2-2",
+    "version_id": "version-2026-07-13-5-b2",
+    "term": "dominate",
+    "meaning_ko": "지배하다, 큰 비중을 차지하다",
+    "example": "The decline was driven above all by a heavy selloff in the two firms that dominate the index, Samsung Electronics and SK hynix.",
+    "pronunciation": "/ˈdɑːmɪneɪt/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-5-b2-3",
+    "version_id": "version-2026-07-13-5-b2",
+    "term": "concentrated",
+    "meaning_ko": "집중된, 한곳에 쏠린",
+    "example": "In effect, South Korea's stock market has become a concentrated bet on the artificial intelligence trade, which magnifies both its gains and its losses.",
+    "pronunciation": "/ˈkɑːnsntreɪtɪd/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-5-b2-4",
+    "version_id": "version-2026-07-13-5-b2",
+    "term": "expectations",
+    "meaning_ko": "기대, 예상",
+    "example": "That gap shows how stock markets often trade on expectations about the future rather than on results that have already been reported.",
+    "pronunciation": "/ˌekspekˈteɪʃnz/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-5-b2-5",
+    "version_id": "version-2026-07-13-5-b2",
+    "term": "oversubscribed",
+    "meaning_ko": "청약이 초과된 (수요가 공급보다 많은)",
+    "example": "The offering was heavily oversubscribed, a clear sign that many global investors still wanted a stake in the memory-chip business at almost any price.",
+    "pronunciation": "/ˌoʊvərsəbˈskraɪbd/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-6-a2-1",
+    "version_id": "version-2026-07-13-6-a2",
+    "term": "apps",
+    "meaning_ko": "앱 (애플리케이션)",
+    "example": "They said the apps are made to keep people using them too much.",
+    "pronunciation": "/æps/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-6-a2-2",
+    "version_id": "version-2026-07-13-6-a2",
+    "term": "feature",
+    "meaning_ko": "기능",
+    "example": "One feature is \"infinite scroll,\" where the page never ends.",
+    "pronunciation": "/ˈfiːtʃər/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-6-a2-3",
+    "version_id": "version-2026-07-13-6-a2",
+    "term": "notifications",
+    "meaning_ko": "알림",
+    "example": "The apps also send many push notifications to bring you back.",
+    "pronunciation": "/ˌnoʊtɪfɪˈkeɪʃnz/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-6-a2-4",
+    "version_id": "version-2026-07-13-6-a2",
+    "term": "worried",
+    "meaning_ko": "걱정하는",
+    "example": "Officials are most worried about young people and teenagers.",
+    "pronunciation": "/ˈwɜːrid/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-6-a2-5",
+    "version_id": "version-2026-07-13-6-a2",
+    "term": "fine",
+    "meaning_ko": "벌금",
+    "example": "If Meta does not change, it could pay a very large fine.",
+    "pronunciation": "/faɪn/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-6-b1-1",
+    "version_id": "version-2026-07-13-6-b1",
+    "term": "preliminary",
+    "meaning_ko": "예비의, 잠정적인",
+    "example": "In preliminary findings published on July 10, 2026, the Commission said the two apps use an addictive design that pushes people into compulsive use.",
+    "pronunciation": "/prɪˈlɪmɪneri/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-6-b1-2",
+    "version_id": "version-2026-07-13-6-b1",
+    "term": "compulsive",
+    "meaning_ko": "강박적인, 자제하기 힘든",
+    "example": "In preliminary findings published on July 10, 2026, the Commission said the two apps use an addictive design that pushes people into compulsive use.",
+    "pronunciation": "/kəmˈpʌlsɪv/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-6-b1-3",
+    "version_id": "version-2026-07-13-6-b1",
+    "term": "vulnerable",
+    "meaning_ko": "취약한, 상처받기 쉬운",
+    "example": "Officials said they were especially concerned about the effect on minors and other vulnerable users.",
+    "pronunciation": "/ˈvʌlnərəbl/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-6-b1-4",
+    "version_id": "version-2026-07-13-6-b1",
+    "term": "disable",
+    "meaning_ko": "비활성화하다, (기능을) 끄다",
+    "example": "To fix the problems, the EU wants Meta to disable features such as autoplay and infinite scroll by default.",
+    "pronunciation": "/dɪsˈeɪbl/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-6-b1-5",
+    "version_id": "version-2026-07-13-6-b1",
+    "term": "penalty",
+    "meaning_ko": "처벌, 벌금",
+    "example": "If the findings are confirmed, Meta could face a very large penalty.",
+    "pronunciation": "/ˈpenəlti/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-6-b2-1",
+    "version_id": "version-2026-07-13-6-b2",
+    "term": "accused",
+    "meaning_ko": "비난했다, (~라고) 고발했다",
+    "example": "The European Commission has accused Meta of breaking the European Union's digital rulebook, arguing that Facebook and Instagram are deliberately designed to keep users hooked.",
+    "pronunciation": "/əˈkjuːzd/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-6-b2-2",
+    "version_id": "version-2026-07-13-6-b2",
+    "term": "regulators",
+    "meaning_ko": "규제 당국, 감독 기관",
+    "example": "Regulators singled out a familiar set of features: infinite scroll, autoplay, push notifications, and the highly personalized recommendation systems that decide what appears in each user's feed.",
+    "pronunciation": "/ˈreɡjuleɪtərz/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-6-b2-3",
+    "version_id": "version-2026-07-13-6-b2",
+    "term": "assess",
+    "meaning_ko": "평가하다, 판단하다",
+    "example": "Officials said Meta had failed to properly assess the risks that its choices pose to users' physical and mental well-being.",
+    "pronunciation": "/əˈses/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-6-b2-4",
+    "version_id": "version-2026-07-13-6-b2",
+    "term": "safeguards",
+    "meaning_ko": "보호 장치, 안전장치",
+    "example": "But the Commission judged these safeguards to be largely cosmetic, noting that they can be dismissed too easily and do not lead to any meaningful reduction in usage.",
+    "pronunciation": "/ˈseɪfɡɑːrdz/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-6-b2-5",
+    "version_id": "version-2026-07-13-6-b2",
+    "term": "architecture",
+    "meaning_ko": "구조, 설계 방식",
+    "example": "The case is significant because it goes beyond questions of content and targets the underlying architecture of the platforms themselves.",
+    "pronunciation": "/ˈɑːrkɪtektʃər/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-7-a2-1",
+    "version_id": "version-2026-07-13-7-a2",
+    "term": "booster",
+    "meaning_ko": "부스터, 로켓의 아래쪽 큰 부분(추진체)",
+    "example": "A booster is the big bottom part of a rocket.",
+    "pronunciation": "/ˈbuːstər/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-7-a2-2",
+    "version_id": "version-2026-07-13-7-a2",
+    "term": "rocket",
+    "meaning_ko": "로켓",
+    "example": "China did something big with a rocket.",
+    "pronunciation": "/ˈrɒkɪt/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-7-a2-3",
+    "version_id": "version-2026-07-13-7-a2",
+    "term": "net",
+    "meaning_ko": "그물, 네트",
+    "example": "A ship waited on the sea with a big net.",
+    "pronunciation": "/net/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-7-a2-4",
+    "version_id": "version-2026-07-13-7-a2",
+    "term": "satellite",
+    "meaning_ko": "인공위성",
+    "example": "The rocket carried a satellite into space first.",
+    "pronunciation": "/ˈsætəlaɪt/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-7-a2-5",
+    "version_id": "version-2026-07-13-7-a2",
+    "term": "company",
+    "meaning_ko": "회사",
+    "example": "The company is called CASC.",
+    "pronunciation": "/ˈkʌmpəni/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-7-b1-1",
+    "version_id": "version-2026-07-13-7-b1",
+    "term": "recover",
+    "meaning_ko": "회수하다, 되찾다",
+    "example": "On July 10, 2026, a Chinese space company recovered a rocket booster for the very first time.",
+    "pronunciation": "/rɪˈkʌvər/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-7-b1-2",
+    "version_id": "version-2026-07-13-7-b1",
+    "term": "orbit",
+    "meaning_ko": "궤도",
+    "example": "The rocket first carried a satellite into its planned orbit.",
+    "pronunciation": "/ˈɔːrbɪt/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-7-b1-3",
+    "version_id": "version-2026-07-13-7-b1",
+    "term": "state-owned",
+    "meaning_ko": "국영의, 정부가 소유한",
+    "example": "CASC is the country's state-owned space company.",
+    "pronunciation": "/ˌsteɪt ˈoʊnd/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-7-b1-4",
+    "version_id": "version-2026-07-13-7-b1",
+    "term": "method",
+    "meaning_ko": "방법, 방식",
+    "example": "China chose a completely different method.",
+    "pronunciation": "/ˈmeθəd/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-7-b1-5",
+    "version_id": "version-2026-07-13-7-b1",
+    "term": "reuse",
+    "meaning_ko": "재사용하다",
+    "example": "CASC has said it wants to reuse the same booster before the end of 2026.",
+    "pronunciation": "/ˌriːˈjuːz/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-7-b2-1",
+    "version_id": "version-2026-07-13-7-b2",
+    "term": "separates",
+    "meaning_ko": "분리되다",
+    "example": "In a typical mission, this stage separates and is thrown away, so a new one must be built every time.",
+    "pronunciation": "/ˈsepəreɪts/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-7-b2-2",
+    "version_id": "version-2026-07-13-7-b2",
+    "term": "descended",
+    "meaning_ko": "내려오다, 하강하다",
+    "example": "As the booster descended, it was caught in the net rather than touching down on its own legs.",
+    "pronunciation": "/dɪˈsendɪd/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-7-b2-3",
+    "version_id": "version-2026-07-13-7-b2",
+    "term": "reusability",
+    "meaning_ko": "재사용 가능성",
+    "example": "Reusability is the key to lowering costs in modern spaceflight.",
+    "pronunciation": "/ˌriːjuːzəˈbɪləti/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-7-b2-4",
+    "version_id": "version-2026-07-13-7-b2",
+    "term": "milestone",
+    "meaning_ko": "중요한 이정표, 획기적 사건",
+    "example": "That is exactly why the milestone has drawn so much attention around the world.",
+    "pronunciation": "/ˈmaɪlstoʊn/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-7-b2-5",
+    "version_id": "version-2026-07-13-7-b2",
+    "term": "guidance",
+    "meaning_ko": "유도, 제어",
+    "example": "The recovery also depended on advanced guidance software and sensors, plus engines strong enough to survive the harsh return through the atmosphere.",
+    "pronunciation": "/ˈɡaɪdns/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-8-a2-1",
+    "version_id": "version-2026-07-13-8-a2",
+    "term": "brand",
+    "meaning_ko": "브랜드, 상표",
+    "example": "A Korean fashion brand has news for baseball fans.",
+    "pronunciation": "/brænd/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-8-a2-2",
+    "version_id": "version-2026-07-13-8-a2",
+    "term": "collection",
+    "meaning_ko": "컬렉션, (옷) 모음",
+    "example": "Together they made a new clothing collection.",
+    "pronunciation": "/kəˈlekʃn/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-8-a2-3",
+    "version_id": "version-2026-07-13-8-a2",
+    "term": "team",
+    "meaning_ko": "팀",
+    "example": "It is working with a baseball team called the LG Twins.",
+    "pronunciation": "/tiːm/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-8-a2-4",
+    "version_id": "version-2026-07-13-8-a2",
+    "term": "jacket",
+    "meaning_ko": "재킷, 상의",
+    "example": "One special piece is a dugout jacket.",
+    "pronunciation": "/ˈdʒækɪt/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-8-a2-5",
+    "version_id": "version-2026-07-13-8-a2",
+    "term": "store",
+    "meaning_ko": "가게, 매장",
+    "example": "You can also buy it at the Matin Kim store in Seoul later.",
+    "pronunciation": "/stɔːr/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-8-b1-1",
+    "version_id": "version-2026-07-13-8-b1",
+    "term": "professional",
+    "meaning_ko": "프로의, 직업적인",
+    "example": "The LG Twins are a professional team in Korea's KBO baseball league.",
+    "pronunciation": "/prəˈfeʃənl/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-8-b1-2",
+    "version_id": "version-2026-07-13-8-b1",
+    "term": "inspired",
+    "meaning_ko": "영감을 받은, ~에서 착안한",
+    "example": "It is a baseball-inspired lineup, so the designs are connected to the sport.",
+    "pronunciation": "/ɪnˈspaɪərd/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-8-b1-3",
+    "version_id": "version-2026-07-13-8-b1",
+    "term": "accessories",
+    "meaning_ko": "액세서리, 부속품",
+    "example": "The accessories include bags, a ball cap, a beanie, and a key ring.",
+    "pronunciation": "/əkˈsesəriz/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-8-b1-4",
+    "version_id": "version-2026-07-13-8-b1",
+    "term": "flagship",
+    "meaning_ko": "대표 매장, 플래그십",
+    "example": "Later, from July 24, the items will be sold at the Matin Kim flagship store in Seongsu-dong, in eastern Seoul.",
+    "pronunciation": "/ˈflæɡʃɪp/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-8-b1-5",
+    "version_id": "version-2026-07-13-8-b1",
+    "term": "collaboration",
+    "meaning_ko": "협업, 콜라보",
+    "example": "This kind of collaboration links streetwear fashion with sports fandom.",
+    "pronunciation": "/kəˌlæbəˈreɪʃn/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-8-b2-1",
+    "version_id": "version-2026-07-13-8-b2",
+    "term": "tie-up",
+    "meaning_ko": "제휴, 협력 관계",
+    "example": "In Korea, fashion and sport are increasingly finding common ground, and a new tie-up shows how.",
+    "pronunciation": "/ˈtaɪ ʌp/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-8-b2-2",
+    "version_id": "version-2026-07-13-8-b2",
+    "term": "range",
+    "meaning_ko": "제품군, (상품) 라인업",
+    "example": "The range is reported to contain six clothing items alongside five accessories.",
+    "pronunciation": "/reɪndʒ/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-8-b2-3",
+    "version_id": "version-2026-07-13-8-b2",
+    "term": "standout",
+    "meaning_ko": "눈에 띄는, 돋보이는 (것)",
+    "example": "One of the standout pieces is a dugout jacket, named after the covered bench where players sit during a match.",
+    "pronunciation": "/ˈstændaʊt/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-8-b2-4",
+    "version_id": "version-2026-07-13-8-b2",
+    "term": "merchandise",
+    "meaning_ko": "상품, 굿즈",
+    "example": "For the club, it offers merchandise that feels more like everyday streetwear than a standard team jersey.",
+    "pronunciation": "/ˈmɜːrtʃəndaɪs/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-8-b2-5",
+    "version_id": "version-2026-07-13-8-b2",
+    "term": "relevance",
+    "meaning_ko": "관련성, (문화적) 영향력",
+    "example": "Collaborations like this have become common as brands look for fresh audiences and cultural relevance.",
+    "pronunciation": "/ˈreləvəns/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-9-a2-1",
+    "version_id": "version-2026-07-13-9-a2",
+    "term": "fire",
+    "meaning_ko": "불, 화재",
+    "example": "A big fire started at a popular pub in Bangkok, Thailand.",
+    "pronunciation": "/ˈfaɪər/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-9-a2-2",
+    "version_id": "version-2026-07-13-9-a2",
+    "term": "pub",
+    "meaning_ko": "술집, 펍",
+    "example": "A big fire started at a popular pub in Bangkok, Thailand.",
+    "pronunciation": "/pʌb/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-9-a2-3",
+    "version_id": "version-2026-07-13-9-a2",
+    "term": "hurt",
+    "meaning_ko": "다치다, 다친",
+    "example": "About 63 more people got hurt.",
+    "pronunciation": "/hɜːrt/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-9-a2-4",
+    "version_id": "version-2026-07-13-9-a2",
+    "term": "smoke",
+    "meaning_ko": "연기",
+    "example": "Thick smoke filled the room in just a few minutes.",
+    "pronunciation": "/smoʊk/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-9-a2-5",
+    "version_id": "version-2026-07-13-9-a2",
+    "term": "hospital",
+    "meaning_ko": "병원",
+    "example": "Then they took hurt people to the hospital.",
+    "pronunciation": "/ˈhɑːspɪtl/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-9-b1-1",
+    "version_id": "version-2026-07-13-9-b1",
+    "term": "deadly",
+    "meaning_ko": "치명적인, 목숨을 앗아가는",
+    "example": "A deadly fire swept through a popular pub in Bangkok, the capital of Thailand.",
+    "pronunciation": "/ˈdedli/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-9-b1-2",
+    "version_id": "version-2026-07-13-9-b1",
+    "term": "blaze",
+    "meaning_ko": "화염, 큰 불",
+    "example": "Officials said that at least 27 people were killed in the blaze.",
+    "pronunciation": "/bleɪz/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-9-b1-3",
+    "version_id": "version-2026-07-13-9-b1",
+    "term": "injured",
+    "meaning_ko": "부상을 입은",
+    "example": "About 63 others were injured, and many of them were hurt seriously.",
+    "pronunciation": "/ˈɪndʒərd/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-9-b1-4",
+    "version_id": "version-2026-07-13-9-b1",
+    "term": "escape",
+    "meaning_ko": "탈출하다, 벗어나다",
+    "example": "Many customers rushed toward the exits, trying to escape the flames.",
+    "pronunciation": "/ɪˈskeɪp/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-9-b1-5",
+    "version_id": "version-2026-07-13-9-b1",
+    "term": "investigation",
+    "meaning_ko": "조사, 수사",
+    "example": "Now the authorities have opened an investigation into the disaster.",
+    "pronunciation": "/ɪnˌvestɪˈɡeɪʃn/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-9-b2-1",
+    "version_id": "version-2026-07-13-9-b2",
+    "term": "injured",
+    "meaning_ko": "부상을 입은",
+    "example": "According to officials, about 63 people were injured in the blaze, and many of them were in a serious condition.",
+    "pronunciation": "/ˈɪndʒərd/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-9-b2-2",
+    "version_id": "version-2026-07-13-9-b2",
+    "term": "witnesses",
+    "meaning_ko": "목격자들",
+    "example": "Witnesses described how the fire spread with alarming speed once it began.",
+    "pronunciation": "/ˈwɪtnəsɪz/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-9-b2-3",
+    "version_id": "version-2026-07-13-9-b2",
+    "term": "desperate",
+    "meaning_ko": "필사적인, 절박한",
+    "example": "In the confusion, many of those inside rushed toward the exits, desperate to escape the flames.",
+    "pronunciation": "/ˈdespərət/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-9-b2-4",
+    "version_id": "version-2026-07-13-9-b2",
+    "term": "footage",
+    "meaning_ko": "(영상) 장면, 촬영분",
+    "example": "Video footage shared online captured a huge blaze raging through the building and smoke pouring from the entrance.",
+    "pronunciation": "/ˈfʊtɪdʒ/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-9-b2-5",
+    "version_id": "version-2026-07-13-9-b2",
+    "term": "emergency",
+    "meaning_ko": "비상, 응급의",
+    "example": "Investigators are also examining whether the building had enough emergency exits for the number of people inside.",
+    "pronunciation": "/ɪˈmɜːrdʒənsi/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-10-a2-1",
+    "version_id": "version-2026-07-13-10-a2",
+    "term": "attacks",
+    "meaning_ko": "공격",
+    "example": "The US started a new wave of attacks on Iran.",
+    "pronunciation": "/əˈtæks/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-10-a2-2",
+    "version_id": "version-2026-07-13-10-a2",
+    "term": "ships",
+    "meaning_ko": "배, 선박",
+    "example": "Many oil ships pass through it every day.",
+    "pronunciation": "/ʃɪps/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-10-a2-3",
+    "version_id": "version-2026-07-13-10-a2",
+    "term": "closed",
+    "meaning_ko": "닫은, 폐쇄한",
+    "example": "But Iran says it has closed the sea.",
+    "pronunciation": "/kloʊzd/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-10-a2-4",
+    "version_id": "version-2026-07-13-10-a2",
+    "term": "agree",
+    "meaning_ko": "동의하다",
+    "example": "The two sides do not agree at all.",
+    "pronunciation": "/əˈɡriː/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-10-a2-5",
+    "version_id": "version-2026-07-13-10-a2",
+    "term": "deal",
+    "meaning_ko": "합의, 거래",
+    "example": "But now that deal is falling apart.",
+    "pronunciation": "/diːl/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-10-b1-1",
+    "version_id": "version-2026-07-13-10-b1",
+    "term": "strikes",
+    "meaning_ko": "공습, 타격",
+    "example": "The United States has launched a new wave of strikes against Iran.",
+    "pronunciation": "/straɪks/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-10-b1-2",
+    "version_id": "version-2026-07-13-10-b1",
+    "term": "waterway",
+    "meaning_ko": "수로, 뱃길",
+    "example": "The fighting centers on the Strait of Hormuz, one of the world's most important waterways.",
+    "pronunciation": "/ˈwɔːtərweɪ/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-10-b1-3",
+    "version_id": "version-2026-07-13-10-b1",
+    "term": "disagree",
+    "meaning_ko": "의견이 다르다",
+    "example": "The two countries strongly disagree about who controls the sea route.",
+    "pronunciation": "/ˌdɪsəˈɡriː/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-10-b1-4",
+    "version_id": "version-2026-07-13-10-b1",
+    "term": "ceasefire",
+    "meaning_ko": "휴전, 정전",
+    "example": "In June, the two sides agreed to a ceasefire to stop the violence.",
+    "pronunciation": "/ˈsiːsfaɪər/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-10-b1-5",
+    "version_id": "version-2026-07-13-10-b1",
+    "term": "conflict",
+    "meaning_ko": "충돌, 분쟁",
+    "example": "The standoff has raised fears of a wider and more dangerous conflict.",
+    "pronunciation": "/ˈkɑːnflɪkt/",
+    "sort_order": 5
+  },
+  {
+    "id": "word-2026-07-13-10-b2-1",
+    "version_id": "version-2026-07-13-10-b2",
+    "term": "tensions",
+    "meaning_ko": "긴장, 갈등 고조",
+    "example": "The United States has launched a new wave of strikes against Iran, sharply raising tensions in the Middle East.",
+    "pronunciation": "/ˈtenʃnz/",
+    "sort_order": 1
+  },
+  {
+    "id": "word-2026-07-13-10-b2-2",
+    "version_id": "version-2026-07-13-10-b2",
+    "term": "degrade",
+    "meaning_ko": "약화시키다, 저하시키다",
+    "example": "Washington said the strikes were designed to degrade Iran's ability to threaten shipping in the Strait of Hormuz.",
+    "pronunciation": "/dɪˈɡreɪd/",
+    "sort_order": 2
+  },
+  {
+    "id": "word-2026-07-13-10-b2-3",
+    "version_id": "version-2026-07-13-10-b2",
+    "term": "dispute",
+    "meaning_ko": "분쟁, 논쟁",
+    "example": "At the heart of the crisis is a direct dispute over who controls this narrow channel.",
+    "pronunciation": "/dɪˈspjuːt/",
+    "sort_order": 3
+  },
+  {
+    "id": "word-2026-07-13-10-b2-4",
+    "version_id": "version-2026-07-13-10-b2",
+    "term": "escalation",
+    "meaning_ko": "격화, 확대",
+    "example": "The current escalation follows a ceasefire that the two sides reached in June.",
+    "pronunciation": "/ˌeskəˈleɪʃn/",
+    "sort_order": 4
+  },
+  {
+    "id": "word-2026-07-13-10-b2-5",
+    "version_id": "version-2026-07-13-10-b2",
+    "term": "disruption",
+    "meaning_ko": "혼란, 중단",
+    "example": "A serious disruption in the Gulf would also threaten to push global energy prices higher.",
+    "pronunciation": "/dɪsˈrʌpʃn/",
+    "sort_order": 5
+  }
 ]

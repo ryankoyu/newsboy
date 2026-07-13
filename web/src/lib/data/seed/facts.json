@@ -1,218 +1,668 @@
 [
   {
-    "id": "fact-meta-1",
-    "article_id": "article-meta-layoffs",
-    "statement": "Meta laid off about 8,000 employees.",
-    "source_count": 5,
+    "id": "fact-2026-07-13-1-1",
+    "article_id": "article-2026-07-13-1",
+    "statement": "Ro Khanna, a Democratic member of the US House from California, was visiting the occupied West Bank when his group was stopped and held.",
+    "source_count": 2,
     "used_in_text": true,
     "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
+    "created_at": "2026-07-13T00:00:00.000Z"
   },
   {
-    "id": "fact-meta-2",
-    "article_id": "article-meta-layoffs",
-    "statement": "The cuts are roughly 10% of Meta's workforce.",
+    "id": "fact-2026-07-13-1-2",
+    "article_id": "article-2026-07-13-1",
+    "statement": "Armed Israeli settlers first stopped his vehicle, and Israeli soldiers arrived afterward.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-1-3",
+    "article_id": "article-2026-07-13-1",
+    "statement": "The incident happened near the Palestinian village of Khirbet Zanuta, in the southern West Bank hills.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-1-4",
+    "article_id": "article-2026-07-13-1",
+    "statement": "The group was let go after calls were made to the US embassy in Jerusalem.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-1-5",
+    "article_id": "article-2026-07-13-1",
+    "statement": "Khanna accused the Israeli military of lying about the detention.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-1-6",
+    "article_id": "article-2026-07-13-1",
+    "statement": "The Israel Defense Forces said its soldiers dispersed the civilians and reopened the road, and that its soldiers did not take part in blocking the road.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-1-7",
+    "article_id": "article-2026-07-13-1",
+    "statement": "Khanna is 49 years old.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-1-8",
+    "article_id": "article-2026-07-13-1",
+    "statement": "The hold lasted about 90 minutes (BBC) or more than an hour (Al Jazeera, PBS) — sources differ on the exact length.",
+    "source_count": 2,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-2-1",
+    "article_id": "article-2026-07-13-2",
+    "statement": "Lindsey Graham, a Republican US senator, died at the age of 71.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-2-2",
+    "article_id": "article-2026-07-13-2",
+    "statement": "His office said he died after a brief and sudden illness.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-2-3",
+    "article_id": "article-2026-07-13-2",
+    "statement": "Preliminary findings from the District of Columbia medical examiner gave the cause of death as aortic dissection linked to heart disease.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-2-4",
+    "article_id": "article-2026-07-13-2",
+    "statement": "Graham had represented South Carolina in the US Senate since 2003.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-2-5",
+    "article_id": "article-2026-07-13-2",
+    "statement": "He was up for re-election in November 2026.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-2-6",
+    "article_id": "article-2026-07-13-2",
+    "statement": "Graham was an early critic of Donald Trump but later became one of his closest allies.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-2-7",
+    "article_id": "article-2026-07-13-2",
+    "statement": "The day before his death he had visited Ukraine and met President Volodymyr Zelenskyy.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-2-8",
+    "article_id": "article-2026-07-13-2",
+    "statement": "South Carolina Governor Henry McMaster is expected to appoint a temporary replacement for the vacant seat.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-2-9",
+    "article_id": "article-2026-07-13-2",
+    "statement": "Graham was known as a foreign policy hawk, especially on Iran and Russia.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-2-10",
+    "article_id": "article-2026-07-13-2",
+    "statement": "Trump reportedly called Graham one of the greatest people and senators he had ever known.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-3-1",
+    "article_id": "article-2026-07-13-3",
+    "statement": "Mitch McConnell is an 84-year-old Republican senator from Kentucky.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-3-2",
+    "article_id": "article-2026-07-13-3",
+    "statement": "McConnell said for the first time on Sunday that a fall led to his hospitalization, breaking weeks of silence about his condition.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-3-3",
+    "article_id": "article-2026-07-13-3",
+    "statement": "He was also treated for mild pneumonia and had been absent from Congress for weeks during the hospitalization.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-3-4",
+    "article_id": "article-2026-07-13-3",
+    "statement": "Doctors ran a battery of tests to work out what caused the fall.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-3-5",
+    "article_id": "article-2026-07-13-3",
+    "statement": "McConnell said he was regaining his strength but would not return to work quite yet.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-3-6",
+    "article_id": "article-2026-07-13-3",
+    "statement": "McConnell said tests confirmed he did not break any bones or suffer a concussion, and did not have a heart attack or a stroke.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-3-7",
+    "article_id": "article-2026-07-13-3",
+    "statement": "McConnell was hospitalized on June 14 and is now in a rehabilitation facility.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-4-1",
+    "article_id": "article-2026-07-13-4",
+    "statement": "South Korea's exports rose 53.9 percent from a year earlier in the first 10 days of July (July 1-10).",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-4-2",
+    "article_id": "article-2026-07-13-4",
+    "statement": "The gain was driven mainly by strong semiconductor (chip) shipments.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-4-3",
+    "article_id": "article-2026-07-13-4",
+    "statement": "Outbound shipments reached $29.8 billion in the July 1-10 period, up from $19.3 billion in the same period last year.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-4-4",
+    "article_id": "article-2026-07-13-4",
+    "statement": "The figure was the highest for any 10-day period recorded by the customs agency; the previous record was $28.6 billion.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-4-5",
+    "article_id": "article-2026-07-13-4",
+    "statement": "The data came from the Korea Customs Service.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-4-6",
+    "article_id": "article-2026-07-13-4",
+    "statement": "Semiconductor exports nearly tripled to $11.2 billion.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-4-7",
+    "article_id": "article-2026-07-13-4",
+    "statement": "Imports rose 17.4 percent to $23.5 billion, leaving a trade surplus of $6.4 billion for the period.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-4-8",
+    "article_id": "article-2026-07-13-4",
+    "statement": "Exports to China rose 88.7 percent to $7 billion and exports to the United States rose 43.2 percent to $4.91 billion.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-5-1",
+    "article_id": "article-2026-07-13-5",
+    "statement": "South Korea's Kospi index fell more than 20% from its June record high, entering bear market territory in early-to-mid July 2026.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-5-2",
+    "article_id": "article-2026-07-13-5",
+    "statement": "The selloff was led by chipmakers Samsung Electronics and SK hynix, whose shares fell sharply on worries about AI spending.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-5-3",
+    "article_id": "article-2026-07-13-5",
+    "statement": "Samsung and SK hynix together make up around half of the Kospi's total weight, up from about a quarter at the end of the previous year, leaving the market heavily exposed to the AI chip trade.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-5-4",
+    "article_id": "article-2026-07-13-5",
+    "statement": "The falls came despite strong earnings from the chipmakers, as investors focused instead on doubts about the long-term AI spending of big tech customers.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-5-5",
+    "article_id": "article-2026-07-13-5",
+    "statement": "SK hynix raised $26.5 billion in a US listing, the largest-ever US IPO by a foreign company, surpassing Alibaba's $25 billion debut in 2014.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-5-6",
+    "article_id": "article-2026-07-13-5",
+    "statement": "SK hynix sold 177.9 million American depositary shares at $149 each on Nasdaq, and the offering was more than seven times oversubscribed.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-5-7",
+    "article_id": "article-2026-07-13-5",
+    "statement": "SK hynix's dollar inflow from the listing was expected to help bolster South Korea's foreign exchange market.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-6-1",
+    "article_id": "article-2026-07-13-6",
+    "statement": "The European Commission issued preliminary findings on July 10, 2026, saying Meta's Facebook and Instagram breach the EU's Digital Services Act because of their addictive design.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-6-2",
+    "article_id": "article-2026-07-13-6",
+    "statement": "The Commission named specific design features as harmful, including infinite scroll, autoplay, push notifications and highly personalized recommendation algorithms.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-6-3",
+    "article_id": "article-2026-07-13-6",
+    "statement": "The Commission said Meta failed to properly assess the risks these features pose to users' physical and mental well-being, including minors and vulnerable adults.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-6-4",
+    "article_id": "article-2026-07-13-6",
+    "statement": "The Commission wants Meta to disable features such as autoplay and infinite scroll by default, add effective screen-time breaks, and make its recommendation systems less engagement-driven.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-6-5",
+    "article_id": "article-2026-07-13-6",
+    "statement": "If the findings are confirmed, Meta could face a fine of up to 6% of its total worldwide annual turnover.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-6-6",
+    "article_id": "article-2026-07-13-6",
+    "statement": "Existing safeguards, including time-management tools activated by default for teens, were judged ineffective because they can be easily dismissed and do not meaningfully reduce usage.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-6-7",
+    "article_id": "article-2026-07-13-6",
+    "statement": "Meta rejected the findings, saying it disagreed with them and that they did not accurately reflect the steps the company has taken to protect teens.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-6-8",
+    "article_id": "article-2026-07-13-6",
+    "statement": "Based on Meta's 2025 revenue, a maximum fine could exceed 12 billion dollars (about 11 billion euros).",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-7-1",
+    "article_id": "article-2026-07-13-7",
+    "statement": "On July 10, 2026, China recovered the first-stage booster of an orbital rocket for the first time, becoming the second country after SpaceX to bring an orbital-class booster back.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-7-2",
+    "article_id": "article-2026-07-13-7",
+    "statement": "The rocket was launched by China Aerospace Science and Technology Corporation (CASC), the country's state-owned space company.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-7-3",
+    "article_id": "article-2026-07-13-7",
+    "statement": "Instead of landing on legs the way SpaceX does, the booster was caught by a net strung across a frame on a recovery ship at sea.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-7-4",
+    "article_id": "article-2026-07-13-7",
+    "statement": "CASC said it plans to reuse the recovered booster before the end of 2026.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-7-5",
+    "article_id": "article-2026-07-13-7",
+    "statement": "The rocket carried a satellite into its target orbit before the first stage came back down.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-7-6",
+    "article_id": "article-2026-07-13-7",
+    "statement": "The rocket was the Long March 10B, and it lifted off from the Hainan Commercial Space Launch Site; the booster deployed four hooks to catch the net.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-7-7",
+    "article_id": "article-2026-07-13-7",
+    "statement": "The booster carries roughly the same payload as SpaceX's Falcon 9.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-8-1",
+    "article_id": "article-2026-07-13-8",
+    "statement": "Matin Kim, a Korean fashion brand, is reported to be releasing a collaboration collection with the KBO baseball team the LG Twins on July 20, 2026.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-8-2",
+    "article_id": "article-2026-07-13-8",
+    "statement": "The collection is reported to include six clothing items, such as short-sleeve T-shirts and jumpers, plus five accessories, including bags, a ball cap, a beanie and a key ring.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-8-3",
+    "article_id": "article-2026-07-13-8",
+    "statement": "Signature pieces reportedly include a dugout jacket and T-shirts printed with Matin Kim's doodle-style calligraphy of team-related keywords such as 'Jamsil Baseball Stadium' and 'Seoul'.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-8-4",
+    "article_id": "article-2026-07-13-8",
+    "statement": "The collection is reported to be sold on Naver's Knockit platform (July 20-26), through a Naver Shopping Live broadcast at noon on July 20, and at the Matin Kim flagship store in Seongsu-dong, eastern Seoul, from July 24.",
+    "source_count": 1,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-9-1",
+    "article_id": "article-2026-07-13-9",
+    "statement": "A fire broke out at a popular pub in Bangkok, Thailand.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-9-2",
+    "article_id": "article-2026-07-13-9",
+    "statement": "At least 27 people were killed in the fire.",
     "source_count": 3,
     "used_in_text": true,
     "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
+    "created_at": "2026-07-13T00:00:00.000Z"
   },
   {
-    "id": "fact-meta-3",
-    "article_id": "article-meta-layoffs",
-    "statement": "Meta had just under 80,000 employees at the end of March 2026.",
-    "source_count": 1,
+    "id": "fact-2026-07-13-9-3",
+    "article_id": "article-2026-07-13-9",
+    "statement": "The pub was in the Chatuchak district, near the famous Chatuchak Weekend Market.",
+    "source_count": 2,
     "used_in_text": true,
     "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
+    "created_at": "2026-07-13T00:00:00.000Z"
   },
   {
-    "id": "fact-meta-4",
-    "article_id": "article-meta-layoffs",
-    "statement": "About 7,000 more workers were moved to new AI-focused teams.",
+    "id": "fact-2026-07-13-9-4",
+    "article_id": "article-2026-07-13-9",
+    "statement": "About 63 people were injured, many of them seriously.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-9-5",
+    "article_id": "article-2026-07-13-9",
+    "statement": "Firefighters arrived to find customers running through the flames to escape.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-9-6",
+    "article_id": "article-2026-07-13-9",
+    "statement": "The pub was named Na Ladprao and stood in the northern part of the Thai capital.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-9-7",
+    "article_id": "article-2026-07-13-9",
+    "statement": "Authorities are investigating whether the pub had enough escape routes.",
+    "source_count": 1,
+    "used_in_text": false,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-10-1",
+    "article_id": "article-2026-07-13-10",
+    "statement": "The United States launched a new wave of strikes on Iran.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-10-2",
+    "article_id": "article-2026-07-13-10",
+    "statement": "The US said the strikes were aimed at degrading Iran's ability to threaten shipping in the Strait of Hormuz.",
+    "source_count": 2,
+    "used_in_text": true,
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
+  },
+  {
+    "id": "fact-2026-07-13-10-3",
+    "article_id": "article-2026-07-13-10",
+    "statement": "The US insisted the Strait of Hormuz remained open, while Iran said it had closed the strait.",
     "source_count": 3,
     "used_in_text": true,
     "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
+    "created_at": "2026-07-13T00:00:00.000Z"
   },
   {
-    "id": "fact-meta-5",
-    "article_id": "article-meta-layoffs",
-    "statement": "New AI teams named: Applied AI Engineering, Agent Transformation Accelerator XFN, Central Analytics.",
+    "id": "fact-2026-07-13-10-4",
+    "article_id": "article-2026-07-13-10",
+    "statement": "Iran launched wide-ranging attacks on US allies and bases in the region.",
     "source_count": 2,
     "used_in_text": true,
     "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
+    "created_at": "2026-07-13T00:00:00.000Z"
   },
   {
-    "id": "fact-meta-6",
-    "article_id": "article-meta-layoffs",
-    "statement": "Singapore workers were notified first (around 4 a.m. local time).",
-    "source_count": 2,
-    "used_in_text": true,
-    "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-meta-7",
-    "article_id": "article-meta-layoffs",
-    "statement": "Cuts hit integrity, cybersecurity, and Reality Labs; AI infrastructure and monetization teams were protected.",
-    "source_count": 2,
-    "used_in_text": false,
-    "note": "used only as background, softened in text",
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-meta-8",
-    "article_id": "article-meta-layoffs",
-    "statement": "Chief People Officer Janelle Gale announced the reassignments.",
+    "id": "fact-2026-07-13-10-5",
+    "article_id": "article-2026-07-13-10",
+    "statement": "A ceasefire deal reached in June has been fraying, with several days of tit-for-tat strikes.",
     "source_count": 1,
     "used_in_text": true,
     "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
+    "created_at": "2026-07-13T00:00:00.000Z"
   },
   {
-    "id": "fact-meta-9",
-    "article_id": "article-meta-layoffs",
-    "statement": "At a July 2, 2026 town hall, Zuckerberg said AI agent progress over the prior ~4 months \"hasn't really accelerated in the way that we expected.\"",
+    "id": "fact-2026-07-13-10-6",
+    "article_id": "article-2026-07-13-10",
+    "statement": "President Trump declared the waterway open to commercial traffic despite Iran's announcement of closure.",
     "source_count": 2,
     "used_in_text": true,
-    "note": "quote used with attribution only",
-    "created_at": "2026-07-10T00:00:00.000Z"
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
   },
   {
-    "id": "fact-meta-10",
-    "article_id": "article-meta-layoffs",
-    "statement": "Zuckerberg said he expects benefits within three to six months.",
-    "source_count": 1,
-    "used_in_text": true,
-    "note": "single source, presented as his statement, not fact",
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-meta-11",
-    "article_id": "article-meta-layoffs",
-    "statement": "Meta's projected 2026 capital spending is about $125-145 billion, more than double 2025.",
+    "id": "fact-2026-07-13-10-7",
+    "article_id": "article-2026-07-13-10",
+    "statement": "Iran responded to earlier US action by striking sites in Jordan, Bahrain, Kuwait, Qatar and Oman.",
     "source_count": 1,
     "used_in_text": false,
-    "note": "single-source and non-central, simplified to 'very large' in text",
-    "created_at": "2026-07-10T00:00:00.000Z"
+    "note": null,
+    "created_at": "2026-07-13T00:00:00.000Z"
   },
   {
-    "id": "fact-meta-12",
-    "article_id": "article-meta-layoffs",
-    "statement": "U.S. severance: 16 weeks base pay plus 2 weeks per year of service; 18 months of health coverage.",
+    "id": "fact-2026-07-13-10-8",
+    "article_id": "article-2026-07-13-10",
+    "statement": "About 140 Iranian military targets were struck in earlier US action.",
     "source_count": 1,
     "used_in_text": false,
-    "note": "single-source and non-central, not used in learner text",
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-1",
-    "article_id": "article-norway-brazil",
-    "statement": "Norway beat Brazil 2-1 in the Round of 16.",
-    "source_count": 2,
-    "used_in_text": true,
     "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-2",
-    "article_id": "article-norway-brazil",
-    "statement": "The match was played on July 5, 2026.",
-    "source_count": 2,
-    "used_in_text": true,
-    "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-3",
-    "article_id": "article-norway-brazil",
-    "statement": "Venue: MetLife Stadium, East Rutherford, New Jersey.",
-    "source_count": 2,
-    "used_in_text": true,
-    "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-4",
-    "article_id": "article-norway-brazil",
-    "statement": "Erling Haaland scored both Norway goals, in the 79th and 90th minutes.",
-    "source_count": 1,
-    "used_in_text": true,
-    "note": "single source (score corroborated by Al Jazeera)",
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-5",
-    "article_id": "article-norway-brazil",
-    "statement": "Neymar scored a late penalty for Brazil (added time, as a substitute).",
-    "source_count": 2,
-    "used_in_text": true,
-    "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-6",
-    "article_id": "article-norway-brazil",
-    "statement": "It was Norway's first-ever World Cup quarterfinal.",
-    "source_count": 1,
-    "used_in_text": true,
-    "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-7",
-    "article_id": "article-norway-brazil",
-    "statement": "Norway had not played at a World Cup for 28 years before this tournament.",
-    "source_count": 1,
-    "used_in_text": true,
-    "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-8",
-    "article_id": "article-norway-brazil",
-    "statement": "Goalkeeper Ørjan Nyland saved a Bruno Guimarães penalty in the 14th minute.",
-    "source_count": 1,
-    "used_in_text": true,
-    "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-9",
-    "article_id": "article-norway-brazil",
-    "statement": "Brazil were five-time World Cup winners entering the round.",
-    "source_count": 1,
-    "used_in_text": true,
-    "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-10",
-    "article_id": "article-norway-brazil",
-    "statement": "Neymar, aged 34, announced the end of his international career after the match.",
-    "source_count": 1,
-    "used_in_text": true,
-    "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-11",
-    "article_id": "article-norway-brazil",
-    "statement": "Neymar quote: \"I tried. It started here, at MetLife Stadium, and I finished here. It is now over.\"",
-    "source_count": 1,
-    "used_in_text": true,
-    "note": "used with attribution",
-    "created_at": "2026-07-10T00:00:00.000Z"
-  },
-  {
-    "id": "fact-wc-12",
-    "article_id": "article-norway-brazil",
-    "statement": "Neymar is Brazil's all-time top scorer; his international debut was August 10, 2010, also at MetLife Stadium.",
-    "source_count": 1,
-    "used_in_text": true,
-    "note": null,
-    "created_at": "2026-07-10T00:00:00.000Z"
+    "created_at": "2026-07-13T00:00:00.000Z"
   }
 ]
