@@ -13,6 +13,10 @@
  * the design. This keeps the two-stage shape A1 specifies even though stage 1
  * is heuristic rather than a real embedding model — swap in an embeddings
  * call later without changing the cluster() signature.
+ *
+ * outletCount here is a DEDUPED SOURCE count (by outletKey), not a raw item
+ * count — top10-curation.md §1 Layer 1 "소스 중복 판정 강화" (rank8 fix: two
+ * feeds from the same outlet must not look like 2 independent sources).
  */
 
 import { randomUUID } from "node:crypto";
@@ -125,11 +129,22 @@ export async function clusterEvents(
     const representative = cluster.items.reduce((best, cur) =>
       cur.summary.length > best.summary.length ? cur : best,
     );
-    const outletCount = new Set(cluster.items.map((i) => i.outlet)).size;
-    const earliestPublishedAt = cluster.items
+    // Source-dedup by outletKey, NOT by raw `outlet` name (top10-curation.md
+    // §1 Layer 1 "소스 중복 판정 강화" — rank8 fix). Two Google News topic
+    // queries or two Korea Herald category feeds share an outletKey and must
+    // count as ONE source for the 2-source gate. Falls back to `outlet` name
+    // only for fixtures/tests that don't set outletKey.
+    const outletKeys = new Set(cluster.items.map((i) => i.outletKey ?? i.outlet));
+    const outletCount = outletKeys.size;
+    const countries = new Set(
+      cluster.items.map((i) => i.country).filter((c): c is string => Boolean(c)),
+    );
+    const publishedDates = cluster.items
       .map((i) => i.publishedAt)
       .filter((d): d is string => Boolean(d))
-      .sort()[0] ?? null;
+      .sort();
+    const earliestPublishedAt = publishedDates[0] ?? null;
+    const latestPublishedAt = publishedDates[publishedDates.length - 1] ?? null;
 
     return {
       id: randomUUID(),
@@ -137,7 +152,10 @@ export async function clusterEvents(
       category: cluster.items[0].category,
       items: cluster.items,
       outletCount,
+      outletKeys: [...outletKeys],
+      countries: [...countries],
       earliestPublishedAt,
+      latestPublishedAt,
     } satisfies EventCluster;
   });
 }

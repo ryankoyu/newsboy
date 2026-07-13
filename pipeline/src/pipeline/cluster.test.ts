@@ -122,4 +122,68 @@ describe("clusterEvents", () => {
       expect(result).toHaveLength(1);
     }
   });
+
+  it("dedups outletCount by outletKey — two feeds from the same outlet count as ONE source (top10-curation.md §1 Layer 1, rank8 fix)", async () => {
+    const items: RawItem[] = [
+      item({
+        outlet: "Korea Herald (Sports)",
+        outletKey: "koreaherald",
+        title: "Local baseball team wins championship series decisively",
+        summary: "The local baseball team clinched the championship series with a decisive win today.",
+      }),
+      item({
+        outlet: "Korea Herald (Life & Culture)",
+        outletKey: "koreaherald",
+        title: "Baseball team wins championship series decisively today",
+        summary: "The baseball team clinched the championship series with a decisive win today.",
+      }),
+    ];
+
+    const result = await clusterEvents(items);
+    expect(result).toHaveLength(1);
+    expect(result[0].items).toHaveLength(2); // both raw items are present...
+    expect(result[0].outletCount).toBe(1); // ...but count as ONE deduped source
+    expect(result[0].outletKeys).toEqual(["koreaherald"]);
+  });
+
+  it("counts two different outletKeys as two sources even if they share a display outlet-name family", async () => {
+    const items: RawItem[] = [
+      item({
+        outlet: "BBC World",
+        outletKey: "bbc",
+        title: "Central bank raises interest rates amid inflation concerns",
+        summary: "The central bank raised its benchmark rate today citing inflation pressures nationwide.",
+      }),
+      item({
+        outlet: "Guardian World",
+        outletKey: "guardian",
+        title: "Central bank raises interest rates amid inflation worries",
+        summary: "The central bank raised its benchmark rate today citing inflation worries nationwide.",
+      }),
+    ];
+
+    const result = await clusterEvents(items);
+    expect(result).toHaveLength(1);
+    expect(result[0].outletCount).toBe(2);
+    expect(new Set(result[0].outletKeys)).toEqual(new Set(["bbc", "guardian"]));
+  });
+
+  it("falls back to the raw outlet name for outletCount when outletKey is absent (fixture/back-compat path)", async () => {
+    const items: RawItem[] = [
+      item({
+        outlet: "Outlet Without Key",
+        title: "Regional summit concludes with new trade agreement today",
+        summary: "Leaders concluded the regional summit today with a new trade agreement signed.",
+      }),
+      item({
+        outlet: "Outlet Without Key",
+        title: "Regional summit ends with trade deal signed today",
+        summary: "The regional summit ended today after leaders signed a new trade deal.",
+      }),
+    ];
+
+    const result = await clusterEvents(items);
+    expect(result).toHaveLength(1);
+    expect(result[0].outletCount).toBe(1);
+  });
 });

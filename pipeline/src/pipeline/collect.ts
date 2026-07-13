@@ -58,6 +58,8 @@ async function fetchFeedWithRetry(
         publishedAt: item.isoDate ?? item.pubDate ?? null,
         category: source.category as CategorySlug,
         guid: item.guid ?? item.id ?? `${source.outlet}-${idx}-${item.link ?? ""}`,
+        outletKey: source.outletKey,
+        country: source.country,
       }));
       return { items };
     } catch (err) {

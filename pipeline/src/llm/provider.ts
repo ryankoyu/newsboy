@@ -35,6 +35,29 @@ export interface Top10Selection {
   rationale: string;
 }
 
+/**
+ * Layer 2 LLM-assisted signal for a single candidate cluster
+ * (top10-curation.md §1 Layer 2 "학습 적합성" / "감점" rows). STUB — no
+ * implementation calls this yet; selectTop10Rules.ts scores only with
+ * code-computable signals (source diversity, Korea relevance, freshness).
+ * Wire this in once judgment quality can be checked against real output
+ * (top10-curation.md §1 Layer 3 roadmap note: "API 키 연결 시").
+ */
+export interface LearnabilityAndDemeritInput {
+  id: string;
+  title: string;
+  category: CategorySlug;
+  summaries: string[];
+}
+
+export interface LearnabilityAndDemeritOutput {
+  /** 0-1: narrative clarity, common vocabulary, low background-knowledge requirement. */
+  learnabilityScore: number;
+  /** 0-1: country-internal-politics minutiae, gossip, sensationalism — higher = more demerit. */
+  demeritScore: number;
+  reasoning: string;
+}
+
 export interface ExtractFactsInput {
   eventId: string;
   category: CategorySlug;
@@ -79,4 +102,15 @@ export interface LLMProvider {
     withinBand: boolean;
     reasoning: string;
   }>;
+
+  /**
+   * [3] Layer 2 learnability + demerit scoring (Haiku tier) — STUB, not yet
+   * wired into selectTop10Rules.ts. See LearnabilityAndDemeritInput/Output
+   * doc comments and top10-curation.md §1 Layer 2. Optional so existing
+   * LLMProvider implementations (Mock/Anthropic) that predate this method
+   * still satisfy the interface without a breaking change.
+   */
+  scoreLearnabilityAndDemerit?(
+    input: LearnabilityAndDemeritInput,
+  ): Promise<LearnabilityAndDemeritOutput>;
 }

@@ -37,6 +37,19 @@ export interface SourceConfig {
   category: CategorySlug;
   /** Fetch method — all sources here are RSS summaries, never full-text scraping. */
   fetchMethod: "rss_summary";
+  /**
+   * ISO 3166-1 alpha-2 country code the outlet is edited from/represents
+   * (Google News regional query → the `gl` edition, not Google's own HQ).
+   * Used for World-slot regional diversity scoring (top10-curation.md §1 Layer 1).
+   */
+  country: string;
+  /**
+   * Groups multiple feeds from the same outlet (e.g. two Korea Herald
+   * category feeds, or several Google News topic queries) so the 2-source
+   * gate and source-dedup treat them as ONE source, not several
+   * (top10-curation.md §1 Layer 1 "소스 중복 판정 강화", rank8 재발 방지).
+   */
+  outletKey: string;
 }
 
 /** One item pulled from an RSS/Atom feed — raw, pre-clustering. */
@@ -49,6 +62,22 @@ export interface RawItem {
   publishedAt: string | null; // ISO 8601, null if feed omitted it
   category: CategorySlug;
   guid: string;
+  /**
+   * Copied from SourceConfig.outletKey — identifies the underlying outlet
+   * regardless of which feed/query produced this item, so source-dedup
+   * (top10-curation.md §1 Layer 1 "소스 중복 판정 강화") can group e.g. two
+   * Korea Herald category feeds or several Google News topic queries as ONE
+   * source. Optional for backward compatibility with hand-built test
+   * fixtures that don't set it — falls back to `outlet` in that case.
+   */
+  outletKey?: string;
+  /**
+   * Copied from SourceConfig.country — the edition/country the source
+   * represents. Used for world-slot regional diversity and (heuristically)
+   * for country-level political-story capping. Optional for the same
+   * fixture-compatibility reason as outletKey.
+   */
+  country?: string;
 }
 
 export interface CollectResult {
@@ -73,9 +102,20 @@ export interface EventCluster {
   title: string;
   category: CategorySlug;
   items: RawItem[];
-  /** Distinct outlets covering this event — used by the 2-source gate. */
+  /**
+   * Distinct SOURCES covering this event, deduped by outletKey (falling back
+   * to `outlet` name when outletKey is absent) — used by the 2-source gate.
+   * top10-curation.md §1 Layer 1: "같은 매체의 여러 피드/같은 URL = 1개 소스"
+   * (rank8 single-source-counted-as-multiple bug fix). NOT a raw item count.
+   */
   outletCount: number;
+  /** Distinct outletKeys behind outletCount — kept for scoring/reporting. */
+  outletKeys: string[];
+  /** Distinct country/edition codes among this cluster's items. */
+  countries: string[];
   earliestPublishedAt: string | null;
+  /** Most recent publishedAt among this cluster's items — freshness signal (Layer 2). */
+  latestPublishedAt: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -85,6 +125,48 @@ export interface EventCluster {
 export interface SelectedEvent extends EventCluster {
   rankInEdition: number; // 1..10
   selectionRationale: string;
+}
+
+/**
+ * Per-candidate scoring + outcome record — one entry per cluster considered
+ * by selectTop10Rules, whether selected, backfilled, or rejected.
+ * Feeds the operator-facing selection-report JSON
+ * (top10-curation.md §1 Layer 1: "모든 룰 적용 결과를 selection-report로").
+ */
+export interface CandidateReportEntry {
+  id: string;
+  title: string;
+  category: CategorySlug;
+  outletCount: number;
+  outletKeys: string[];
+  countries: string[];
+  score: number;
+  scoreBreakdown: Record<string, number>;
+  isPolitical: boolean;
+  isCasualty: boolean;
+  subjectKey: string | null;
+  outcome: "selected" | "backfilled" | "rejected" | "held_back_two_source";
+  rank: number | null;
+  rejectionReasons: string[];
+}
+
+/** One backfill event: a quota slot that couldn't be filled from its own category. */
+export interface BackfillLogEntry {
+  category: CategorySlug;
+  slotIndex: number; // 1-based within that category's quota
+  reason: string;
+  filledFrom: CategorySlug | null; // null if the slot stayed empty
+  filledByClusterId: string | null;
+}
+
+export interface SelectionReport {
+  editionDate: string;
+  generatedAt: string;
+  quota: Record<CategorySlug, number>;
+  candidates: CandidateReportEntry[];
+  backfills: BackfillLogEntry[];
+  finalOrder: string[]; // cluster ids, rank 1..10
+  limitations: string[];
 }
 
 // ---------------------------------------------------------------------------
