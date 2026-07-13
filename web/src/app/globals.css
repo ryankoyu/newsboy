@@ -244,6 +244,33 @@ a {
 .briefly-word[data-seen="true"] {
   border-bottom: 1px dotted var(--color-text-muted);
 }
+/* Saved word (design-decisions.md §4.7 item 3): a filled highlight instead
+   of the "seen" dotted underline — stronger, distinct style for a word the
+   user has actually saved to My Vocabulary. Takes priority over the dotted
+   "seen" underline (border-bottom cleared) since the fill already conveys
+   "you know this one". */
+.briefly-word[data-saved="true"] {
+  background: var(--color-accent-soft);
+  border-bottom: none;
+  box-shadow: inset 0 -2px 0 var(--color-accent);
+}
+
+/* ===== Sentence save affordance (design-decisions.md §4.7 item 2) ===== */
+.briefly-sentence {
+  transition: background var(--dur-fast) var(--ease);
+}
+.briefly-sentence:hover,
+.briefly-sentence:focus-visible {
+  background: var(--color-surface-alt);
+}
+/* Saved sentence: subtle warm highlighter stripe (a3 mood — reuses the
+   accent-soft token family rather than a raw yellow hex). */
+.briefly-sentence[data-sentence-saved="true"] {
+  background: var(--color-accent-soft);
+  box-shadow: inset 3px 0 0 var(--color-accent);
+  padding-left: var(--sp-3);
+  margin-left: calc(-1 * var(--sp-3));
+}
 
 /* ===== Article body fade transition (§3-1) ===== */
 .briefly-article-body {

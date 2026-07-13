@@ -178,7 +178,13 @@ export function ArticleViewer({
         </div>
 
         <div ref={bodyRef}>
-          <ArticleBody key={version.id} sentences={version.sentences} words={words} />
+          <ArticleBody
+            key={version.id}
+            articleId={article.id}
+            level={version.level as CefrLevel}
+            sentences={version.sentences}
+            words={words}
+          />
         </div>
 
         <WordListSection words={words} />

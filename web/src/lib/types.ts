@@ -194,6 +194,21 @@ export interface Bookmark {
   created_at: string;
 }
 
+/**
+ * Supabase-side shape for a saved sentence (supabase/migrations/0002_user_library.sql).
+ * Not yet wired into DataProvider/SessionStore — the current implementation
+ * is localStorage-backed (see src/lib/session.ts SavedSentenceEntry). This
+ * type documents the eventual Supabase table shape for when auth ships.
+ */
+export interface SavedSentence {
+  id: string;
+  user_id: string;
+  article_version_id: string;
+  sentence_index: number;
+  text_snapshot: string;
+  created_at: string;
+}
+
 // =========================================================
 // Composed / view-model types (not DB tables — convenience shapes
 // for the data layer & UI consumption)

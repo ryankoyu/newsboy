@@ -1,7 +1,7 @@
 import { dataProvider } from "@/lib/data";
-import { SavedView } from "@/components/SavedView";
+import { MyView } from "@/components/MyView";
 
 export default async function SavedPage() {
   const edition = await dataProvider.getLatestEdition();
-  return <SavedView edition={edition} />;
+  return <MyView edition={edition} />;
 }

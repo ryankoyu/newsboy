@@ -63,6 +63,9 @@ const fallbackStore: SessionStore = {
   getSavedWords: () => [],
   isWordSaved: () => false,
   toggleSavedWord: () => false,
+  getSavedSentences: () => [],
+  isSentenceSaved: () => false,
+  toggleSavedSentence: () => false,
   getDisplayName: () => null,
   setDisplayName: () => {},
 };

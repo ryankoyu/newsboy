@@ -16,7 +16,7 @@ import { usePathname } from "next/navigation";
  */
 const TABS = [
   { href: "/", label: "Home", emoji: "🏠", match: (p: string) => p === "/" },
-  { href: "/saved", label: "Saved", emoji: "🔖", match: (p: string) => p.startsWith("/saved") },
+  { href: "/saved", label: "My", emoji: "🔖", match: (p: string) => p.startsWith("/saved") },
   { href: "/settings", label: "Settings", emoji: "⚙️", match: (p: string) => p.startsWith("/settings") },
 ];
 

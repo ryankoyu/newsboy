@@ -70,6 +70,14 @@ export interface SessionStore {
   isWordSaved(term: string): boolean;
   toggleSavedWord(entry: SavedWordEntry): boolean; // returns new state
 
+  /**
+   * Saved sentences (design-decisions.md §4.7 — sentence save from the
+   * article body, surfaced in the My page "문장" drawer).
+   */
+  getSavedSentences(): SavedSentenceEntry[];
+  isSentenceSaved(articleId: string, level: CefrLevel, sentenceIndex: number): boolean;
+  toggleSavedSentence(entry: SavedSentenceEntry): boolean; // returns new state
+
   /** Display name, if the user set one during onboarding (optional, local only). */
   getDisplayName(): string | null;
   setDisplayName(name: string | null): void;
@@ -78,6 +86,15 @@ export interface SessionStore {
 export interface SavedWordEntry {
   term: string;
   meaning_ko: string;
+}
+
+export interface SavedSentenceEntry {
+  articleId: string;
+  level: CefrLevel;
+  sentenceIndex: number;
+  /** Snapshot of the sentence text at save time (survives content edits). */
+  text: string;
+  savedAt: string; // ISO timestamp
 }
 
 const STORAGE_KEY = "briefly:session:v1";
@@ -92,6 +109,7 @@ interface PersistedShape {
   readArticles: string[];
   seenWords: string[];
   savedWords: SavedWordEntry[];
+  savedSentences: SavedSentenceEntry[];
   displayName: string | null;
 }
 
@@ -105,6 +123,7 @@ const DEFAULTS: PersistedShape = {
   readArticles: [],
   seenWords: [],
   savedWords: [],
+  savedSentences: [],
   displayName: null,
 };
 
@@ -246,6 +265,39 @@ export const localSessionStore: SessionStore = {
     s.savedWords = has
       ? s.savedWords.filter((w) => w.term.toLowerCase() !== key)
       : [...s.savedWords, entry];
+    save(s);
+    return !has;
+  },
+
+  getSavedSentences() {
+    return load().savedSentences;
+  },
+  isSentenceSaved(articleId, level, sentenceIndex) {
+    return load().savedSentences.some(
+      (e) =>
+        e.articleId === articleId &&
+        e.level === level &&
+        e.sentenceIndex === sentenceIndex
+    );
+  },
+  toggleSavedSentence(entry) {
+    const s = load();
+    const has = s.savedSentences.some(
+      (e) =>
+        e.articleId === entry.articleId &&
+        e.level === entry.level &&
+        e.sentenceIndex === entry.sentenceIndex
+    );
+    s.savedSentences = has
+      ? s.savedSentences.filter(
+          (e) =>
+            !(
+              e.articleId === entry.articleId &&
+              e.level === entry.level &&
+              e.sentenceIndex === entry.sentenceIndex
+            )
+        )
+      : [...s.savedSentences, entry];
     save(s);
     return !has;
   },

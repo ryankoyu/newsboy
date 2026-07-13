@@ -148,6 +148,100 @@ describe("localSessionStore — saved words", () => {
   });
 });
 
+describe("localSessionStore — saved sentences", () => {
+  it("defaults to an empty list", () => {
+    expect(localSessionStore.getSavedSentences()).toEqual([]);
+  });
+
+  it("toggleSavedSentence adds then removes an entry, returning the new state", () => {
+    const entry = {
+      articleId: "article-1",
+      level: "A2" as const,
+      sentenceIndex: 0,
+      text: "Ro Khanna is a US congressman from California.",
+      savedAt: "2026-07-13T00:00:00.000Z",
+    };
+    expect(localSessionStore.isSentenceSaved("article-1", "A2", 0)).toBe(false);
+
+    const added = localSessionStore.toggleSavedSentence(entry);
+    expect(added).toBe(true);
+    expect(localSessionStore.isSentenceSaved("article-1", "A2", 0)).toBe(true);
+    expect(localSessionStore.getSavedSentences()).toEqual([entry]);
+
+    const removed = localSessionStore.toggleSavedSentence(entry);
+    expect(removed).toBe(false);
+    expect(localSessionStore.isSentenceSaved("article-1", "A2", 0)).toBe(false);
+    expect(localSessionStore.getSavedSentences()).toEqual([]);
+  });
+
+  it("distinguishes entries by (articleId, level, sentenceIndex) — same article, different level", () => {
+    localSessionStore.toggleSavedSentence({
+      articleId: "article-1",
+      level: "A2",
+      sentenceIndex: 0,
+      text: "A2 sentence.",
+      savedAt: "2026-07-13T00:00:00.000Z",
+    });
+    localSessionStore.toggleSavedSentence({
+      articleId: "article-1",
+      level: "B1",
+      sentenceIndex: 0,
+      text: "B1 sentence.",
+      savedAt: "2026-07-13T00:00:01.000Z",
+    });
+
+    expect(localSessionStore.isSentenceSaved("article-1", "A2", 0)).toBe(true);
+    expect(localSessionStore.isSentenceSaved("article-1", "B1", 0)).toBe(true);
+    expect(localSessionStore.getSavedSentences()).toHaveLength(2);
+
+    // Removing the A2 entry should not affect the B1 entry.
+    localSessionStore.toggleSavedSentence({
+      articleId: "article-1",
+      level: "A2",
+      sentenceIndex: 0,
+      text: "A2 sentence.",
+      savedAt: "2026-07-13T00:00:00.000Z",
+    });
+    expect(localSessionStore.isSentenceSaved("article-1", "A2", 0)).toBe(false);
+    expect(localSessionStore.isSentenceSaved("article-1", "B1", 0)).toBe(true);
+  });
+
+  it("distinguishes entries by sentenceIndex within the same article/level", () => {
+    localSessionStore.toggleSavedSentence({
+      articleId: "article-1",
+      level: "A2",
+      sentenceIndex: 0,
+      text: "First.",
+      savedAt: "2026-07-13T00:00:00.000Z",
+    });
+    localSessionStore.toggleSavedSentence({
+      articleId: "article-1",
+      level: "A2",
+      sentenceIndex: 1,
+      text: "Second.",
+      savedAt: "2026-07-13T00:00:00.000Z",
+    });
+    expect(localSessionStore.getSavedSentences()).toHaveLength(2);
+    expect(localSessionStore.isSentenceSaved("article-1", "A2", 0)).toBe(true);
+    expect(localSessionStore.isSentenceSaved("article-1", "A2", 1)).toBe(true);
+    expect(localSessionStore.isSentenceSaved("article-1", "A2", 2)).toBe(false);
+  });
+
+  it("persists saved sentences in localStorage across reads", () => {
+    const entry = {
+      articleId: "article-2",
+      level: "B2" as const,
+      sentenceIndex: 3,
+      text: "Persisted sentence.",
+      savedAt: "2026-07-13T00:00:00.000Z",
+    };
+    localSessionStore.toggleSavedSentence(entry);
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    expect(raw).toBeTruthy();
+    expect(JSON.parse(raw as string).savedSentences).toEqual([entry]);
+  });
+});
+
 describe("localSessionStore — display name", () => {
   it("setDisplayName persists and can be cleared with null", () => {
     localSessionStore.setDisplayName("Yuko");
