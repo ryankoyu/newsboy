@@ -2,17 +2,21 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { ArticleWithDetails, CefrLevel, Word } from "@/lib/types";
+import type { ArticleWithDetails, CefrLevel, EditionWithArticles, Word } from "@/lib/types";
 import { estimateReadingMinutes } from "@/lib/data";
 import { useSession, notifySessionChange } from "@/lib/useSession";
 import { READING_SCALE_VALUE, sessionStore } from "@/lib/session";
 import { CategoryTag } from "@/components/CategoryTag";
 import { ReadTimeMeta } from "@/components/ReadTimeMeta";
+import { SourceCountBadge } from "@/components/SourceCountBadge";
 import { LevelSwitcher } from "@/components/LevelSwitcher";
+import { TodayProgress } from "@/components/TodayProgress";
 import { ArticleViewerBar } from "@/components/ArticleViewerBar";
 import { ArticleBody } from "@/components/ArticleBody";
 import { WordListSection } from "@/components/WordListSection";
 import { SourcesSection } from "@/components/SourcesSection";
+import { NextArticleCard } from "@/components/NextArticleCard";
+import { BriefCompleteCard } from "@/components/BriefCompleteCard";
 
 /**
  * Article viewer — a3-ui-ux.md §2-2 (the app's core screen).
@@ -24,17 +28,26 @@ import { SourcesSection } from "@/components/SourcesSection";
  *  (a) scroll reaches 90% of body height
  *  (b) 30s+ time on page AND scroll >= 50%
  * (Quiz-submission trigger is N/A — no quiz in MVP.)
+ *
+ * `edition` (enhancement-plan.md Batch 1 #2/#3, optional) enables:
+ *  - a quiet "N/10" today-progress indicator near the level switcher
+ *  - a "다음 기사 →" card at the end of the body (or the completion card,
+ *    on the last-ranked article once all 10 are read)
+ * Omitted in the levelFlow test (no edition context there) — everything
+ * above degrades gracefully to "not shown" when edition is absent.
  */
 export function ArticleViewer({
   article,
   initialLevel,
   hasExplicitLevel,
   wordsByVersion,
+  edition,
 }: {
   article: ArticleWithDetails;
   initialLevel: CefrLevel;
   hasExplicitLevel: boolean;
   wordsByVersion: Record<string, Word[]>;
+  edition?: EditionWithArticles | null;
 }) {
   const router = useRouter();
   const { session } = useSession();
@@ -127,6 +140,29 @@ export function ArticleViewer({
   const minutes = estimateReadingMinutes(version.level as CefrLevel, version.word_count);
   const words = wordsByVersion[version.id] ?? [];
 
+  // Continuous-reading flow (enhancement-plan.md Batch 1 #2/#3): rank this
+  // article within today's edition, find the next one, and count how many
+  // of today's articles are read. `session.getReadArticles()` re-runs on
+  // every notifySessionChange() (useSyncExternalStore), so this updates
+  // immediately once the read-tracking effect above marks this article read.
+  const editionArticles = edition?.articles ?? [];
+  const rankedArticles = [...editionArticles].sort(
+    (a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0)
+  );
+  const currentIndex = rankedArticles.findIndex((a) => a.id === article.id);
+  const nextArticle = currentIndex >= 0 ? rankedArticles[currentIndex + 1] ?? null : null;
+  const isLastInEdition = currentIndex >= 0 && currentIndex === rankedArticles.length - 1;
+  const readArticleIds = new Set(session.getReadArticles());
+  const readCountToday = rankedArticles.filter((a) => readArticleIds.has(a.id)).length;
+  const allReadToday =
+    rankedArticles.length > 0 && rankedArticles.every((a) => readArticleIds.has(a.id));
+
+  // Archive (enhancement-plan.md Batch 1 #4): flag + label when this
+  // article belongs to a past (non-today) edition, so the viewer never
+  // implies a past brief is today's.
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const isPastEdition = Boolean(edition && edition.edition_date !== todayStr);
+
   return (
     <div style={{ minHeight: "100vh", background: "var(--color-bg)" }}>
       <ArticleViewerBar articleId={article.id} />
@@ -149,8 +185,24 @@ export function ArticleViewer({
           }}
         >
           <CategoryTag category={article.category} />
-          <ReadTimeMeta minutes={minutes} />
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)" }}>
+            <SourceCountBadge count={article.sources.length} />
+            <ReadTimeMeta minutes={minutes} />
+          </div>
         </div>
+
+        {isPastEdition && edition && (
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: "var(--fs-sm)",
+              color: "var(--color-text-muted)",
+              margin: "0 0 var(--sp-2)",
+            }}
+          >
+            {formatPastEditionLabel(edition.edition_date)} 브리핑
+          </p>
+        )}
 
         <h1
           style={{
@@ -174,7 +226,19 @@ export function ArticleViewer({
             marginBottom: "var(--sp-2)",
           }}
         >
-          <LevelSwitcher value={level} onChange={handleLevelChange} />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "var(--sp-3)",
+            }}
+          >
+            <LevelSwitcher value={level} onChange={handleLevelChange} />
+            {rankedArticles.length > 0 && (
+              <TodayProgress readCount={readCountToday} total={rankedArticles.length} />
+            )}
+          </div>
         </div>
 
         <div ref={bodyRef}>
@@ -189,7 +253,21 @@ export function ArticleViewer({
 
         <WordListSection words={words} />
         <SourcesSection sources={article.sources} />
+
+        {/* Continuous-reading flow (Batch 1 #2/#3): next article, or the
+            completion screen once every one of today's articles is read
+            and this is the last-ranked one. */}
+        {isLastInEdition && allReadToday ? (
+          <BriefCompleteCard totalToday={rankedArticles.length} />
+        ) : (
+          nextArticle && <NextArticleCard article={nextArticle} level={version.level as CefrLevel} />
+        )}
       </article>
     </div>
   );
+}
+
+function formatPastEditionLabel(editionDate: string): string {
+  const d = new Date(`${editionDate}T00:00:00`);
+  return d.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
 }

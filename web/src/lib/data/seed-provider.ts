@@ -86,6 +86,10 @@ export const seedDataProvider: DataProvider = {
       .filter((w) => w.version_id === versionId)
       .sort((a, b) => a.sort_order - b.sort_order);
   },
+
+  async listEditions() {
+    return [...editions].sort((a, b) => (a.edition_date < b.edition_date ? 1 : -1));
+  },
 };
 
 /** Provenance lookup helper — not part of DataProvider (internal/audit use only, A2 §7-1). */

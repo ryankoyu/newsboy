@@ -98,4 +98,20 @@ describe("seedDataProvider (via dataProvider) — seed loading", () => {
     const words = await dataProvider.getWordsForVersion("no-such-version");
     expect(words).toEqual([]);
   });
+
+  it("listEditions returns all seeded editions, newest first (enhancement-plan.md Batch 1 #4)", async () => {
+    const editions = await dataProvider.listEditions();
+    expect(editions.length).toBeGreaterThan(0);
+    const dates = editions.map((e) => e.edition_date);
+    expect(dates).toEqual([...dates].sort((a, b) => (a < b ? 1 : -1)));
+  });
+
+  it("listEditions results are each resolvable via getEditionByDate", async () => {
+    const editions = await dataProvider.listEditions();
+    for (const e of editions) {
+      const resolved = await dataProvider.getEditionByDate(e.edition_date);
+      expect(resolved).not.toBeNull();
+      expect(resolved?.id).toBe(e.id);
+    }
+  });
 });

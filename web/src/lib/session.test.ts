@@ -105,6 +105,47 @@ describe("localSessionStore — read articles", () => {
   });
 });
 
+describe("localSessionStore — read events (timestamped, enhancement-plan.md Batch 1 #3)", () => {
+  it("defaults to an empty list", () => {
+    expect(localSessionStore.getReadEvents()).toEqual([]);
+  });
+
+  it("markRead records a timestamped read event alongside readArticles", () => {
+    const before = Date.now();
+    localSessionStore.markRead("article-1");
+    const after = Date.now();
+
+    const events = localSessionStore.getReadEvents();
+    expect(events).toHaveLength(1);
+    expect(events[0].articleId).toBe("article-1");
+    const t = new Date(events[0].readAt).getTime();
+    expect(t).toBeGreaterThanOrEqual(before);
+    expect(t).toBeLessThanOrEqual(after);
+  });
+
+  it("does not add a duplicate readEvent when the article is already read", () => {
+    localSessionStore.markRead("article-1");
+    localSessionStore.markRead("article-1");
+    expect(localSessionStore.getReadEvents()).toHaveLength(1);
+  });
+
+  it("records a separate event per distinct article", () => {
+    localSessionStore.markRead("article-1");
+    localSessionStore.markRead("article-2");
+    const events = localSessionStore.getReadEvents();
+    expect(events.map((e) => e.articleId).sort()).toEqual(["article-1", "article-2"]);
+  });
+
+  it("migration: older persisted blobs without readEvents fall back to an empty list, not an error", () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ level: "B1", readArticles: ["article-1"] })
+    );
+    expect(localSessionStore.getReadArticles()).toEqual(["article-1"]);
+    expect(localSessionStore.getReadEvents()).toEqual([]);
+  });
+});
+
 describe("localSessionStore — seen words", () => {
   it("markWordSeen stores lowercase key and is case-insensitive on read", () => {
     localSessionStore.markWordSeen("Workforce");
@@ -128,12 +169,26 @@ describe("localSessionStore — saved words", () => {
     const added = localSessionStore.toggleSavedWord(entry);
     expect(added).toBe(true);
     expect(localSessionStore.isWordSaved("workforce")).toBe(true);
-    expect(localSessionStore.getSavedWords()).toEqual([entry]);
+    expect(localSessionStore.getSavedWords()).toEqual([
+      { ...entry, savedAt: expect.any(String) },
+    ]);
 
     const removed = localSessionStore.toggleSavedWord(entry);
     expect(removed).toBe(false);
     expect(localSessionStore.isWordSaved("workforce")).toBe(false);
     expect(localSessionStore.getSavedWords()).toEqual([]);
+  });
+
+  it("toggleSavedWord stamps savedAt with the current time (enhancement-plan.md Batch 1 #3)", () => {
+    const before = Date.now();
+    localSessionStore.toggleSavedWord({ term: "workforce", meaning_ko: "노동력" });
+    const after = Date.now();
+
+    const [saved] = localSessionStore.getSavedWords();
+    expect(saved.savedAt).toBeTruthy();
+    const t = new Date(saved.savedAt as string).getTime();
+    expect(t).toBeGreaterThanOrEqual(before);
+    expect(t).toBeLessThanOrEqual(after);
   });
 
   it("toggleSavedWord matches case-insensitively on term", () => {

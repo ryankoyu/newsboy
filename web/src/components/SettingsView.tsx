@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import type { CefrLevel } from "@/lib/types";
 import type { ReadingScale, ThemePref } from "@/lib/session";
 import { useSession } from "@/lib/useSession";
@@ -98,6 +99,20 @@ export function SettingsView() {
               { value: "system", label: "시스템" },
             ]}
           />
+        </SettingBlock>
+
+        <SettingBlock title="신뢰">
+          <Link
+            href="/about"
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: "var(--fs-ui)",
+              color: "var(--color-link)",
+              textDecoration: "none",
+            }}
+          >
+            우리가 뉴스를 만드는 방법 →
+          </Link>
         </SettingBlock>
 
         <p

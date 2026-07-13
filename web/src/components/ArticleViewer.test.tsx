@@ -1,15 +1,18 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, waitFor, fireEvent, cleanup } from "@testing-library/react";
 import { ArticleViewer } from "@/components/ArticleViewer";
+import { sessionStore } from "@/lib/session";
 import type {
   Article,
   ArticleVersion,
   ArticleWithDetails,
   Category,
+  EditionWithArticles,
   Fact,
   Source,
   Word,
 } from "@/lib/types";
+import editionsJson from "@/lib/data/seed/editions.json";
 import articlesJson from "@/lib/data/seed/articles.json";
 import articleVersionsJson from "@/lib/data/seed/article_versions.json";
 import categoriesJson from "@/lib/data/seed/categories.json";
@@ -58,9 +61,27 @@ function buildWordsByVersion(article: ArticleWithDetails): Record<string, Word[]
   return map;
 }
 
+function buildSeedEdition(): EditionWithArticles {
+  const edition = editionsJson[0];
+  const editionArticles = articles
+    .filter((a) => a.edition_id === edition.id)
+    .sort((a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0))
+    .map((a) => buildSeedArticle(a.id));
+  return { ...edition, articles: editionArticles } as EditionWithArticles;
+}
+
 beforeEach(() => {
   window.localStorage.clear();
   replaceMock.mockClear();
+});
+
+// This project's vitest config doesn't set `globals: true`, so
+// @testing-library/react's built-in auto-cleanup (which checks for a global
+// `afterEach`) never registers — every `render()` in this file would
+// otherwise accumulate in the document across tests. Register cleanup
+// explicitly so each test starts from an empty document.
+afterEach(() => {
+  cleanup();
 });
 
 /**
@@ -130,5 +151,136 @@ describe("ArticleViewer", () => {
         screen.getByRole("heading", { level: 1, name: a2Version.title })
       ).toBeInTheDocument();
     });
+  });
+
+  it("renders the trust notice with the article's actual source count (enhancement-plan.md Batch 1 #1)", async () => {
+    render(
+      <ArticleViewer
+        article={article}
+        initialLevel="A2"
+        hasExplicitLevel
+        wordsByVersion={wordsByVersion}
+      />
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          `이 기사는 ${article.sources.length}개 매체에서 교차 확인된 사실을 바탕으로 새로 작성되었습니다.`,
+          { exact: false }
+        )
+      ).toBeInTheDocument();
+    });
+    expect(screen.getByRole("link", { name: /우리가 뉴스를 만드는 방법/ })).toHaveAttribute(
+      "href",
+      "/about"
+    );
+  });
+
+  it("shows a '소스 N' badge matching the article's source count", async () => {
+    render(
+      <ArticleViewer
+        article={article}
+        initialLevel="A2"
+        hasExplicitLevel
+        wordsByVersion={wordsByVersion}
+      />
+    );
+    await waitFor(() => {
+      expect(screen.getByText(`소스 ${article.sources.length}`)).toBeInTheDocument();
+    });
+  });
+});
+
+describe("ArticleViewer — continuous reading flow (enhancement-plan.md Batch 1 #2/#3)", () => {
+  const edition = buildSeedEdition();
+  const rankedArticles = [...edition.articles].sort(
+    (a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0)
+  );
+
+  it("shows a quiet N/total progress indicator reflecting read articles in this edition", async () => {
+    const first = rankedArticles[0];
+    sessionStore.markRead(rankedArticles[1].id); // one other article already read
+
+    render(
+      <ArticleViewer
+        article={first}
+        initialLevel="A2"
+        hasExplicitLevel
+        wordsByVersion={buildWordsByVersion(first)}
+        edition={edition}
+      />
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(`오늘의 브리핑 진행 1 / ${rankedArticles.length}`)
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("shows a 'next article' card linking to the next-ranked article when not on the last one", async () => {
+    const first = rankedArticles[0];
+    const second = rankedArticles[1];
+    const secondA2 = second.versions.find((v) => v.level === "A2") ?? second.versions[0];
+
+    render(
+      <ArticleViewer
+        article={first}
+        initialLevel="A2"
+        hasExplicitLevel
+        wordsByVersion={buildWordsByVersion(first)}
+        edition={edition}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("다음 기사 →")).toBeInTheDocument();
+    });
+    const link = screen.getByRole("link", { name: new RegExp(secondA2.title) });
+    expect(link).toHaveAttribute("href", `/article/${second.slug}?level=${secondA2.level}`);
+  });
+
+  it("shows the completion card instead of a next-article card once every article today is read", async () => {
+    for (const a of rankedArticles) {
+      sessionStore.markRead(a.id);
+    }
+    const last = rankedArticles[rankedArticles.length - 1];
+
+    render(
+      <ArticleViewer
+        article={last}
+        initialLevel="A2"
+        hasExplicitLevel
+        wordsByVersion={buildWordsByVersion(last)}
+        edition={edition}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("오늘의 브리핑 끝!")).toBeInTheDocument();
+    });
+    expect(screen.queryByText("다음 기사 →")).not.toBeInTheDocument();
+    expect(screen.getByText("나의 주간 브리핑", { exact: false })).toBeInTheDocument();
+  });
+
+  it("degrades gracefully with no progress/next-article UI when edition is omitted", async () => {
+    const first = rankedArticles[0];
+    render(
+      <ArticleViewer
+        article={first}
+        initialLevel="A2"
+        hasExplicitLevel
+        wordsByVersion={buildWordsByVersion(first)}
+      />
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { level: 1 })
+      ).toBeInTheDocument();
+    });
+    expect(screen.queryByText("다음 기사 →")).not.toBeInTheDocument();
+    expect(screen.queryByText("오늘의 브리핑 끝!")).not.toBeInTheDocument();
   });
 });

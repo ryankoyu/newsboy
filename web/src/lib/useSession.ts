@@ -57,6 +57,7 @@ const fallbackStore: SessionStore = {
   getReadArticles: () => [],
   isRead: () => false,
   markRead: () => {},
+  getReadEvents: () => [],
   getSeenWords: () => [],
   isWordSeen: () => false,
   markWordSeen: () => {},

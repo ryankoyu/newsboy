@@ -1,5 +1,6 @@
 import type {
   Category,
+  Edition,
   EditionWithArticles,
   ArticleWithDetails,
   Word,
@@ -19,6 +20,12 @@ export interface DataProvider {
   getEditionByDate(editionDate: string): Promise<EditionWithArticles | null>;
   getArticleBySlug(slug: string): Promise<ArticleWithDetails | null>;
   getWordsForVersion(versionId: string): Promise<Word[]>;
+  /**
+   * All published editions, newest first (enhancement-plan.md Batch 1 #4 —
+   * /archive). Lightweight (no articles resolved) — callers that need
+   * articles for a specific date should follow up with getEditionByDate.
+   */
+  listEditions(): Promise<Edition[]>;
 }
 
 /**

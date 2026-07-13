@@ -60,6 +60,15 @@ export interface SessionStore {
   isRead(articleId: string): boolean;
   markRead(articleId: string): void;
 
+  /**
+   * Timestamped read events (enhancement-plan.md Batch 1 #3 — weekly brief +
+   * streak need "when" an article was read, not just "which"). Old entries
+   * persisted before this field existed have no timestamp and are excluded
+   * from weekly/streak aggregation (never backfilled/invented — see
+   * lib/weeklyBrief.ts).
+   */
+  getReadEvents(): ReadEvent[];
+
   /** Words the user has looked up at least once ("본 적 있음" dotted underline). */
   getSeenWords(): string[];
   isWordSeen(term: string): boolean;
@@ -92,6 +101,20 @@ export interface SavedWordEntry {
    * lookup backfills it later.
    */
   meaning_ko: string | null;
+  /**
+   * ISO timestamp of when the word was saved (enhancement-plan.md Batch 1
+   * #3 — weekly brief needs "words newly saved this week"). Optional/absent
+   * on entries persisted before this field existed (migrated, not
+   * backfilled — see migrateSessionShape below).
+   */
+  savedAt?: string;
+}
+
+/** A single timestamped "read this article" event (weekly brief + streak). */
+export interface ReadEvent {
+  articleId: string;
+  /** ISO timestamp. */
+  readAt: string;
 }
 
 export interface SavedSentenceEntry {
@@ -113,6 +136,15 @@ interface PersistedShape {
   onboardingBannerDismissed: boolean;
   bookmarks: string[];
   readArticles: string[];
+  /**
+   * Timestamped counterpart of readArticles (added enhancement-plan.md Batch
+   * 1 #3). readArticles stays the source of truth for "is this read at
+   * all"; readEvents is additive and only gains entries going forward —
+   * pre-existing readArticles entries from before this field existed have
+   * no corresponding readEvents entry (no timestamp to invent, so they're
+   * simply excluded from weekly/streak aggregation).
+   */
+  readEvents: ReadEvent[];
   seenWords: string[];
   savedWords: SavedWordEntry[];
   savedSentences: SavedSentenceEntry[];
@@ -127,6 +159,7 @@ const DEFAULTS: PersistedShape = {
   onboardingBannerDismissed: false,
   bookmarks: [],
   readArticles: [],
+  readEvents: [],
   seenWords: [],
   savedWords: [],
   savedSentences: [],
@@ -143,6 +176,10 @@ function load(): PersistedShape {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return { ...DEFAULTS };
     const parsed = JSON.parse(raw) as Partial<PersistedShape>;
+    // Migration (enhancement-plan.md Batch 1 #3): older persisted blobs
+    // predate readEvents/savedAt-on-words. Merge with defaults rather than
+    // backfilling fake timestamps — untimestamped history is simply
+    // unavailable to weekly/streak aggregation (CLAUDE.md rule 1).
     return { ...DEFAULTS, ...parsed };
   } catch {
     return { ...DEFAULTS };
@@ -238,8 +275,13 @@ export const localSessionStore: SessionStore = {
     const s = load();
     if (!s.readArticles.includes(articleId)) {
       s.readArticles = [...s.readArticles, articleId];
+      s.readEvents = [...s.readEvents, { articleId, readAt: new Date().toISOString() }];
       save(s);
     }
+  },
+
+  getReadEvents() {
+    return load().readEvents;
   },
 
   getSeenWords() {
@@ -270,7 +312,7 @@ export const localSessionStore: SessionStore = {
     const has = s.savedWords.some((w) => w.term.toLowerCase() === key);
     s.savedWords = has
       ? s.savedWords.filter((w) => w.term.toLowerCase() !== key)
-      : [...s.savedWords, entry];
+      : [...s.savedWords, { ...entry, savedAt: entry.savedAt ?? new Date().toISOString() }];
     save(s);
     return !has;
   },

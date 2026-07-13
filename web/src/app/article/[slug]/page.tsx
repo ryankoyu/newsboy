@@ -28,12 +28,24 @@ export default async function ArticlePage({
     wordsByVersion[v.id] = await dataProvider.getWordsForVersion(v.id);
   }
 
+  // Resolve the edition this article belongs to (for continuous-reading
+  // progress/next-article — enhancement-plan.md Batch 1 #2/#3). Works for
+  // both the current and past (archive) editions — degrades to null
+  // (features simply don't render) if no edition_id or lookup fails.
+  let edition = null;
+  if (article.edition_id) {
+    const allEditions = await dataProvider.listEditions();
+    const match = allEditions.find((e) => e.id === article.edition_id);
+    edition = match ? await dataProvider.getEditionByDate(match.edition_date) : null;
+  }
+
   return (
     <ArticleViewer
       article={article}
       initialLevel={requestedLevel}
       hasExplicitLevel={hasExplicitLevel}
       wordsByVersion={wordsByVersion}
+      edition={edition}
     />
   );
 }

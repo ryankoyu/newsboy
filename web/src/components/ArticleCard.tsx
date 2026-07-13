@@ -6,6 +6,7 @@ import { estimateReadingMinutes } from "@/lib/data";
 import { CategoryTag } from "@/components/CategoryTag";
 import { LevelBadge } from "@/components/LevelBadge";
 import { ReadTimeMeta } from "@/components/ReadTimeMeta";
+import { SourceCountBadge } from "@/components/SourceCountBadge";
 import { useSession } from "@/lib/useSession";
 
 /**
@@ -79,12 +80,13 @@ export function ArticleCard({ article }: { article: ArticleWithDetails }) {
             fontFamily: "var(--font-en)",
             fontSize: "var(--fs-sm)",
             color: "var(--color-text-secondary)",
-            margin: 0,
+            margin: "0 0 var(--sp-2)",
           }}
         >
           {preview}
         </p>
       )}
+      <SourceCountBadge count={article.sources.length} />
       {isRead && (
         <div
           style={{
