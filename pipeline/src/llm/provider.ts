@@ -13,6 +13,7 @@
  */
 
 import type { CategorySlug, ExtractedFact, RawItem, WordEntry } from "../types.js";
+import type { CallUsage } from "./cost.js";
 
 export type ModelTier = "haiku" | "sonnet" | "opus";
 
@@ -80,6 +81,25 @@ export interface RewriteOutput {
   content: string;
   wordCount: number;
   words: WordEntry[];
+  /** Present when the concrete provider tracks token usage (Anthropic; absent for Mock). */
+  usage?: CallUsage;
+}
+
+/**
+ * [5] Combined single-call input: generate A2 + B1 + B2 + words for one
+ * event in ONE API request instead of three (cost optimization #1 — source
+ * facts are sent once instead of three times).
+ */
+export interface GenerateAllLevelsInput {
+  eventId: string;
+  category: CategorySlug;
+  facts: ExtractedFact[];
+}
+
+export interface GenerateAllLevelsOutput {
+  versions: Record<"A2" | "B1" | "B2", RewriteOutput>;
+  /** Combined usage for the single call that produced all three levels. */
+  usage?: CallUsage;
 }
 
 export interface LLMProvider {
@@ -94,7 +114,20 @@ export interface LLMProvider {
   /** [4] Fact extraction with provenance tagging (Sonnet tier). */
   extractFacts(input: ExtractFactsInput): Promise<ExtractedFact[]>;
 
-  /** [5] Level-specific rewrite from facts only (Opus tier). */
+  /**
+   * [5] Combined single-call generation of all three CEFR levels + words
+   * (Opus tier). This is the PRIMARY path — cost optimization #1: source
+   * facts are sent once per event instead of once per level (3x). Preferred
+   * over `rewrite()` for the initial draft of every event.
+   */
+  generateAllLevels(input: GenerateAllLevelsInput): Promise<GenerateAllLevelsOutput>;
+
+  /**
+   * [5b] Single-level rewrite — used ONLY for gate-failure retries of one
+   * specific level (cost optimization #1: retry sends a compact fact summary,
+   * not the full source material, since only one level needs regenerating).
+   * Concrete providers may also use this as a fallback path.
+   */
   rewrite(input: RewriteInput): Promise<RewriteOutput>;
 
   /** [6a] CEFR boundary judgment when the heuristic checker is inconclusive (Haiku tier). */

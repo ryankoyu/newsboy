@@ -8,11 +8,28 @@
  * Model-tier mapping follows a1-architecture.md §3.1. Model ids are current
  * as of this writing [문서] — check docs/reference or the Anthropic API
  * skill before assuming these ids stay valid long-term.
+ *
+ * COST OPTIMIZATION (2026-07-13, see docs — pipeline cost review):
+ *  1. generateAllLevels() produces A2+B1+B2+words in ONE call per event
+ *     (source facts sent once, not 3x). rewrite() is now reserved for
+ *     single-level gate-failure retries, and receives a compact fact
+ *     SUMMARY rather than the full extracted-fact list, since a retry only
+ *     needs enough context to fix the failing dimension.
+ *  2. System prompts (prompts.ts) are byte-stable across calls and carry
+ *     cache_control so repeated calls hit Anthropic's prompt cache
+ *     (shared/prompt-caching.md: prefix match, ~90% cheaper reads).
+ *  3. Structured outputs (output_config.format) replace manual ```json
+ *     fence-stripping as the primary parse path — extractJson() is now a
+ *     defensive fallback only.
+ *  4. Every call's usage (input/output/cache tokens) is returned on the
+ *     result so callers can accumulate cost — see llm/cost.ts.
  */
 
 import Anthropic from "@anthropic-ai/sdk";
 import type {
   ExtractFactsInput,
+  GenerateAllLevelsInput,
+  GenerateAllLevelsOutput,
   LLMProvider,
   ModelTier,
   RewriteInput,
@@ -21,7 +38,15 @@ import type {
   Top10Candidate,
   Top10Selection,
 } from "./provider.js";
-import type { ExtractedFact, WordEntry } from "../types.js";
+import type { ExtractedFact, WordEntry, CefrLevel } from "../types.js";
+import type { CallUsage } from "./cost.js";
+import { emptyUsage } from "./cost.js";
+import {
+  COMBINED_OUTPUT_SCHEMA,
+  COMBINED_SYSTEM_PROMPT,
+  SINGLE_LEVEL_OUTPUT_SCHEMA,
+  SINGLE_LEVEL_SYSTEM_PROMPT,
+} from "./prompts.js";
 
 const MODEL_BY_TIER: Record<ModelTier, string> = {
   haiku: "claude-haiku-4-5",
@@ -36,10 +61,50 @@ const FABRICATION_GUARDRAIL =
   "entirely new wording.";
 
 function extractJson<T>(text: string): T {
-  // Claude sometimes wraps JSON in ```json fences despite instructions — strip defensively.
+  // Structured outputs (output_config.format) should make this a no-op most
+  // of the time, but Claude occasionally still wraps JSON in ```json fences —
+  // strip defensively rather than trust the format guarantee unconditionally.
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
   const raw = fenced ? fenced[1] : text;
   return JSON.parse(raw.trim()) as T;
+}
+
+function usageFromResponse(response: { usage: Anthropic.Usage }): CallUsage {
+  const u = response.usage;
+  return {
+    inputTokens: u.input_tokens ?? 0,
+    outputTokens: u.output_tokens ?? 0,
+    cacheCreationInputTokens: u.cache_creation_input_tokens ?? 0,
+    cacheReadInputTokens: u.cache_read_input_tokens ?? 0,
+  };
+}
+
+/**
+ * Compact fact summary for single-level retries — sends the statement text
+ * only (no outlet/provenance metadata, which the retry doesn't need to
+ * regenerate one level's prose). This is the "요약본만 재전송" behavior the
+ * task requires: full ExtractedFact[] objects (with confirmedByOutlets,
+ * sourceCount, note, searchSummaryOnly) are NOT resent on retry.
+ */
+function summarizeFactsForRetry(facts: ExtractedFact[]): string[] {
+  return facts.filter((f) => f.usedInText).map((f) => f.statement);
+}
+
+interface RawLevelOutput {
+  title: string;
+  content: string;
+  wordCount: number;
+  words: WordEntry[];
+}
+
+function toRewriteOutput(raw: RawLevelOutput, usage?: CallUsage): RewriteOutput {
+  return {
+    title: raw.title,
+    content: raw.content,
+    wordCount: raw.wordCount,
+    words: raw.words,
+    usage,
+  };
 }
 
 export class AnthropicLLMProvider implements LLMProvider {
@@ -58,7 +123,11 @@ export class AnthropicLLMProvider implements LLMProvider {
     this.client = new Anthropic({ apiKey: key });
   }
 
-  private async complete(tier: ModelTier, system: string, user: string): Promise<string> {
+  private async complete(
+    tier: ModelTier,
+    system: string,
+    user: string,
+  ): Promise<{ text: string; usage: CallUsage }> {
     const response = await this.client.messages.create({
       model: MODEL_BY_TIER[tier],
       max_tokens: 4096,
@@ -69,7 +138,45 @@ export class AnthropicLLMProvider implements LLMProvider {
     if (!textBlock || textBlock.type !== "text") {
       throw new Error("[AnthropicLLMProvider] no text content in response");
     }
-    return textBlock.text;
+    return { text: textBlock.text, usage: usageFromResponse(response) };
+  }
+
+  /**
+   * Structured-output call with a cached (cache_control-tagged) system
+   * prompt. `system` must be a byte-stable string across calls for the
+   * cache breakpoint to ever hit — see prompts.ts doc comment.
+   */
+  private async completeStructured(
+    tier: ModelTier,
+    system: string,
+    user: string,
+    schema: Record<string, unknown>,
+  ): Promise<{ text: string; usage: CallUsage }> {
+    const response = await this.client.messages.create({
+      model: MODEL_BY_TIER[tier],
+      max_tokens: 8192,
+      // Fixed prefix first (system, cached), then per-call user content —
+      // shared/prompt-caching.md render order: tools -> system -> messages.
+      system: [
+        {
+          type: "text",
+          text: system,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
+      output_config: {
+        format: {
+          type: "json_schema",
+          schema,
+        },
+      },
+      messages: [{ role: "user", content: user }],
+    });
+    const textBlock = response.content.find((b) => b.type === "text");
+    if (!textBlock || textBlock.type !== "text") {
+      throw new Error("[AnthropicLLMProvider] no text content in response");
+    }
+    return { text: textBlock.text, usage: usageFromResponse(response) };
   }
 
   async judgeSameEvent(input: SameEventInput): Promise<boolean> {
@@ -77,7 +184,7 @@ export class AnthropicLLMProvider implements LLMProvider {
       "You judge whether two news headlines/summaries describe the same real-world " +
       'event. Respond with strict JSON only: {"sameEvent": true|false}.';
     const user = JSON.stringify(input);
-    const text = await this.complete("haiku", system, user);
+    const { text } = await this.complete("haiku", system, user);
     const parsed = extractJson<{ sameEvent: boolean }>(text);
     return parsed.sameEvent;
   }
@@ -91,7 +198,7 @@ export class AnthropicLLMProvider implements LLMProvider {
       'Respond with strict JSON only: {"selections": [{"id": "...", "rankInEdition": 1, "rationale": "..."}]} ' +
       "with exactly 10 entries, ranked 1-10.";
     const user = JSON.stringify(candidates);
-    const text = await this.complete("sonnet", system, user);
+    const { text } = await this.complete("sonnet", system, user);
     const parsed = extractJson<{ selections: Top10Selection[] }>(text);
     return parsed.selections;
   }
@@ -107,46 +214,59 @@ export class AnthropicLLMProvider implements LLMProvider {
       'Respond with strict JSON only: {"facts": [{"statement": "...", "confirmedByOutlets": ["..."], ' +
       '"sourceCount": 0, "usedInText": true, "note": "...", "searchSummaryOnly": false}]}.';
     const user = JSON.stringify(input);
-    const text = await this.complete("sonnet", system, user);
+    const { text } = await this.complete("sonnet", system, user);
     const parsed = extractJson<{ facts: ExtractedFact[] }>(text);
     return parsed.facts;
   }
 
-  async rewrite(input: RewriteInput): Promise<RewriteOutput> {
-    const targets: Record<string, string> = {
-      A2: "150-180 words, short simple sentences, present/simple past tense, common vocabulary only",
-      B1: "~300 words, compound sentences, moderate vocabulary, clear cause-effect connectors",
-      B2: "450-520 words, subordinate clauses allowed, richer vocabulary, but avoid C1-level idioms",
-    };
-    const system =
-      `${FABRICATION_GUARDRAIL} ` +
-      `Write a completely new English news article at CEFR level ${input.level} using ONLY the ` +
-      `facts provided — do not add outside facts. Target: ${targets[input.level]}. ` +
-      "Write a brand-new headline (never reuse a source headline). Also produce 5 key " +
-      "vocabulary words with Korean meaning, an example sentence, and a pronunciation hint. " +
-      "CRITICAL: every word you select MUST actually appear in the article body you just wrote " +
-      "for THIS level (exact word, or a simple inflected form — plural -s/-es, past -ed, " +
-      "progressive -ing; multi-word terms like \"lay off\" must appear as that exact phrase). " +
-      "Do not pick a word that only appears in your notes, the source facts, or a different " +
-      "level's version — a curated word the reader cannot find and click in the text is a " +
-      "defect. If fewer than 5 in-text words are suitable, return fewer rather than inventing " +
-      "one that isn't in the body. " +
-      "CRITICAL — do not lose core information through vocabulary avoidance: simplifying for a " +
-      "lower CEFR level must never mean dropping the load-bearing 'what' of who-did-what (e.g. " +
-      "rewriting a semiconductor export story for A2 must still say semiconductors, not just " +
-      "'products'). If a fact genuinely cannot be expressed without a word above this level's " +
-      "normal vocabulary, KEEP that word in the text rather than deleting the information, and " +
-      "mark it in `words` with \"isKey\": true (0-2 such words per level — only ones that are " +
-      "both hard for this level AND essential to understanding the article; do not overuse). " +
-      "Ordinary curated words should omit isKey or set it to false. " +
-      'Respond with strict JSON only: {"title": "...", "content": "...", "wordCount": 0, ' +
-      '"words": [{"term": "...", "meaningKo": "...", "example": "...", "pronunciation": "...", ' +
-      '"sortOrder": 0, "isKey": false}]}.' +
-      (input.feedback ? ` Previous attempt failed a quality gate: ${input.feedback}. Fix this specifically.` : "");
+  /**
+   * PRIMARY generation path: A2 + B1 + B2 + words in one call. Source facts
+   * are sent exactly once (cost optimization #1). Uses structured outputs +
+   * a cached system prompt (cost optimization #2).
+   */
+  async generateAllLevels(input: GenerateAllLevelsInput): Promise<GenerateAllLevelsOutput> {
     const user = JSON.stringify({ facts: input.facts, category: input.category });
-    const text = await this.complete("opus", system, user);
-    const parsed = extractJson<RewriteOutput>(text);
-    return parsed;
+    const { text, usage } = await this.completeStructured(
+      "opus",
+      COMBINED_SYSTEM_PROMPT,
+      user,
+      COMBINED_OUTPUT_SCHEMA,
+    );
+    const parsed = extractJson<Record<CefrLevel, RawLevelOutput>>(text);
+
+    return {
+      versions: {
+        A2: toRewriteOutput(parsed.A2),
+        B1: toRewriteOutput(parsed.B1),
+        B2: toRewriteOutput(parsed.B2),
+      },
+      usage,
+    };
+  }
+
+  /**
+   * Single-level retry path — used only when one level fails its quality
+   * gate. Sends a compact fact SUMMARY (statement text only), not the full
+   * ExtractedFact[] with provenance metadata, since a retry needs just
+   * enough context to regenerate one level's prose (cost optimization #1:
+   * "실패한 레벨만 개별 재생성...이때 소스는 요약본만 재전송").
+   */
+  async rewrite(input: RewriteInput): Promise<RewriteOutput> {
+    const factSummary = summarizeFactsForRetry(input.facts);
+    const user = JSON.stringify({
+      factSummary,
+      category: input.category,
+      level: input.level,
+      feedback: input.feedback,
+    });
+    const { text, usage } = await this.completeStructured(
+      "opus",
+      SINGLE_LEVEL_SYSTEM_PROMPT,
+      user,
+      SINGLE_LEVEL_OUTPUT_SCHEMA,
+    );
+    const parsed = extractJson<RawLevelOutput>(text);
+    return toRewriteOutput(parsed, usage);
   }
 
   async judgeCefrBand(input: {
@@ -157,7 +277,7 @@ export class AnthropicLLMProvider implements LLMProvider {
       "You are a CEFR reading-level assessor. Judge whether the given text fits the " +
       'target CEFR band. Respond with strict JSON only: {"withinBand": true|false, "reasoning": "..."}.';
     const user = JSON.stringify(input);
-    const text = await this.complete("haiku", system, user);
+    const { text } = await this.complete("haiku", system, user);
     return extractJson<{ withinBand: boolean; reasoning: string }>(text);
   }
 }

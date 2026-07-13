@@ -16,6 +16,8 @@
 
 import type {
   ExtractFactsInput,
+  GenerateAllLevelsInput,
+  GenerateAllLevelsOutput,
   LLMProvider,
   RewriteInput,
   RewriteOutput,
@@ -23,7 +25,7 @@ import type {
   Top10Candidate,
   Top10Selection,
 } from "./provider.js";
-import type { ExtractedFact, WordEntry } from "../types.js";
+import type { CefrLevel, ExtractedFact, WordEntry } from "../types.js";
 
 function countOutlets(items: ExtractFactsInput["items"]): Map<string, number> {
   const map = new Map<string, number>();
@@ -137,20 +139,26 @@ export class MockLLMProvider implements LLMProvider {
     return facts;
   }
 
-  async rewrite(input: RewriteInput): Promise<RewriteOutput> {
-    const usable = input.facts.filter((f) => f.usedInText);
-    const factLines = (usable.length > 0 ? usable : input.facts).map((f) => f.statement);
+  /**
+   * Shared templating logic for one level. Extracted so both `rewrite()`
+   * (single-level retry path) and `generateAllLevels()` (combined path,
+   * mirroring AnthropicLLMProvider's cost-optimized primary path) produce
+   * the same shape of output from the same facts.
+   */
+  private renderLevel(facts: ExtractedFact[], level: CefrLevel): RewriteOutput {
+    const usable = facts.filter((f) => f.usedInText);
+    const factLines = (usable.length > 0 ? usable : facts).map((f) => f.statement);
 
     const wordTargets: Record<string, number> = { A2: 165, B1: 300, B2: 480 };
-    const target = wordTargets[input.level];
+    const target = wordTargets[level];
 
     // Simple template: level A2 keeps sentences short/split, B1 joins some
     // with connectors, B2 adds an evaluative closing paragraph — mirrors the
     // *shape* of R3's real output, not its literary quality.
     let paragraphs: string[];
-    if (input.level === "A2") {
+    if (level === "A2") {
       paragraphs = factLines.map((line) => line.replace(/\s+/g, " ").trim());
-    } else if (input.level === "B1") {
+    } else if (level === "B1") {
       paragraphs = [];
       for (let i = 0; i < factLines.length; i += 2) {
         const pair = factLines.slice(i, i + 2).join(" In addition, ");
@@ -173,9 +181,9 @@ export class MockLLMProvider implements LLMProvider {
     const currentWords = content.split(/\s+/).filter(Boolean).length;
     if (currentWords < target) {
       const filler =
-        input.level === "A2"
+        level === "A2"
           ? " This is important news. Many people are talking about it."
-          : input.level === "B1"
+          : level === "B1"
             ? " Observers say the situation is likely to keep developing over the coming days, and many are watching closely to see what happens next."
             : " Analysts caution that the full implications may not become clear for some time, and the story is likely to continue evolving as more information emerges from those directly involved.";
       let padded = content;
@@ -201,9 +209,29 @@ export class MockLLMProvider implements LLMProvider {
     }));
 
     const titleSeed = factLines[0] ?? "Today's top story";
-    const title = `[Mock ${input.level}] ${titleSeed.split(" ").slice(0, 8).join(" ")}`;
+    const title = `[Mock ${level}] ${titleSeed.split(" ").slice(0, 8).join(" ")}`;
 
     return { title, content, wordCount, words };
+  }
+
+  /**
+   * Combined path (mirrors AnthropicLLMProvider.generateAllLevels — the
+   * mock has no real per-call cost, but implements the same interface shape
+   * so pipeline code exercises the real combined-call structure in tests).
+   */
+  async generateAllLevels(input: GenerateAllLevelsInput): Promise<GenerateAllLevelsOutput> {
+    return {
+      versions: {
+        A2: this.renderLevel(input.facts, "A2"),
+        B1: this.renderLevel(input.facts, "B1"),
+        B2: this.renderLevel(input.facts, "B2"),
+      },
+    };
+  }
+
+  /** Single-level retry path — mirrors AnthropicLLMProvider.rewrite(). */
+  async rewrite(input: RewriteInput): Promise<RewriteOutput> {
+    return this.renderLevel(input.facts, input.level);
   }
 
   async judgeCefrBand(input: {

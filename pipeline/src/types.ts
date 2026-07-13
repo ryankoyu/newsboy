@@ -303,4 +303,24 @@ export interface PipelineRun {
   stages: StageOutcome[];
   articlesProduced: number;
   errorSummary?: string;
+  /**
+   * Estimated USD cost of this run's LLM calls, plus a per-stage token
+   * breakdown — populated when the LLM provider reports usage (Anthropic;
+   * absent/zero for MockLLMProvider). See llm/cost.ts UsageLedger.
+   */
+  costSummary?: {
+    estimatedUsd: number;
+    byStage: Record<
+      string,
+      {
+        calls: number;
+        costUsd: number;
+        inputTokens: number;
+        outputTokens: number;
+        cacheCreationInputTokens: number;
+        cacheReadInputTokens: number;
+      }
+    >;
+    usedBatchApi: boolean;
+  };
 }

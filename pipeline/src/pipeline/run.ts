@@ -32,8 +32,10 @@ import { collect } from "./collect.js";
 import { clusterEvents } from "./cluster.js";
 import { selectTop10 } from "./selectTop10.js";
 import { extractFacts } from "./extract.js";
-import { rewriteAllLevels } from "./rewrite.js";
-import { gateVersion } from "./gate.js";
+import { generateAndGateAll } from "./generate.js";
+import type { EventToGenerate } from "./generate.js";
+import { UsageLedger } from "../llm/cost.js";
+import type Anthropic from "@anthropic-ai/sdk";
 
 export interface RunOptions {
   sources: SourceConfig[];
@@ -43,6 +45,15 @@ export interface RunOptions {
   editionDate?: string;
   /** Cap on articles fully processed — useful for cheap demo runs. */
   maxArticles?: number;
+  /**
+   * When set, the generate/gate stage submits ALL events as one batch
+   * (Anthropic Batch API) instead of one call per event — ~50% cheaper,
+   * but latency is "usually <1h, up to 24h" so this is intended for
+   * scheduled (nightly) runs, not interactive ones. Requires a real
+   * Anthropic SDK client (batch submission isn't part of the LLMProvider
+   * interface — MockLLMProvider runs never set this).
+   */
+  batchClient?: Anthropic;
   log?: (message: string) => void;
 }
 
@@ -117,6 +128,11 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
     }
   }
 
+  // Hoisted above the try so the finally-block cost summary can read it even
+  // when a stage threw partway through (tokens spent before the failure are
+  // still real cost).
+  const usageLedger = new UsageLedger();
+
   try {
     // [1] 수집
     const collected = await stage("collect", () => collect(options.sources));
@@ -133,20 +149,15 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
       ? top10.selected.slice(0, options.maxArticles)
       : top10.selected;
 
-    // [4]-[6] 이벤트별: 사실 추출 → 재작성 → 게이트
-    // extract/rewrite/gate run per-event inside one loop (facts feed straight
-    // into that event's rewrite), but are still reported as separate
-    // PipelineStage outcomes for monitoring — each with real counts, not a
-    // placeholder (a previous version of this stage recorded ok:true with no
-    // actual work; see extractStart below for the real fact-count tally).
+    // [4] 사실 추출 (per event — cheap, unaffected by the batch/combined
+    // optimization below, which targets [5]-[6]).
     const articles: PipelineArticle[] = [];
 
     const extractStart = new Date().toISOString();
     let totalFactsExtracted = 0;
     let totalFactsUsedInText = 0;
+    const eventsToGenerate: EventToGenerate[] = [];
 
-    const rewriteStart = new Date().toISOString();
-    let gateFailures = 0;
     try {
       for (const event of eventsToProcess) {
         const { facts } = await extractFacts(event, options.llm);
@@ -156,21 +167,94 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
         log(
           `[pipeline] event="${event.title.slice(0, 50)}" facts=${facts.length} usable=${usableCount}`,
         );
+        eventsToGenerate.push({
+          eventId: event.id,
+          category: event.category,
+          facts,
+          sourceItems: event.items,
+        });
+      }
+      run.stages.push({
+        stage: "extract",
+        startedAt: extractStart,
+        finishedAt: new Date().toISOString(),
+        ok: true,
+        detail: {
+          eventsProcessed: eventsToProcess.length,
+          factsExtracted: totalFactsExtracted,
+          factsUsedInText: totalFactsUsedInText,
+        },
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      run.stages.push({
+        stage: "extract",
+        startedAt: extractStart,
+        finishedAt: new Date().toISOString(),
+        ok: eventsToGenerate.length > 0,
+        detail: {
+          eventsProcessed: eventsToGenerate.length,
+          factsExtracted: totalFactsExtracted,
+          factsUsedInText: totalFactsUsedInText,
+        },
+        error: message,
+      });
+      throw err;
+    }
 
-        const rewrite = await rewriteAllLevels(event.id, event.category, facts, options.llm);
+    // [5]-[6] 이벤트별: 재작성(레벨 통합 1콜) → 게이트(불합격 시 레벨별 재시도)
+    // COST OPTIMIZATION: generateAndGateAll() calls llm.generateAllLevels()
+    // once per event (A2+B1+B2+words in one call) instead of the old
+    // once-per-level loop, and — when options.batchClient is set — submits
+    // every event's initial draft as ONE Batch API round instead of
+    // per-event standard calls (see pipeline/generate.ts + llm/batch.ts).
+    const rewriteStart = new Date().toISOString();
+    let gateFailures = 0;
+    const eventById = new Map(eventsToProcess.map((e) => [e.id, e]));
+
+    try {
+      const drafts = await generateAndGateAll(eventsToGenerate, {
+        llm: options.llm,
+        batchClient: options.batchClient,
+        log,
+      });
+
+      for (const draft of drafts) {
+        const event = eventById.get(draft.eventId);
+        if (!event) continue;
+        const generatedFacts =
+          eventsToGenerate.find((e) => e.eventId === draft.eventId)?.facts ?? [];
+
+        // Initial (pre-gate) draft — one combined generateAllLevels() call
+        // covering all 3 levels for this event (batch share, or a standard
+        // per-event fallback call if this event's batch request failed).
+        usageLedger.record({
+          stage: "rewrite",
+          eventId: draft.eventId,
+          tier: "opus",
+          mode: draft.initialDraftMode,
+          usage: draft.initialDraftUsage,
+        });
 
         const gatedVersions: GatedVersion[] = [];
-        for (const version of rewrite.versions) {
-          const gated = await gateVersion(
-            event.id,
-            event.category,
-            version,
-            facts,
-            event.items,
-            options.llm,
-          );
+        for (const gated of draft.gatedVersions) {
           if (!gated.passed) gateFailures++;
-          gatedVersions.push(gated);
+          // Gate retries always use the standard (non-batch) rewrite() path
+          // regardless of initialDraftMode — see generate.ts's NOTE on retries.
+          usageLedger.record({
+            stage: "rewrite_retry",
+            eventId: draft.eventId,
+            level: gated.version.level,
+            tier: "opus",
+            mode: "standard",
+            usage: gated.retryUsage,
+          });
+          gatedVersions.push({
+            version: gated.version,
+            checks: gated.checks,
+            passed: gated.passed,
+            rewriteAttempts: gated.rewriteAttempts,
+          });
         }
 
         articles.push({
@@ -187,28 +271,18 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
             title: i.title,
             fetchMethod: "rss_summary" as const,
           })),
-          facts,
+          facts: generatedFacts,
           versions: gatedVersions,
           createdAt: new Date().toISOString(),
         });
       }
-      run.stages.push({
-        stage: "extract",
-        startedAt: extractStart,
-        finishedAt: new Date().toISOString(),
-        ok: true,
-        detail: {
-          eventsProcessed: eventsToProcess.length,
-          factsExtracted: totalFactsExtracted,
-          factsUsedInText: totalFactsUsedInText,
-        },
-      });
+
       run.stages.push({
         stage: "rewrite",
         startedAt: rewriteStart,
         finishedAt: new Date().toISOString(),
         ok: true,
-        detail: { articles: articles.length },
+        detail: { articles: articles.length, usedBatchApi: Boolean(options.batchClient) },
       });
       run.stages.push({
         stage: "gate",
@@ -222,17 +296,6 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      run.stages.push({
-        stage: "extract",
-        startedAt: extractStart,
-        finishedAt: new Date().toISOString(),
-        ok: totalFactsExtracted > 0 || articles.length > 0,
-        detail: {
-          eventsProcessed: articles.length,
-          factsExtracted: totalFactsExtracted,
-          factsUsedInText: totalFactsUsedInText,
-        },
-      });
       run.stages.push({
         stage: "rewrite",
         startedAt: rewriteStart,
@@ -263,6 +326,30 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
     run.errorSummary = err instanceof Error ? err.message : String(err);
   } finally {
     run.finishedAt = new Date().toISOString();
+
+    // Cost summary is computed even on failure — tokens already spent don't
+    // un-spend themselves, and a failed run's partial cost is still useful
+    // for monitoring (a1 §5.3 pipeline_runs intent: visible per-stage cost).
+    const byStage = usageLedger.byStage();
+    run.costSummary = {
+      estimatedUsd: usageLedger.totalUsd(),
+      byStage: Object.fromEntries(
+        Object.entries(byStage).map(([stage, bucket]) => [
+          stage,
+          {
+            calls: bucket.calls,
+            costUsd: bucket.costUsd,
+            inputTokens: bucket.usage.inputTokens,
+            outputTokens: bucket.usage.outputTokens,
+            cacheCreationInputTokens: bucket.usage.cacheCreationInputTokens,
+            cacheReadInputTokens: bucket.usage.cacheReadInputTokens,
+          },
+        ]),
+      ),
+      usedBatchApi: Boolean(options.batchClient),
+    };
+    log(`[pipeline] ${usageLedger.summaryLine()}`);
+
     // Recording the run must never mask the original failure.
     try {
       await options.storage.recordPipelineRun(run);

@@ -21,12 +21,19 @@ import type {
   RawItem,
 } from "../types.js";
 import type { LLMProvider } from "../llm/provider.js";
+import type { CallUsage } from "../llm/cost.js";
+import { addUsage, emptyUsage } from "../llm/cost.js";
 import { checkCefr } from "../gates/cefr.js";
 import { checkNgramOverlap } from "../gates/ngram.js";
 import { checkTwoSourceRule } from "../gates/twoSource.js";
 import { checkWordMatch } from "../gates/wordMatch.js";
 
 export const MAX_REWRITE_ATTEMPTS = 3;
+
+export interface GatedVersionWithUsage extends GatedVersion {
+  /** Usage from any retry calls made inside this gate loop (empty if the version passed on the first try). */
+  retryUsage: CallUsage;
+}
 
 function buildFeedback(checks: QualityCheckResult[]): string {
   const failed = checks.filter((c) => !c.passed);
@@ -42,9 +49,10 @@ export async function gateVersion(
   facts: ExtractedFact[],
   sourceItems: RawItem[],
   llm: LLMProvider,
-): Promise<GatedVersion> {
+): Promise<GatedVersionWithUsage> {
   let currentVersion = version;
   let attempts = 0;
+  let retryUsage = emptyUsage();
 
   while (true) {
     attempts++;
@@ -97,11 +105,15 @@ export async function gateVersion(
         checks,
         passed: allPassed,
         rewriteAttempts: attempts,
+        retryUsage,
       };
     }
 
     // Retry the failing dimensions (CEFR/n-gram/word-match) via targeted
     // feedback. two_source is excluded — it can't be fixed by a rewrite.
+    // COST OPTIMIZATION: only the failing level is regenerated here (never
+    // all three), and llm.rewrite() sends a compact fact summary rather than
+    // the full source material — see AnthropicLLMProvider.rewrite().
     const feedback = buildFeedback(checks.filter((c) => c.kind !== "two_source"));
     const rewritten = await llm.rewrite({
       eventId,
@@ -110,6 +122,7 @@ export async function gateVersion(
       level: currentVersion.level,
       feedback,
     });
+    if (rewritten.usage) retryUsage = addUsage(retryUsage, rewritten.usage);
     currentVersion = {
       level: currentVersion.level,
       title: rewritten.title,
