@@ -12,8 +12,12 @@
  *   LLM_PROVIDER=anthropic (default) — requires ANTHROPIC_API_KEY, fails fast without it.
  *   LLM_PROVIDER=mock                — deterministic mock, for demo/dry runs.
  *   STORAGE=local (default)          — writes pipeline/output/*.json.
- *   STORAGE=supabase                 — skeleton, throws until implemented
+ *   STORAGE=supabase                 — writes the real Supabase schema
  *                                      (requires SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY).
+ *                                      Implemented (storage/supabase.ts) but
+ *                                      never yet run against a live project —
+ *                                      verified only with a mocked-client
+ *                                      unit test until a real one exists.
  *   MAX_ARTICLES=<n>                 — optional cap for cheaper runs.
  *   USE_BATCH_API=true               — use the Anthropic Batch API for the
  *                                      rewrite stage (~50% cheaper, but
@@ -52,7 +56,7 @@ function buildLLM(): LLMProvider {
 function buildStorage(): StorageAdapter {
   const storage = process.env.STORAGE ?? "local";
   if (storage === "local") return new LocalFileStorageAdapter();
-  if (storage === "supabase") return new SupabaseStorageAdapter(); // skeleton — throws on use
+  if (storage === "supabase") return new SupabaseStorageAdapter(); // throws only if SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY missing
   throw new Error(`[pipeline] unknown STORAGE "${storage}" (expected "local" or "supabase")`);
 }
 
