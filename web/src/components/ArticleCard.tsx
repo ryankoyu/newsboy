@@ -7,6 +7,7 @@ import { CategoryTag } from "@/components/CategoryTag";
 import { LevelBadge } from "@/components/LevelBadge";
 import { ReadTimeMeta } from "@/components/ReadTimeMeta";
 import { SourceCountBadge } from "@/components/SourceCountBadge";
+import { countUniqueOutlets } from "@/lib/sourceOutlets";
 import { useSession } from "@/lib/useSession";
 
 /**
@@ -86,7 +87,7 @@ export function ArticleCard({ article }: { article: ArticleWithDetails }) {
           {preview}
         </p>
       )}
-      <SourceCountBadge count={article.sources.length} />
+      <SourceCountBadge count={countUniqueOutlets(article.sources)} />
       {isRead && (
         <div
           style={{

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Source } from "@/lib/types";
+import { groupSourcesByOutlet } from "@/lib/sourceOutlets";
 
 /**
  * Sources section — a3-ui-ux.md §2-2 point 7. Required in MVP (copyright/
@@ -11,10 +12,17 @@ import type { Source } from "@/lib/types";
  * cross-checked across N outlets, rewritten from scratch (see
  * docs/news-sourcing-strategy.md §2-3). No superlatives, no claims we can't
  * back with the seed data's own source_count.
+ *
+ * docs/feature-status.md G2 fix (2026-07-17): "N개 매체" must count distinct
+ * outlets, not raw source rows — two feeds from the same outlet (e.g. two
+ * Guardian sections) are one outlet. Sources are grouped by outlet domain
+ * (web/src/lib/sourceOutlets.ts) for both the count and the list display;
+ * every article link is still kept, just nested under its outlet.
  */
 export function SourcesSection({ sources }: { sources: Source[] }) {
   if (sources.length === 0) return null;
-  const n = sources.length;
+  const groups = groupSourcesByOutlet(sources);
+  const n = groups.length;
 
   return (
     <section
@@ -68,21 +76,37 @@ export function SourcesSection({ sources }: { sources: Source[] }) {
         This story is based on:
       </p>
       <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-        {sources.map((s) => (
-          <li key={s.id} style={{ margin: "var(--sp-1) 0" }}>
-            <a
-              href={s.url}
-              target="_blank"
-              rel="noopener noreferrer"
+        {groups.map((g) => (
+          <li key={g.domain} style={{ margin: "var(--sp-2) 0" }}>
+            <span
               style={{
                 fontFamily: "var(--font-ui)",
                 fontSize: "var(--fs-sm)",
-                color: "var(--color-link)",
-                textDecoration: "none",
+                fontWeight: 600,
+                color: "var(--color-text)",
               }}
             >
-              {s.outlet ?? new URL(s.url).hostname} <span aria-hidden>↗</span>
-            </a>
+              {g.label}
+            </span>
+            <ul style={{ listStyle: "none", margin: "var(--sp-1) 0 0", padding: "0 0 0 var(--sp-3)" }}>
+              {g.sources.map((s) => (
+                <li key={s.id} style={{ margin: "2px 0" }}>
+                  <a
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontFamily: "var(--font-ui)",
+                      fontSize: "var(--fs-sm)",
+                      color: "var(--color-link)",
+                      textDecoration: "none",
+                    }}
+                  >
+                    {s.title ?? s.outlet ?? g.label} <span aria-hidden>↗</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>

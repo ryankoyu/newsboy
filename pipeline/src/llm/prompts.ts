@@ -19,9 +19,26 @@ export const FABRICATION_GUARDRAIL =
 
 export const LEVEL_TARGETS: Record<"A2" | "B1" | "B2", string> = {
   A2: "150-180 words, short simple sentences, present/simple past tense, common vocabulary only",
-  B1: "~300 words, compound sentences, moderate vocabulary, clear cause-effect connectors",
+  B1: "280-320 words, compound sentences, moderate vocabulary, clear cause-effect connectors",
   B2: "450-520 words, subordinate clauses allowed, richer vocabulary, but avoid C1-level idioms",
 };
+
+/**
+ * docs/feature-status.md G6: real API production shipped EVERY B2 version
+ * under the 450-520 target (334-447 words) despite LEVEL_TARGETS already
+ * stating the range — a single number mentioned once was not forceful
+ * enough. This is a separate, harder-worded instruction appended after the
+ * per-level targets so word count reads as a hard requirement, not a
+ * suggestion the model can trade off against "richer vocabulary."
+ */
+const WORD_COUNT_ENFORCEMENT =
+  "CRITICAL — word count is a hard requirement, not a suggestion: each level's word count " +
+  "range above is a range you must land INSIDE, and the minimum is a floor you must reach, " +
+  "not a ceiling to stay safely under. Stopping early because the story \"said everything\" " +
+  "is a defect — use the full range to add more supporting detail, context, or explanation " +
+  "from the given facts (never invented ones) rather than ending short. Before finishing, " +
+  "count your own words; if you are under the minimum for the requested level, keep writing " +
+  "using more of the facts provided until you are within range.";
 
 const WORD_RULES =
   "CRITICAL: every word you select MUST actually appear in the article body you just wrote " +
@@ -38,7 +55,11 @@ const WORD_RULES =
   "normal vocabulary, KEEP that word in the text rather than deleting the information, and " +
   "mark it in `words` with \"isKey\": true (0-2 such words per level — only ones that are " +
   "both hard for that level AND essential to understanding the article; do not overuse). " +
-  "Ordinary curated words should omit isKey or set it to false.";
+  "Ordinary curated words should omit isKey or set it to false. " +
+  "Every word also needs a \"pos\" (part of speech) using one of these exact short forms: " +
+  '"n." (noun), "v." (verb), "adj." (adjective), "adv." (adverb), "phrase" (multi-word ' +
+  "terms, idioms, or phrasal verbs). Pick whichever applies to the sense used in THIS " +
+  "article's sentence — do not guess a different sense.";
 
 /**
  * Fixed system prompt for the COMBINED (all-3-levels-in-one-call) generation
@@ -66,14 +87,14 @@ export const COMBINED_SYSTEM_PROMPT =
   "truncate or pad one level to produce another. " +
   `Level A2 target: ${LEVEL_TARGETS.A2}. ` +
   `Level B1 target: ${LEVEL_TARGETS.B1}. ` +
-  `Level B2 target: ${LEVEL_TARGETS.B2}. ` +
+  `Level B2 target: ${LEVEL_TARGETS.B2}. ${WORD_COUNT_ENFORCEMENT} ` +
   "Each level needs its own brand-new headline (never reuse a source headline, and the " +
   "three levels' headlines do not need to match each other word-for-word). Each level also " +
   "needs its own 5 key vocabulary words with Korean meaning, an example sentence, and a " +
   `pronunciation hint. ${WORD_RULES} ` +
   'Respond with strict JSON only, in exactly this shape: {"A2": {"title": "...", ' +
   '"content": "...", "wordCount": 0, "words": [{"term": "...", "meaningKo": "...", ' +
-  '"example": "...", "pronunciation": "...", "sortOrder": 0, "isKey": false}]}, ' +
+  '"example": "...", "pronunciation": "...", "sortOrder": 0, "isKey": false, "pos": "n."}]}, ' +
   '"B1": {same shape as A2}, "B2": {same shape as A2}}. Top-level keys must be exactly ' +
   '"A2", "B1", "B2" — no other wrapping object, no markdown fences.';
 
@@ -86,12 +107,12 @@ export const SINGLE_LEVEL_SYSTEM_PROMPT =
   `${FABRICATION_GUARDRAIL} ` +
   "Write a completely new English news article at the CEFR level given in the request, " +
   "using ONLY the facts provided — do not add outside facts. Target word counts: " +
-  `A2: ${LEVEL_TARGETS.A2}. B1: ${LEVEL_TARGETS.B1}. B2: ${LEVEL_TARGETS.B2}. ` +
+  `A2: ${LEVEL_TARGETS.A2}. B1: ${LEVEL_TARGETS.B1}. B2: ${LEVEL_TARGETS.B2}. ${WORD_COUNT_ENFORCEMENT} ` +
   "Write a brand-new headline (never reuse a source headline). Also produce 5 key " +
   `vocabulary words with Korean meaning, an example sentence, and a pronunciation hint. ${WORD_RULES} ` +
   'Respond with strict JSON only: {"title": "...", "content": "...", "wordCount": 0, ' +
   '"words": [{"term": "...", "meaningKo": "...", "example": "...", "pronunciation": "...", ' +
-  '"sortOrder": 0, "isKey": false}]}.';
+  '"sortOrder": 0, "isKey": false, "pos": "n."}]}.';
 
 /**
  * JSON schema for output_config.format (structured outputs) — combined path.
@@ -108,8 +129,13 @@ const wordEntrySchema = {
     pronunciation: { type: "string" },
     sortOrder: { type: "integer" },
     isKey: { type: "boolean" },
+    // docs/feature-status.md G9 — part of speech. One of the short forms
+    // enumerated in the WORD_RULES instruction ("n." / "v." / "adj." /
+    // "adv." / "phrase"); enum-constrained here so structured outputs can't
+    // drift into free-text pos labels.
+    pos: { type: "string", enum: ["n.", "v.", "adj.", "adv.", "phrase"] },
   },
-  required: ["term", "meaningKo", "example", "pronunciation", "sortOrder", "isKey"],
+  required: ["term", "meaningKo", "example", "pronunciation", "sortOrder", "isKey", "pos"],
   additionalProperties: false,
 };
 

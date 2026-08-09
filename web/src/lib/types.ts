@@ -24,7 +24,7 @@ export type ArticleStatus =
 
 export type EditionStatus = "draft" | "published";
 
-export type CheckKind = "cefr" | "ngram_overlap" | "two_source" | "word_match";
+export type CheckKind = "cefr" | "ngram_overlap" | "two_source" | "word_match" | "word_count";
 
 export type FetchMethod = "full_text" | "search_summary";
 
@@ -135,6 +135,16 @@ export interface Word {
    * error or show a ruby when it's absent/false (task constraint #6).
    */
   isKey?: boolean;
+  /**
+   * docs/feature-status.md G9 ("Smart Dictionary에 품사 표기가 없다") /
+   * a3-ui-ux.md §2-3 ("품사 + 한국어 뜻"). Short abbreviation such as "n.",
+   * "v.", "adj.", "adv.", "phrase" — see pipeline/src/llm/prompts.ts for the
+   * generation instruction. Optional — no existing seed word has this field
+   * (none were backfilled; see design-decisions.md 규칙 1 "지어내지 않기"),
+   * and SmartDictionary must render fine without it (show if present, omit
+   * if absent).
+   */
+  pos?: string | null;
 }
 
 // NOTE: Quiz / QuizOption types intentionally omitted — quizzes are out of

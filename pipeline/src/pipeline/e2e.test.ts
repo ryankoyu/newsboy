@@ -90,7 +90,7 @@ describe("pipeline e2e (mock LLM, real stage functions, structural checks only)"
       for (const version of rewrite.versions) {
         const gated = await gateVersion(event.id, event.category, version, facts, event.items, llm);
         expect(gated.checks.map((c) => c.kind).sort()).toEqual(
-          ["cefr", "ngram_overlap", "two_source", "word_match"].sort(),
+          ["cefr", "ngram_overlap", "two_source", "word_match", "word_count"].sort(),
         );
         gatedVersions.push(gated);
       }
@@ -127,7 +127,9 @@ describe("pipeline e2e (mock LLM, real stage functions, structural checks only)"
       expect(article.slug).toMatch(/-\d+$/); // rank suffix present
       for (const gated of article.versions) {
         expect(gated.version.content.length).toBeGreaterThan(0);
-        expect(gated.checks.length).toBe(4);
+        // cefr, ngram_overlap, two_source, word_match, word_count — see
+        // gates/wordCount.ts (docs/feature-status.md G6).
+        expect(gated.checks.length).toBe(5);
       }
     }
 

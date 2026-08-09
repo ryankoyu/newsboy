@@ -6,9 +6,11 @@ import type { ArticleWithDetails, CefrLevel, EditionWithArticles, Word } from "@
 import { estimateReadingMinutes } from "@/lib/data";
 import { useSession, notifySessionChange } from "@/lib/useSession";
 import { READING_SCALE_VALUE, sessionStore } from "@/lib/session";
+import { isEditionPast, formatPastEditionLabel } from "@/lib/editionDate";
 import { CategoryTag } from "@/components/CategoryTag";
 import { ReadTimeMeta } from "@/components/ReadTimeMeta";
 import { SourceCountBadge } from "@/components/SourceCountBadge";
+import { countUniqueOutlets } from "@/lib/sourceOutlets";
 import { LevelSwitcher } from "@/components/LevelSwitcher";
 import { TodayProgress } from "@/components/TodayProgress";
 import { ArticleViewerBar } from "@/components/ArticleViewerBar";
@@ -160,8 +162,7 @@ export function ArticleViewer({
   // Archive (enhancement-plan.md Batch 1 #4): flag + label when this
   // article belongs to a past (non-today) edition, so the viewer never
   // implies a past brief is today's.
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const isPastEdition = Boolean(edition && edition.edition_date !== todayStr);
+  const isPastEdition = Boolean(edition && isEditionPast(edition.edition_date));
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--color-bg)" }}>
@@ -186,7 +187,7 @@ export function ArticleViewer({
         >
           <CategoryTag category={article.category} />
           <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)" }}>
-            <SourceCountBadge count={article.sources.length} />
+            <SourceCountBadge count={countUniqueOutlets(article.sources)} />
             <ReadTimeMeta minutes={minutes} />
           </div>
         </div>
@@ -265,9 +266,4 @@ export function ArticleViewer({
       </article>
     </div>
   );
-}
-
-function formatPastEditionLabel(editionDate: string): string {
-  const d = new Date(`${editionDate}T00:00:00`);
-  return d.toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
 }

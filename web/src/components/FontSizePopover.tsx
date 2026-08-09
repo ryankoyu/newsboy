@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReadingScale } from "@/lib/session";
 import { useSession } from "@/lib/useSession";
 
@@ -14,6 +14,19 @@ export function FontSizePopover() {
   const { session, refresh } = useSession();
   const [open, setOpen] = useState(false);
   const current = session.getFontSize();
+
+  // docs/feature-status.md G10: Esc must close this popover — only the
+  // outside-click scrim did before. Same pattern as SmartDictionary's Esc
+  // handling; only attached while open so it doesn't swallow Escape
+  // elsewhere on the page.
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <div style={{ position: "relative" }}>

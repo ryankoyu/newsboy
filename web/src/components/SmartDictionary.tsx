@@ -25,6 +25,14 @@ export interface DictionaryEntry {
   pronunciation: string | null;
   meaning_ko: string | null;
   example: string | null;
+  /**
+   * docs/feature-status.md G9 — part of speech ("n.", "v.", "adj." ...).
+   * Always undefined for the minimal "뜻 준비 중" card (uncatalogued words
+   * never have a pos), kept here only so the shared `Word | DictionaryEntry`
+   * union type-checks. Shown when present, omitted when absent — never
+   * invented.
+   */
+  pos?: string | null;
 }
 
 export function SmartDictionary({
@@ -172,6 +180,25 @@ export function SmartDictionary({
             margin: 0,
           }}
         >
+          {entry.pos && (
+            <span
+              lang="en"
+              style={{
+                display: "inline-block",
+                fontFamily: "var(--font-ui)",
+                fontSize: "var(--fs-xs)",
+                fontWeight: 700,
+                color: "var(--color-text-secondary)",
+                background: "var(--color-surface-alt)",
+                borderRadius: "var(--r-sm)",
+                padding: "1px var(--sp-1)",
+                marginRight: "var(--sp-2)",
+                verticalAlign: "middle",
+              }}
+            >
+              {entry.pos}
+            </span>
+          )}
           {entry.meaning_ko}
         </p>
       ) : (

@@ -201,11 +201,10 @@ function runLayer1Selection(
   // --- Pass 1: fill each category's own quota from its own candidates ------
   for (const [category, quota] of Object.entries(CATEGORY_QUOTA) as [CategorySlug, number][]) {
     const list = byCategory.get(category) ?? [];
-    let filled = 0;
-    for (const candidate of list) {
-      if (filled >= quota) break;
-      if (tryAdmit(candidate)) filled++;
-    }
+    const filled =
+      category === "world"
+        ? fillWorldQuotaWithRegionSpread(list, quota, tryAdmit, chosenIds)
+        : fillQuotaByScore(list, quota, tryAdmit);
 
     if (filled < quota) {
       for (let slot = filled + 1; slot <= quota; slot++) {
@@ -310,6 +309,57 @@ function runLayer1Selection(
       limitations: LAYER1_LIMITATIONS,
     },
   };
+}
+
+/** Plain best-score-first quota fill — used for every non-"world" category. */
+function fillQuotaByScore(
+  list: ScoredCandidate[],
+  quota: number,
+  tryAdmit: (candidate: ScoredCandidate) => boolean,
+): number {
+  let filled = 0;
+  for (const candidate of list) {
+    if (filled >= quota) break;
+    if (tryAdmit(candidate)) filled++;
+  }
+  return filled;
+}
+
+/**
+ * World-quota fill with regional spread — top10-curation.md §1 Layer 1
+ * "World 3건은 지역 분산 지향: 가능하면 서로 다른 지역(아메리카/유럽/아시아·중동/기타)에서."
+ * This is a soft preference ("지향"), not a hard cap like the same-country
+ * politics rule: for each open world slot, prefer the highest-scored
+ * remaining candidate whose region (rules.ts regionOf, keyed off the same
+ * countryGuess proxy already used for the same-country World cap) hasn't
+ * been used yet by an already-admitted world story; only fall back to the
+ * plain highest-scored remaining candidate once every represented region is
+ * already covered (or the candidate has no country signal at all, bucketed
+ * into "other" — see regionOf doc comment for that limitation).
+ */
+function fillWorldQuotaWithRegionSpread(
+  list: ScoredCandidate[],
+  quota: number,
+  tryAdmit: (candidate: ScoredCandidate) => boolean,
+  chosenIds: Set<string>,
+): number {
+  let filled = 0;
+  const usedRegions = new Set<string>();
+  let remaining = list.filter((c) => !chosenIds.has(c.cluster.id));
+
+  while (filled < quota && remaining.length > 0) {
+    const fromNewRegion = remaining.find(
+      (c) => !usedRegions.has(regionOf(c.countryGuess ?? "")),
+    );
+    const candidate = fromNewRegion ?? remaining[0];
+
+    remaining = remaining.filter((c) => c.cluster.id !== candidate.cluster.id);
+    if (tryAdmit(candidate)) {
+      filled++;
+      usedRegions.add(regionOf(candidate.countryGuess ?? ""));
+    }
+  }
+  return filled;
 }
 
 /**

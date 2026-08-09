@@ -10,7 +10,7 @@
 create type cefr_level     as enum ('A2', 'B1', 'B2');
 create type article_status as enum ('ingest', 'generated', 'review', 'approved', 'published', 'rejected');
 create type edition_status as enum ('draft', 'published');
-create type check_kind     as enum ('cefr', 'ngram_overlap', 'two_source', 'word_match'); -- 품질 게이트 종류
+create type check_kind     as enum ('cefr', 'ngram_overlap', 'two_source', 'word_match', 'word_count'); -- 품질 게이트 종류. word_count: docs/feature-status.md G6 (B2 분량 미달) 대응, 2026-07-17 추가
 
 -- =========================================================
 -- 공개 콘텐츠
@@ -132,7 +132,7 @@ create index on quiz_options (quiz_id);
 create table quality_checks (
   id          uuid primary key default gen_random_uuid(),
   version_id  uuid not null references article_versions(id) on delete cascade,
-  kind        check_kind not null,             -- 'cefr' | 'ngram_overlap' | 'two_source' | 'word_match'
+  kind        check_kind not null,             -- 'cefr' | 'ngram_overlap' | 'two_source' | 'word_match' | 'word_count'
   score       numeric,                         -- CEFR 점수 or 중복률(%)
   passed      boolean not null,
   detail      jsonb,                           -- 세부(초과 어휘 목록 등)

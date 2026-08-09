@@ -12,6 +12,7 @@ import type {
   Source,
   Word,
 } from "@/lib/types";
+import { countUniqueOutlets } from "@/lib/sourceOutlets";
 import editionsJson from "@/lib/data/seed/editions.json";
 import articlesJson from "@/lib/data/seed/articles.json";
 import articleVersionsJson from "@/lib/data/seed/article_versions.json";
@@ -153,7 +154,7 @@ describe("ArticleViewer", () => {
     });
   });
 
-  it("renders the trust notice with the article's actual source count (enhancement-plan.md Batch 1 #1)", async () => {
+  it("renders the trust notice with the article's DEDUPED outlet count, not the raw source-row count (docs/feature-status.md G2)", async () => {
     render(
       <ArticleViewer
         article={article}
@@ -163,10 +164,16 @@ describe("ArticleViewer", () => {
       />
     );
 
+    // The rank-1 seed article has 6 source ROWS but only 5 distinct outlets
+    // (two Guardian World feeds) — the trust notice must count outlets, not
+    // rows, or it overstates cross-verification.
+    const uniqueOutlets = countUniqueOutlets(article.sources);
+    expect(uniqueOutlets).toBeLessThan(article.sources.length);
+
     await waitFor(() => {
       expect(
         screen.getByText(
-          `이 기사는 ${article.sources.length}개 매체에서 교차 확인된 사실을 바탕으로 새로 작성되었습니다.`,
+          `이 기사는 ${uniqueOutlets}개 매체에서 교차 확인된 사실을 바탕으로 새로 작성되었습니다.`,
           { exact: false }
         )
       ).toBeInTheDocument();
@@ -177,7 +184,7 @@ describe("ArticleViewer", () => {
     );
   });
 
-  it("shows a '소스 N' badge matching the article's source count", async () => {
+  it("shows a '소스 N' badge matching the article's DEDUPED outlet count (docs/feature-status.md G2)", async () => {
     render(
       <ArticleViewer
         article={article}
@@ -186,8 +193,9 @@ describe("ArticleViewer", () => {
         wordsByVersion={wordsByVersion}
       />
     );
+    const uniqueOutlets = countUniqueOutlets(article.sources);
     await waitFor(() => {
-      expect(screen.getByText(`소스 ${article.sources.length}`)).toBeInTheDocument();
+      expect(screen.getByText(`소스 ${uniqueOutlets}`)).toBeInTheDocument();
     });
   });
 });

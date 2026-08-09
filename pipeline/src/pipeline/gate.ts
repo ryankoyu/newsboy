@@ -27,6 +27,7 @@ import { checkCefr } from "../gates/cefr.js";
 import { checkNgramOverlap } from "../gates/ngram.js";
 import { checkTwoSourceRule } from "../gates/twoSource.js";
 import { checkWordMatch } from "../gates/wordMatch.js";
+import { checkWordCount } from "../gates/wordCount.js";
 
 export const MAX_REWRITE_ATTEMPTS = 3;
 
@@ -38,7 +39,17 @@ export interface GatedVersionWithUsage extends GatedVersion {
 function buildFeedback(checks: QualityCheckResult[]): string {
   const failed = checks.filter((c) => !c.passed);
   return failed
-    .map((c) => `${c.kind} check failed (score=${c.score ?? "n/a"}): ${JSON.stringify(c.detail)}`)
+    .map((c) => {
+      // word_count carries a ready-made Korean feedback line (gates/wordCount.ts
+      // checkWordCount) — "현재 N단어, 목표 M~K단어" — surface it verbatim so
+      // the rewrite prompt gets a direct, unambiguous instruction instead of a
+      // raw JSON dump (docs/feature-status.md G6).
+      const detail = c.detail as Record<string, unknown> | null;
+      if (c.kind === "word_count" && typeof detail?.feedback === "string") {
+        return `word_count check failed: ${detail.feedback}`;
+      }
+      return `${c.kind} check failed (score=${c.score ?? "n/a"}): ${JSON.stringify(c.detail)}`;
+    })
     .join(" | ");
 }
 
@@ -61,6 +72,7 @@ export async function gateVersion(
     const ngramResult = checkNgramOverlap(currentVersion.content, sourceItems);
     const twoSourceResult = checkTwoSourceRule(facts);
     const wordMatchResult = checkWordMatch(currentVersion.content, currentVersion.words);
+    const wordCountResult = checkWordCount(currentVersion.content, currentVersion.level);
 
     const checks: QualityCheckResult[] = [
       {
@@ -90,6 +102,13 @@ export async function gateVersion(
         score: null,
         passed: wordMatchResult.passed,
         detail: { ...wordMatchResult.detail, unmatchedTerms: wordMatchResult.unmatchedTerms },
+      },
+      {
+        kind: "word_count",
+        level: currentVersion.level,
+        score: wordCountResult.wordCount,
+        passed: wordCountResult.passed,
+        detail: wordCountResult.detail,
       },
     ];
 

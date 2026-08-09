@@ -74,7 +74,8 @@ describe("generateAndGateAll — standard mode", () => {
       expect(draft.initialDraftMode).toBe("standard");
       expect(draft.gatedVersions.map((g) => g.version.level).sort()).toEqual(["A2", "B1", "B2"]);
       for (const gated of draft.gatedVersions) {
-        expect(gated.checks).toHaveLength(4);
+        // cefr, ngram_overlap, two_source, word_match, word_count.
+        expect(gated.checks).toHaveLength(5);
         expect(gated.retryUsage).toBeDefined();
       }
     }

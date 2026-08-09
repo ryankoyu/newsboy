@@ -239,6 +239,16 @@ export interface WordEntry {
    * absent for ordinary curated words.
    */
   isKey?: boolean;
+  /**
+   * docs/feature-status.md G9 ("Smart Dictionary에 품사 표기가 없다") /
+   * a3-ui-ux.md §2-3 ("품사 + 한국어 뜻"). Short abbreviation — "n.", "v.",
+   * "adj.", "adv.", "phrase" (see llm/prompts.ts WORD_RULES for the exact
+   * instruction given to the model). Optional: existing seed data predates
+   * this field and is NOT backfilled (design-decisions.md 규칙 1 — no
+   * inventing data that wasn't generated), so downstream code must treat
+   * this as possibly absent.
+   */
+  pos?: string;
 }
 
 export interface ArticleVersionDraft {
@@ -258,7 +268,7 @@ export interface RewriteResult {
 // [6] 품질 게이트 (gate) — maps to quality_checks
 // ---------------------------------------------------------------------------
 
-export type CheckKind = "cefr" | "ngram_overlap" | "two_source" | "word_match";
+export type CheckKind = "cefr" | "ngram_overlap" | "two_source" | "word_match" | "word_count";
 
 export interface QualityCheckResult {
   kind: CheckKind;

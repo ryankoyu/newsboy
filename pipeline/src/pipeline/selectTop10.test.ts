@@ -243,6 +243,69 @@ describe("selectTop10 — tone balance (casualty cap + non-casualty last slot)",
   });
 });
 
+describe("selectTop10 — World region spread (top10-curation.md §1: 'World 3건은 지역 분산 지향')", () => {
+  it("prefers a different region over a higher-scored same-region candidate for the 2nd/3rd world slots", async () => {
+    // Five world candidates, descending score via outletCount, spanning
+    // three regions (rules.ts REGION_BY_COUNTRY): US/CA/MX = americas,
+    // GB = europe, JP = asia. Plain score-order would pick US, CA, MX (all
+    // "americas") since none of them repeat a country and so never trip the
+    // same-country World cap — that's exactly the gap G5 described.
+    const worldCandidates: EventCluster[] = [
+      cluster({ id: "us", title: "US event alpha unfolds today", countries: ["US"], outletCount: 6, outletKeys: ["a", "b", "c", "d", "e", "f"] }),
+      cluster({ id: "ca", title: "Canada event beta unfolds today", countries: ["CA"], outletCount: 5, outletKeys: ["a", "b", "c", "d", "e"] }),
+      cluster({ id: "mx", title: "Mexico event gamma unfolds today", countries: ["MX"], outletCount: 4, outletKeys: ["a", "b", "c", "d"] }),
+      cluster({ id: "gb", title: "UK event delta unfolds today", countries: ["GB"], outletCount: 3, outletKeys: ["a", "b", "c"] }),
+      cluster({ id: "jp", title: "Japan event epsilon unfolds today", countries: ["JP"], outletCount: 2, outletKeys: ["a", "b"] }),
+    ];
+    const clusters: EventCluster[] = [
+      ...worldCandidates,
+      ...manyClusters("korea", 2, "Korea"),
+      ...manyClusters("ai-tech", 2, "AI"),
+      ...manyClusters("business", 2, "Biz"),
+      ...manyClusters("culture-sports", 1, "Culture"),
+    ];
+
+    const result = await selectTop10(clusters, llm);
+    const worldSelected = result.selected.filter((s) => s.category === "world");
+    expect(worldSelected).toHaveLength(3);
+
+    const selectedIds = new Set(worldSelected.map((s) => s.id));
+    // Region-spread should pick the highest-scored americas candidate (US),
+    // then reach past the higher-scored CA/MX (both americas, already
+    // covered) to admit GB (europe) and JP (asia) instead.
+    expect(selectedIds.has("us")).toBe(true);
+    expect(selectedIds.has("gb")).toBe(true);
+    expect(selectedIds.has("jp")).toBe(true);
+    expect(selectedIds.has("ca")).toBe(false);
+    expect(selectedIds.has("mx")).toBe(false);
+  });
+
+  it("falls back to plain score order once every available region is already represented", async () => {
+    // Only two regions exist in the whole candidate pool (americas, europe)
+    // but the world quota is 3 — the 3rd slot cannot find an unused region,
+    // so it must fall back to the next-best remaining candidate rather than
+    // leaving the slot empty or crashing.
+    const worldCandidates: EventCluster[] = [
+      cluster({ id: "us", title: "US event alpha unfolds today", countries: ["US"], outletCount: 6, outletKeys: ["a", "b", "c", "d", "e", "f"] }),
+      cluster({ id: "gb", title: "UK event delta unfolds today", countries: ["GB"], outletCount: 5, outletKeys: ["a", "b", "c", "d", "e"] }),
+      cluster({ id: "de", title: "Germany event zeta unfolds today", countries: ["DE"], outletCount: 4, outletKeys: ["a", "b", "c", "d"] }),
+    ];
+    const clusters: EventCluster[] = [
+      ...worldCandidates,
+      ...manyClusters("korea", 2, "Korea"),
+      ...manyClusters("ai-tech", 2, "AI"),
+      ...manyClusters("business", 2, "Biz"),
+      ...manyClusters("culture-sports", 1, "Culture"),
+    ];
+
+    const result = await selectTop10(clusters, llm);
+    const worldSelected = result.selected.filter((s) => s.category === "world");
+    expect(worldSelected).toHaveLength(3);
+    const selectedIds = new Set(worldSelected.map((s) => s.id));
+    expect(selectedIds).toEqual(new Set(["us", "gb", "de"]));
+  });
+});
+
 describe("selectTop10 — selection report", () => {
   it("records an outcome for every candidate and a finalOrder matching the selected ranks", async () => {
     const clusters: EventCluster[] = [
