@@ -1,6 +1,6 @@
 # PROJECT BRIEF
 
-## BRIEFLY (가칭)
+## Newsboy (구 가칭 BRIEFLY)
 
 **AI-powered Daily News Learning Platform**
 
@@ -21,7 +21,7 @@ Version 0.1 — 2026-07-10
 
 **한 줄 정의**
 
-> BRIEFLY는 매일 가장 중요한 뉴스를 사용자의 언어 수준에 맞게 재구성하여, 세상을 이해하는 가장 쉬운 방법을 제공하는 AI 기반 데일리 브리핑 플랫폼이다.
+> Newsboy(구 가칭 BRIEFLY)는 매일 가장 중요한 뉴스를 사용자의 언어 수준에 맞게 재구성하여, 세상을 이해하는 가장 쉬운 방법을 제공하는 AI 기반 데일리 브리핑 플랫폼이다.
 
 **Mission**
 

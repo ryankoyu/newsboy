@@ -14,7 +14,7 @@ const PRETENDARD_CDN_URL =
   "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css";
 
 export const metadata: Metadata = {
-  title: "BRIEFLY",
+  title: "Newsboy",
   description:
     "하루 10개 뉴스를 A2/B1/B2 레벨로 새로 써서 전하는 영어 학습 뉴스 서비스",
 };

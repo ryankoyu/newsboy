@@ -92,7 +92,7 @@ export function OnboardingFlow({
                 color: "var(--color-text)",
               }}
             >
-              BRIEFLY
+              Newsboy
             </h1>
             <p
               lang="en"

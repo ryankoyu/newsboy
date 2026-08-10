@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "우리가 뉴스를 만드는 방법 · BRIEFLY",
-  description: "BRIEFLY가 매일 아침 뉴스를 수집하고, 확인하고, 다시 쓰는 방법.",
+  title: "우리가 뉴스를 만드는 방법 · Newsboy",
+  description: "Newsboy가 매일 아침 뉴스를 수집하고, 확인하고, 다시 쓰는 방법.",
 };
 
 /**
@@ -45,7 +45,7 @@ export default function AboutPage() {
           lineHeight: "var(--lh-ui)",
         }}
       >
-        BRIEFLY의 모든 기사는 아래 네 단계를 거쳐 만들어집니다.
+        Newsboy의 모든 기사는 아래 네 단계를 거쳐 만들어집니다.
       </p>
 
       <ol

@@ -1,6 +1,6 @@
 # 기능 상태 — 단일 기준 문서 (Feature Status)
 
-> **이 문서가 BRIEFLY 기능의 단일 기준이다. 기능을 추가·변경·보류할 때마다 이 문서를 갱신한다.**
+> **이 문서가 Newsboy(구 가칭 BRIEFLY) 기능의 단일 기준이다. 기능을 추가·변경·보류할 때마다 이 문서를 갱신한다.**
 > 계획은 여러 문서(project-brief / design-decisions / a3-ui-ux / enhancement-plan / top10-curation / production-readiness)에 흩어져 있고, 그 문서들은 "그때 무엇을 정했는가"의 기록이다.
 > 이 문서는 "지금 무엇이 실제로 동작하는가"의 기록이다. 둘이 다르면 이 문서를 먼저 고친다.
 

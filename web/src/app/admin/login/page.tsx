@@ -30,7 +30,7 @@ export default async function AdminLoginPage({
             margin: 0,
           }}
         >
-          BRIEFLY 검수 콘솔
+          Newsboy 검수 콘솔
         </h1>
         <p
           style={{

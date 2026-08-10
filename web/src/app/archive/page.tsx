@@ -4,7 +4,7 @@ import { dataProvider } from "@/lib/data";
 import { EmptyState } from "@/components/EmptyState";
 
 export const metadata: Metadata = {
-  title: "지난 브리핑 · BRIEFLY",
+  title: "지난 브리핑 · Newsboy",
   description: "날짜별로 지난 브리핑 에디션을 둘러보세요.",
 };
 

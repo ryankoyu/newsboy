@@ -101,7 +101,7 @@ export function SideNav() {
         }}
       >
         <span aria-hidden>☕</span>
-        <span>BRIEFLY</span>
+        <span>Newsboy</span>
       </Link>
       {TABS.map((tab) => {
         const active = tab.match(pathname);

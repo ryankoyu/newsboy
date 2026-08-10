@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 /* =========================================================
-   BRIEFLY Design Tokens
+   Newsboy Design Tokens (구 가칭 BRIEFLY — class names below keep the
+   briefly- prefix as internal identifiers; not user-facing, not renamed)
    Source: docs/design/a3-ui-ux.md §0
    Screens are NOT implemented here — layout + tokens only.
    ========================================================= */
@@ -360,7 +361,7 @@ a {
 }
 
 /* AppHeader logo — hidden on desktop, where SideNav already carries the
-   BRIEFLY logo (Q2: duplicate logo). Visible on mobile/tablet, which have
+   Newsboy logo (Q2: duplicate logo). Visible on mobile/tablet, which have
    no side nav. */
 .briefly-header-logo {
   display: inline-flex;

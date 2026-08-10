@@ -50,7 +50,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             textDecoration: "none",
           }}
         >
-          BRIEFLY 검수 콘솔
+          Newsboy 검수 콘솔
         </Link>
         <form action={logoutAction}>
           <button
@@ -106,7 +106,7 @@ function AdminUnavailableNotice({ reason }: { reason?: "disabled" | "no-reposito
       }}
     >
       <h1 style={{ fontSize: "var(--fs-h2)", fontWeight: 700, color: "var(--color-text)", margin: 0 }}>
-        BRIEFLY 검수 콘솔
+        Newsboy 검수 콘솔
       </h1>
       <p style={{ fontSize: "var(--fs-ui)", fontWeight: 600, color: "var(--color-text)", margin: 0 }}>
         {message}
