@@ -45,6 +45,7 @@ import type {
 import type { ExtractedFact, WordEntry, CefrLevel } from "../types.js";
 import type { CallUsage } from "./cost.js";
 import { emptyUsage } from "./cost.js";
+import { extractJson } from "./json.js";
 import {
   COMBINED_OUTPUT_SCHEMA,
   COMBINED_SYSTEM_PROMPT,
@@ -64,14 +65,6 @@ const FABRICATION_GUARDRAIL =
   "Never reproduce a source's exact sentences or structure — express everything in " +
   "entirely new wording.";
 
-function extractJson<T>(text: string): T {
-  // Structured outputs (output_config.format) should make this a no-op most
-  // of the time, but Claude occasionally still wraps JSON in ```json fences —
-  // strip defensively rather than trust the format guarantee unconditionally.
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const raw = fenced ? fenced[1] : text;
-  return JSON.parse(raw.trim()) as T;
-}
 
 function usageFromResponse(response: { usage: Anthropic.Usage }): CallUsage {
   const u = response.usage;

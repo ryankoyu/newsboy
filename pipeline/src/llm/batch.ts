@@ -18,6 +18,7 @@
  */
 
 import Anthropic from "@anthropic-ai/sdk";
+import { extractJson } from "./json.js";
 import type { MessageCreateParamsNonStreaming } from "@anthropic-ai/sdk/resources/messages/messages.js";
 import type { ExtractedFact, CategorySlug, CefrLevel, WordEntry } from "../types.js";
 import type { CallUsage } from "./cost.js";
@@ -110,11 +111,7 @@ function usageFromResponse(usage: Anthropic.Usage): CallUsage {
   };
 }
 
-function extractJsonFromText<T>(text: string): T {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const raw = fenced ? fenced[1] : text;
-  return JSON.parse(raw.trim()) as T;
-}
+const extractJsonFromText = extractJson;
 
 /**
  * Submit one batch for the given requests, poll until it ends or our
