@@ -33,6 +33,8 @@ import type {
   SelectionReport,
 } from "../types.js";
 import type { LLMProvider } from "../llm/provider.js";
+import type { CallUsage } from "../llm/cost.js";
+import { computeLeadScore } from "./leadScore.js";
 import { scoreCluster } from "./score.js";
 import {
   clusterSubjectKey,
@@ -69,6 +71,8 @@ const TOTAL_SLOTS = 10;
 
 export interface Top10Result {
   selected: SelectedEvent[];
+  /** Usage of the Sonnet rationale call, when one was made. */
+  usage?: CallUsage;
   /** Events held back for the next batch due to insufficient corroboration. */
   heldBack: EventCluster[];
   /** Full rule-application record for operator review (top10-curation.md §1 Layer 1). */
@@ -262,13 +266,15 @@ function runLayer1Selection(
     }
   }
 
-  // --- Rank ordering: quota is filled by category, but within the final 10
-  // rank by score desc so the most important stories lead the edition. ------
-  chosen.sort((a, b) => b.score - a.score);
+  // --- Rank ordering: the quota decides WHICH ten run; leadScore decides
+  // which of them leads. Ordering by the selection score put the freshest
+  // Korea-tagged item on the front page regardless of reach or stakes — see
+  // leadScore.ts for the 2026-07-13 evidence. Selection itself is unchanged.
+  sortForFrontPage(chosen, now);
 
   // --- Tone/casualty balance: cap casualty stories at MAX_CASUALTY_STORIES,
   // and guarantee the LAST slot (rank 10) is non-casualty. -------------------
-  applyToneBalance(chosen, scored, chosenIds, addRejection);
+  applyToneBalance(chosen, scored, chosenIds, addRejection, now);
 
   const finalOrder = chosen.map((c) => c.cluster.id);
 
@@ -371,11 +377,24 @@ function fillWorldQuotaWithRegionSpread(
  * violation is found, rather than just dropping a slot — preserves 10 total
  * whenever a substitute exists.
  */
+/**
+ * Order the chosen ten for the front page. Sorts in place so the existing
+ * tone-balance logic, which indexes into this array, keeps working.
+ */
+function sortForFrontPage(chosen: ScoredCandidate[], now: Date): void {
+  const lead = new Map(chosen.map((c) => [c.cluster.id, computeLeadScore(c.cluster, now).total]));
+  chosen.sort(
+    (a, b) =>
+      (lead.get(b.cluster.id) ?? 0) - (lead.get(a.cluster.id) ?? 0) || b.score - a.score,
+  );
+}
+
 function applyToneBalance(
   chosen: ScoredCandidate[],
   allScored: ScoredCandidate[],
   chosenIds: Set<string>,
   addRejection: (id: string, reason: string) => void,
+  now: Date,
 ): void {
   function findReplacement(excludeCasualty: boolean): ScoredCandidate | undefined {
     return allScored
@@ -401,7 +420,7 @@ function applyToneBalance(
     chosenIds.delete(removed.cluster.id);
     chosenIds.add(replacement.cluster.id);
     chosen[worstIdx] = replacement;
-    chosen.sort((a, b) => b.score - a.score);
+    sortForFrontPage(chosen, now);
     casualtyIndices = chosen.map((c, idx) => (c.isCasualty ? idx : -1)).filter((idx) => idx >= 0);
   }
 
@@ -489,6 +508,10 @@ export async function selectTop10(
   // item, but the ranking itself is already final — this call cannot change
   // which stories were picked or their order (see module doc comment).
   let rationales = new Map<string, string>();
+  // Usage of the rationale call, surfaced so run.ts can price the select
+  // stage. Undefined when the call was skipped or failed (rationales then
+  // fall back to the rule-derived text below), and for the mock provider.
+  let llmUsage: CallUsage | undefined;
   try {
     const candidatesForLlm = chosen.map((c) => ({
       id: c.cluster.id,
@@ -497,8 +520,9 @@ export async function selectTop10(
       outletCount: c.cluster.outletCount,
       summaries: c.cluster.items.slice(0, 5).map((i) => `[${i.outlet}] ${i.title}: ${i.summary}`),
     }));
-    const llmSelections = await llm.selectTop10(candidatesForLlm);
-    rationales = new Map(llmSelections.map((s) => [s.id, s.rationale]));
+    const llmResult = await llm.selectTop10(candidatesForLlm);
+    llmUsage = llmResult.usage;
+    rationales = new Map(llmResult.selections.map((s) => [s.id, s.rationale]));
   } catch {
     // Rationale text is a nice-to-have narration, not load-bearing — if the
     // LLM call fails for any reason, fall back to a rule-derived rationale
@@ -518,6 +542,7 @@ export async function selectTop10(
 
   return {
     selected,
+    usage: llmUsage,
     heldBack: [...heldBackTwoSource, ...notSelectedEligible],
     report: {
       editionDate,

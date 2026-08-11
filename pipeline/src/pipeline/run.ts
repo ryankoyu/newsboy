@@ -24,6 +24,7 @@ import type {
   PipelineStage,
   SelectedEvent,
   StageOutcome,
+  CheckKind,
 } from "../types.js";
 import type { LLMProvider } from "../llm/provider.js";
 import type { StorageAdapter } from "../storage/adapter.js";
@@ -157,11 +158,19 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
 
     // [2] 클러스터링
     const clusters = await stage("cluster", () =>
-      clusterEvents(collected.items, { llm: options.llm }),
+      clusterEvents(collected.items, {
+        llm: options.llm,
+        onUsage: (usage) =>
+          usageLedger.record({ stage: "same_event", tier: "haiku", mode: "standard", usage }),
+      }),
     );
 
     // [3] Top 10 선정 (2소스 게이트 포함)
     const top10 = await stage("select", () => selectTop10(clusters, options.llm));
+    // The rationale call is a real Sonnet call; it went unpriced until now.
+    if (top10.usage) {
+      usageLedger.record({ stage: "select", tier: "sonnet", mode: "standard", usage: top10.usage });
+    }
 
     const eventsToProcess = options.maxArticles
       ? top10.selected.slice(0, options.maxArticles)
@@ -191,12 +200,18 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
     let resolvedEventsById = new Map<string, SelectedEvent>();
 
     try {
-      const { resolved, log: replacementLog } = await resolveUsableEvents(
+      const { resolved, log: replacementLog, extractionUsages } = await resolveUsableEvents(
         eventsToProcess,
         top10.heldBack,
         options.llm,
         log,
       );
+
+      // One record per extraction call, discarded candidates included — those
+      // cost money too, and hiding them would understate the stage.
+      for (const usage of extractionUsages) {
+        usageLedger.record({ stage: "extract", tier: "sonnet", mode: "standard", usage });
+      }
 
       resolvedEventsById = new Map(resolved.map((r) => [r.event.id, r.event]));
 
@@ -260,6 +275,11 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
     // per-event standard calls (see pipeline/generate.ts + llm/batch.ts).
     const rewriteStart = new Date().toISOString();
     let gateFailures = 0;
+    // Retry accounting. rewrite_retry is the second-largest line in the
+    // cost summary, and without these the run could say how much it spent
+    // regenerating but not what kept failing.
+    let retriesTriggered = 0;
+    const retryCauseCounts: Partial<Record<CheckKind, number>> = {};
     // Uses resolvedEventsById (post-replacement), NOT eventsToProcess — a
     // slot whose original event was dropped for insufficient corroboration
     // must resolve to its REPLACEMENT event here, or article assembly below
@@ -296,14 +316,28 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
           if (!gated.passed) gateFailures++;
           // Gate retries always use the standard (non-batch) rewrite() path
           // regardless of initialDraftMode — see generate.ts's NOTE on retries.
-          usageLedger.record({
-            stage: "rewrite_retry",
-            eventId: draft.eventId,
-            level: gated.version.level,
-            tier: "opus",
-            mode: "standard",
-            usage: gated.retryUsage,
-          });
+          for (const usage of gated.cefrJudgeUsages) {
+            usageLedger.record({ stage: "cefr_judge", tier: "haiku", mode: "standard", usage });
+          }
+          for (const reasons of gated.retryReasons) {
+            retriesTriggered++;
+            for (const kind of reasons) {
+              retryCauseCounts[kind] = (retryCauseCounts[kind] ?? 0) + 1;
+            }
+          }
+          // Only a version that was actually regenerated gets a retry row.
+          // Recording one per version regardless made the summary read
+          // "rewrite_retry: 30 calls" for a run with 13 real retry calls.
+          if (gated.rewriteAttempts > 1) {
+            usageLedger.record({
+              stage: "rewrite_retry",
+              eventId: draft.eventId,
+              level: gated.version.level,
+              tier: "opus",
+              mode: "standard",
+              usage: gated.retryUsage,
+            });
+          }
           gatedVersions.push({
             version: gated.version,
             checks: gated.checks,
@@ -350,6 +384,8 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
         detail: {
           versionsGated: articles.length * 3,
           versionsFlaggedForHumanReview: gateFailures,
+          retriesTriggered,
+          retryCauses: retryCauseCounts,
         },
       });
     } catch (err) {
