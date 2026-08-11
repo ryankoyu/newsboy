@@ -4,7 +4,14 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import type { CandidateReportEntry, CefrLevel, PipelineArticle, PipelineEdition } from "@/lib/admin/pipelineTypes";
 import { ALL_CHECK_KINDS, checkBadgeState, deriveGateStatus, findCheck, type CheckBadgeState } from "@/lib/admin/gateStatus";
-import { approveArticleAction, excludeArticleAction, publishEditionAction, resetArticleDecisionAction } from "../actions";
+import {
+  approveArticleAction,
+  excludeArticleAction,
+  publishEditionAction,
+  resetArticleDecisionAction,
+  setLeadArticleAction,
+  approveAllPendingAction,
+} from "../actions";
 
 const CHECK_LABEL: Record<string, string> = {
   cefr: "CEFR",
@@ -83,9 +90,50 @@ export function ReviewClient({
   const [publishErr, setPublishErr] = useState<string | null>(null);
 
   const articles = [...edition.articles].sort((a, b) => a.rankInEdition - b.rankInEdition);
+  // The desk's front-page pick, if any. Without one the pipeline's rank 1
+  // leads, which is what the reader app shows today.
+  const leadId = edition.leadArticleId ?? null;
+  const effectiveLeadId =
+    leadId ??
+    articles.find((a) => (a.reviewDecision ?? "pending") !== "excluded")?.id ??
+    null;
   const approvedCount = articles.filter((a) => a.reviewDecision === "approved").length;
   const excludedCount = articles.filter((a) => a.reviewDecision === "excluded").length;
   const pendingCount = articles.length - approvedCount - excludedCount;
+
+  function handleApproveAll() {
+    setPublishErr(null);
+    setPublishMsg(null);
+    if (pendingCount === 0) {
+      setPublishErr("대기 중인 기사가 없습니다.");
+      return;
+    }
+    // Bulk approval is a convenience, not a bypass: the confirm spells out
+    // what it will not touch.
+    if (
+      !window.confirm(
+        `대기 중인 ${pendingCount}건을 한 번에 승인합니다.` +
+          "\n보류(held) 기사와 이미 제외한 기사는 건드리지 않습니다.\n계속할까요?"
+      )
+    ) {
+      return;
+    }
+    startTransition(async () => {
+      const res = await approveAllPendingAction(edition.editionDate);
+      if (!res.ok) {
+        setPublishErr(res.error ?? "전체 승인에 실패했습니다.");
+        return;
+      }
+      const skipped = res.skipped ?? [];
+      const detail = skipped
+        .map((x) => `#${x.rankInEdition} ${x.reason}`)
+        .join(", ");
+      setPublishMsg(
+        `${res.approved}건 승인` +
+          (skipped.length > 0 ? ` · ${skipped.length}건 건너뜀 (${detail})` : "")
+      );
+    });
+  }
 
   function handlePublish() {
     if (approvedCount === 0) {
@@ -126,6 +174,25 @@ export function ReviewClient({
           <div style={{ fontSize: "var(--fs-sm)", color: "var(--color-text-secondary)", marginBottom: 6 }}>
             승인 {approvedCount} · 제외 {excludedCount} · 대기 {pendingCount} / 전체 {articles.length}
           </div>
+          {/* Saves clicks on a long edition; the confirm states what it skips. */}
+          <button
+            type="button"
+            onClick={handleApproveAll}
+            disabled={pending || pendingCount === 0}
+            style={{
+              padding: "var(--sp-3) var(--sp-5)",
+              borderRadius: "var(--r-sm)",
+              border: "1px solid var(--color-border-strong)",
+              background: "var(--color-surface)",
+              color: pendingCount === 0 ? "var(--color-text-muted)" : "var(--color-text)",
+              fontFamily: "var(--font-ui)",
+              fontSize: "var(--fs-ui)",
+              fontWeight: 600,
+              cursor: pending || pendingCount === 0 ? "not-allowed" : "pointer",
+            }}
+          >
+            {`전체 승인 (${pendingCount}건)`}
+          </button>
           <button
             type="button"
             onClick={handlePublish}
@@ -162,6 +229,8 @@ export function ReviewClient({
             editionDate={edition.editionDate}
             article={a}
             selection={selectionByArticleId[a.id]}
+            isLead={a.id === effectiveLeadId}
+            leadIsExplicit={a.id === leadId}
           />
         ))}
       </div>
@@ -173,10 +242,16 @@ function ArticleCard({
   editionDate,
   article,
   selection,
+  isLead,
+  leadIsExplicit,
 }: {
   editionDate: string;
   article: PipelineArticle;
   selection?: CandidateReportEntry & { similarity: number };
+  /** This article currently leads the edition. */
+  isLead: boolean;
+  /** The lead came from a desk decision rather than the pipeline's order. */
+  leadIsExplicit: boolean;
 }) {
   const [level, setLevel] = useState<CefrLevel>("A2");
   const [reasonOpen, setReasonOpen] = useState(false);
@@ -209,6 +284,14 @@ function ArticleCard({
     });
   }
 
+  function setLead(next: string | null) {
+    setErr(null);
+    startTransition(async () => {
+      const res = await setLeadArticleAction(editionDate, next);
+      if (!res.ok) setErr(res.error ?? "1면 지정 실패");
+    });
+  }
+
   function reset() {
     setErr(null);
     startTransition(async () => {
@@ -228,8 +311,24 @@ function ArticleCard({
     >
       <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--sp-3)", flexWrap: "wrap" }}>
         <div style={{ minWidth: 260, flex: 1 }}>
-          <div style={{ fontSize: "var(--fs-xs)", color: "var(--color-text-muted)", fontWeight: 700 }}>
-            #{article.rankInEdition} · {article.category}
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)" }}>
+            <span style={{ fontSize: "var(--fs-xs)", color: "var(--color-text-muted)", fontWeight: 700 }}>
+              #{article.rankInEdition} · {article.category}
+            </span>
+            {isLead && (
+              <span
+                style={{
+                  fontSize: "var(--fs-xs)",
+                  fontWeight: 700,
+                  background: "var(--color-accent)",
+                  color: "var(--color-text-invert)",
+                  borderRadius: "var(--r-pill)",
+                  padding: "2px var(--sp-2)",
+                }}
+              >
+                1면{leadIsExplicit ? "" : " (자동)"}
+              </span>
+            )}
           </div>
           <p style={{ margin: "4px 0 0", fontSize: "var(--fs-ui)", color: "var(--color-text)", fontWeight: 600 }}>
             {article.eventSummary}
@@ -443,6 +542,30 @@ function ArticleCard({
           }}
         >
           제외
+        </button>
+        {/* The pipeline ranks the ten; the desk decides which one leads. */}
+        <button
+          type="button"
+          onClick={() => setLead(leadIsExplicit ? null : article.id)}
+          disabled={pending || gate.status === "held" || decision === "excluded"}
+          style={{
+            padding: "var(--sp-2) var(--sp-4)",
+            borderRadius: "var(--r-sm)",
+            border: "1px solid var(--color-border-strong)",
+            background: leadIsExplicit ? "var(--color-accent-soft)" : "transparent",
+            color:
+              gate.status === "held" || decision === "excluded"
+                ? "var(--color-text-muted)"
+                : "var(--color-text)",
+            fontFamily: "var(--font-ui)",
+            fontSize: "var(--fs-sm)",
+            cursor:
+              pending || gate.status === "held" || decision === "excluded"
+                ? "not-allowed"
+                : "pointer",
+          }}
+        >
+          {leadIsExplicit ? "1면 해제" : "1면으로"}
         </button>
         {decision !== "pending" && (
           <button

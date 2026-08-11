@@ -8,7 +8,7 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { deriveGateStatus } from "./gateStatus";
 import { editionFilePath, PIPELINE_EDITIONS_DIR } from "@/lib/config/paths";
-import type { EditionListItem, EditionRepository } from "./editionRepository";
+import type { EditionListItem, EditionRepository, BulkApproveResult } from "./editionRepository";
 import type { PipelineEdition, ReviewDecision } from "./pipelineTypes";
 
 async function readEditionFile(editionDate: string): Promise<PipelineEdition | null> {
@@ -95,6 +95,71 @@ export const localFsEditionRepository: EditionRepository = {
 
     await writeEditionFile(edition);
     return edition;
+  },
+
+  async approveAllPending(editionDate) {
+    const edition = await readEditionFile(editionDate);
+    if (!edition) throw new Error(`Edition not found: ${editionDate}`);
+
+    const skipped: BulkApproveResult["skipped"] = [];
+    let approved = 0;
+
+    for (const article of edition.articles) {
+      const decision = article.reviewDecision ?? "pending";
+      // An operator's own exclusion is a decision, not an absence of one —
+      // a bulk approve must not quietly undo it.
+      if (decision === "excluded") {
+        skipped.push({
+          id: article.id,
+          rankInEdition: article.rankInEdition,
+          reason: "이미 제외함",
+        });
+        continue;
+      }
+      if (decision === "approved") continue;
+      // Same bar as approving one by one: a held article needs a human to
+      // resolve the gate failure first.
+      if (deriveGateStatus(article).status === "held") {
+        skipped.push({
+          id: article.id,
+          rankInEdition: article.rankInEdition,
+          reason: "보류(held) — 게이트 미통과",
+        });
+        continue;
+      }
+      article.reviewDecision = "approved";
+      article.excludeReason = undefined;
+      approved += 1;
+    }
+
+    // One write for the whole batch rather than one per article.
+    await writeEditionFile(edition);
+    return { approved, skipped };
+  },
+  async setLeadArticle(editionDate, articleId) {
+    const edition = await readEditionFile(editionDate);
+    if (!edition) throw new Error(`Edition not found: ${editionDate}`);
+
+    if (articleId === null) {
+      edition.leadArticleId = null;
+      await writeEditionFile(edition);
+      return;
+    }
+
+    const article = edition.articles.find((x) => x.id === articleId);
+    if (!article) throw new Error(`Article not found in edition ${editionDate}: ${articleId}`);
+
+    // The front page is the most-read slot in the edition, so it takes the
+    // same bars as approval: a gate-held or excluded story cannot lead.
+    if (deriveGateStatus(article).status === "held") {
+      throw new Error("보류(held) 상태인 기사는 1면으로 지정할 수 없습니다.");
+    }
+    if (article.reviewDecision === "excluded") {
+      throw new Error("제외한 기사는 1면으로 지정할 수 없습니다.");
+    }
+
+    edition.leadArticleId = articleId;
+    await writeEditionFile(edition);
   },
 
   async setEditionStatus(editionDate, status, publishedAt) {

@@ -18,6 +18,12 @@ export interface EditionListItem {
   publishedAt?: string;
 }
 
+export interface BulkApproveResult {
+  approved: number;
+  /** Articles deliberately left alone, with the reason. */
+  skipped: Array<{ id: string; rankInEdition: number; reason: string }>;
+}
+
 export interface EditionRepository {
   /** All editions found on disk, newest date first. */
   listEditions(): Promise<EditionListItem[]>;
@@ -33,6 +39,21 @@ export interface EditionRepository {
   ): Promise<PipelineEdition>;
 
   /** Marks the edition published (or reverts to draft — used by the manual verification/rollback step). */
+  /**
+   * Put one article on the front page, or clear the override with null.
+   * Rejects an article that is excluded or gate-held.
+   */
+  setLeadArticle(editionDate: string, articleId: string | null): Promise<void>;
+
+  /**
+   * Approve every article still awaiting a decision.
+   *
+   * Skips gate-held articles (they cannot be approved individually either)
+   * and leaves already-excluded ones excluded — a bulk action must not
+   * silently reverse a decision the operator already made.
+   */
+  approveAllPending(editionDate: string): Promise<BulkApproveResult>;
+
   setEditionStatus(
     editionDate: string,
     status: PipelineEdition["status"],

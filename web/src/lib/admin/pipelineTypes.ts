@@ -109,6 +109,17 @@ export interface PipelineEdition {
   articles: PipelineArticle[];
   /** Admin-only, additive. Set when the edition is published from the console. */
   publishedAt?: string;
+  /**
+   * Admin-only, additive. The article the desk put on the front page,
+   * overriding the pipeline's own rank-1 pick.
+   *
+   * The pipeline's ranking is a proposal; choosing the lead is the desk's
+   * call. Stored as an id rather than by renumbering ranks, because article
+   * ids are derived from the pipeline rank and must stay stable across
+   * re-publishes. Unset (or pointing at an article that ends up excluded)
+   * means the pipeline's order stands.
+   */
+  leadArticleId?: string | null;
 }
 
 // ---------------------------------------------------------------------------
