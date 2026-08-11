@@ -42,6 +42,13 @@ interface RawLevelOutput {
 export interface BatchGenerateSuccess {
   eventId: string;
   versions: Record<CefrLevel, RawLevelOutput>;
+  /**
+   * Beats every level was written to. Carried through the batch path as well
+   * as the standard one — production runs on the batch path (scheduled CI
+   * enables it), so a plan that only survived standard calls would be missing
+   * exactly where it matters.
+   */
+  paragraphPlan: string[];
   usage: CallUsage;
 }
 
@@ -206,10 +213,17 @@ export async function runGenerateAllLevelsBatch(
         continue;
       }
       try {
-        const parsed = extractJsonFromText<Record<CefrLevel, RawLevelOutput>>(textBlock.text);
+        const parsed = extractJsonFromText<
+          Record<CefrLevel, RawLevelOutput> & { paragraphPlan?: unknown }
+        >(textBlock.text);
         succeeded.push({
           eventId: result.custom_id,
           versions: parsed,
+          paragraphPlan: Array.isArray(parsed.paragraphPlan)
+            ? parsed.paragraphPlan.filter(
+                (x): x is string => typeof x === "string" && x.trim() !== "",
+              )
+            : [],
           usage: usageFromResponse(message.usage),
         });
       } catch (err) {

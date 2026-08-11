@@ -1,5 +1,5 @@
-import { SettingsView } from "@/components/SettingsView";
+import { SkinnedSettingsView } from "@/components/newsprint/SkinnedSettingsView";
 
 export default function SettingsPage() {
-  return <SettingsView />;
+  return <SkinnedSettingsView />;
 }

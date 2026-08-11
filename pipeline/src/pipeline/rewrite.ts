@@ -27,6 +27,8 @@ const LEVELS: CefrLevel[] = ["A2", "B1", "B2"];
 
 export interface RewriteAllLevelsResult extends RewriteResult {
   usage: CallUsage;
+  /** Beats all three levels were written to; empty when the model omitted it. */
+  paragraphPlan: string[];
 }
 
 export async function rewriteAllLevels(
@@ -51,5 +53,5 @@ export async function rewriteAllLevels(
   });
   if (result.usage) usage = addUsage(usage, result.usage);
 
-  return { eventId, versions, usage };
+  return { eventId, versions, usage, paragraphPlan: result.paragraphPlan };
 }

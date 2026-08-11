@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { dataProvider } from "@/lib/data";
 import type { CefrLevel, Word } from "@/lib/types";
-import { ArticleViewer } from "@/components/ArticleViewer";
+import { SkinnedArticleViewer } from "@/components/newsprint/SkinnedArticleViewer";
 
 const VALID_LEVELS: CefrLevel[] = ["A2", "B1", "B2"];
 
@@ -40,7 +40,7 @@ export default async function ArticlePage({
   }
 
   return (
-    <ArticleViewer
+    <SkinnedArticleViewer
       article={article}
       initialLevel={requestedLevel}
       hasExplicitLevel={hasExplicitLevel}

@@ -22,6 +22,7 @@
 import { randomUUID } from "node:crypto";
 import type { EventCluster, RawItem } from "../types.js";
 import type { LLMProvider } from "../llm/provider.js";
+import type { CallUsage } from "../llm/cost.js";
 
 const STOPWORDS = new Set([
   "the", "a", "an", "and", "or", "but", "of", "in", "on", "at", "to", "for",
@@ -64,6 +65,12 @@ function withinTimeWindow(a: RawItem, b: RawItem): boolean {
 interface ClusterOptions {
   /** Optional — used only for boundary-case (same-event?) judgment calls. */
   llm?: LLMProvider;
+  /**
+   * Called once per boundary judgment that actually hit the API, so the
+   * caller can price the cluster stage. Optional: clustering behaves
+   * identically without it.
+   */
+  onUsage?: (usage: CallUsage) => void;
 }
 
 export async function clusterEvents(
@@ -110,11 +117,15 @@ export async function clusterEvents(
 
     if (boundaryClusterIdx >= 0 && options.llm) {
       const candidate = clusters[boundaryClusterIdx];
-      const isSameEvent = await options.llm.judgeSameEvent({
+      const { sameEvent, usage } = await options.llm.judgeSameEvent({
         a: { title: candidate.items[0].title, summary: candidate.items[0].summary },
         b: { title: item.title, summary: item.summary },
       });
-      if (isSameEvent) {
+      // One Haiku call per boundary-case item — the most frequent LLM call in
+      // the pipeline, and previously invisible in the cost summary because
+      // this method returned a bare boolean.
+      if (usage) options.onUsage?.(usage);
+      if (sameEvent) {
         candidate.items.push(item);
         candidate.tokenSets.push(itemTokens);
         continue;

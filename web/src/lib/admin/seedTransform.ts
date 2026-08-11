@@ -86,9 +86,25 @@ export function buildSeedBundle(
   const editionId = `edition-${date}`;
   const warnings: string[] = [];
 
-  const approved: PipelineArticle[] = edition.articles
+  const approvedByPipelineRank: PipelineArticle[] = edition.articles
     .filter((a) => a.reviewDecision === "approved")
     .sort((a, b) => a.rankInEdition - b.rankInEdition);
+
+  // The desk can put any approved article on the front page. Applied as an
+  // ordering, not a renumbering: article ids stay derived from the PIPELINE
+  // rank so re-publishing after a lead change replaces the same rows rather
+  // than orphaning them. A lead pointing at an article that was later
+  // excluded simply does not apply, and the pipeline order stands.
+  const leadId = edition.leadArticleId ?? null;
+  const lead = leadId ? approvedByPipelineRank.find((a) => a.id === leadId) : undefined;
+  if (leadId && !lead) {
+    warnings.push(
+      `1면으로 지정된 기사(${leadId})가 승인 목록에 없어 무시했습니다 — 파이프라인 순서를 사용합니다.`
+    );
+  }
+  const approved: PipelineArticle[] = lead
+    ? [lead, ...approvedByPipelineRank.filter((a) => a.id !== lead.id)]
+    : approvedByPipelineRank;
 
   const articles: SeedRow[] = [];
   const articleVersions: SeedRow[] = [];
@@ -97,8 +113,10 @@ export function buildSeedBundle(
   const sources: SeedRow[] = [];
   const factSources: SeedRow[] = [];
 
-  for (const article of approved) {
+  for (const [displayIndex, article] of approved.entries()) {
+    // Identity comes from the pipeline rank; presentation from the desk order.
     const rank = article.rankInEdition;
+    const displayRank = displayIndex + 1;
     const articleId = `article-${date}-${rank}`;
     const categorySlug = CATEGORY_SLUG_MAP[article.category];
     const categoryId = categorySlug ? categoryIdBySlug[categorySlug] : undefined;
@@ -125,7 +143,7 @@ export function buildSeedBundle(
       category_id: categoryId ?? null,
       slug,
       event_summary: article.eventSummary,
-      rank_in_edition: rank,
+      rank_in_edition: displayRank,
       status: "published",
       published_at: publishedAtIso,
       created_at: article.createdAt,

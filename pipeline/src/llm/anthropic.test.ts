@@ -140,7 +140,9 @@ describe("AnthropicLLMProvider.generateAllLevels (combined single-call path)", (
 
     const config = captured[0].output_config as { format: { type: string; schema: Record<string, unknown> } };
     expect(config.format.type).toBe("json_schema");
-    expect(config.format.schema.required).toEqual(["A2", "B1", "B2"]);
+    // paragraphPlan is required too: the three levels are kept comparable by
+    // sharing a beat list, and a plan the model may omit is no plan at all.
+    expect(config.format.schema.required).toEqual(["paragraphPlan", "A2", "B1", "B2"]);
   });
 
   it("returns the call's usage for cost tracking", async () => {

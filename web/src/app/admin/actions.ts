@@ -81,3 +81,51 @@ export async function logoutAction(): Promise<void> {
   await clearAdminSessionCookie();
   redirect("/admin/login");
 }
+
+/**
+ * Put one article on the front page, or clear the override with null.
+ *
+ * The pipeline's ranking is a proposal — leadScore.ts orders the ten by reach
+ * and stakes — but which story leads is an editorial call, so the desk gets
+ * the final say here.
+ */
+export async function setLeadArticleAction(
+  editionDate: string,
+  articleId: string | null
+): Promise<ActionResult> {
+  await requireAdminSession();
+  try {
+    await localFsEditionRepository.setLeadArticle(editionDate, articleId);
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+  revalidatePath(`/admin/${editionDate}`);
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+export interface BulkApproveActionResult extends ActionResult {
+  approved?: number;
+  skipped?: Array<{ id: string; rankInEdition: number; reason: string }>;
+}
+
+/**
+ * Approve every article still awaiting a decision.
+ *
+ * Held articles are skipped and already-excluded ones are left excluded, so
+ * this saves clicks without reversing a judgement the operator has made or
+ * bypassing the gate bar that individual approval enforces.
+ */
+export async function approveAllPendingAction(
+  editionDate: string
+): Promise<BulkApproveActionResult> {
+  await requireAdminSession();
+  try {
+    const res = await localFsEditionRepository.approveAllPending(editionDate);
+    revalidatePath(`/admin/${editionDate}`);
+    revalidatePath("/admin");
+    return { ok: true, approved: res.approved, skipped: res.skipped };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}

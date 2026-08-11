@@ -32,7 +32,7 @@ export async function extractFacts(
   event: EventCluster,
   llm: LLMProvider,
 ): Promise<FactExtractionResult> {
-  const rawFacts = await llm.extractFacts({
+  const { facts: rawFacts, usage } = await llm.extractFacts({
     eventId: event.id,
     category: event.category,
     title: event.title,
@@ -42,6 +42,7 @@ export async function extractFacts(
   return {
     eventId: event.id,
     facts: enforceTwoSourceRule(rawFacts),
+    usage,
   };
 }
 

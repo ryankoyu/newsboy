@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "paths": {
+      "@/lib/data": ["../src/lib/data/index.ts"],
+      "@/*": ["../src/*"],
+      "next/link": ["./shims/next-link.tsx"],
+      "next/navigation": ["./shims/next-navigation.tsx"]
+    }
+  }
+}

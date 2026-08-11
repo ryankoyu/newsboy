@@ -1,5 +1,5 @@
 import { dataProvider } from "@/lib/data";
-import { HomeView } from "@/components/HomeView";
+import { SkinnedHomeView } from "@/components/newsprint/SkinnedHomeView";
 import { isEditionPast } from "@/lib/editionDate";
 
 export default async function Home() {
@@ -9,5 +9,5 @@ export default async function Home() {
   // does, so a stale/late edition shows the same "past brief" state on
   // both screens instead of contradicting each other.
   const isPastEdition = Boolean(edition && isEditionPast(edition.edition_date));
-  return <HomeView edition={edition} isPastEdition={isPastEdition} />;
+  return <SkinnedHomeView edition={edition} isPastEdition={isPastEdition} />;
 }

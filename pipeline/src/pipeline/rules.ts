@@ -47,8 +47,7 @@ const POLITICAL_KEYWORDS = [
 ];
 
 export function isPoliticalStory(cluster: EventCluster): boolean {
-  const text = clusterText(cluster).toLowerCase();
-  return POLITICAL_KEYWORDS.some((kw) => text.includes(kw));
+  return containsWord(clusterText(cluster), POLITICAL_KEYWORDS);
 }
 
 /**
@@ -73,10 +72,14 @@ export function politicalCountryGuess(cluster: EventCluster): string | null {
 
 const CASUALTY_KEYWORDS = [
   "dead",
+  "die",
   "dies",
   "died",
   "death",
   "deaths",
+  "fatalities",
+  "injured",
+  "wounded",
   "killed",
   "killing",
   "kills",
@@ -93,6 +96,8 @@ const CASUALTY_KEYWORDS = [
   "earthquake",
   "flood",
   "wildfire",
+  "fire",
+  "blaze",
   "explosion",
   "crash",
   "fatal",
@@ -102,8 +107,7 @@ const CASUALTY_KEYWORDS = [
 ];
 
 export function isCasualtyStory(cluster: EventCluster): boolean {
-  const text = clusterText(cluster).toLowerCase();
-  return CASUALTY_KEYWORDS.some((kw) => text.includes(kw));
+  return containsWord(clusterText(cluster), CASUALTY_KEYWORDS);
 }
 
 // ---------------------------------------------------------------------------
@@ -172,6 +176,20 @@ export function regionOf(countryCode: string): string {
 // ---------------------------------------------------------------------------
 // Shared text helper
 // ---------------------------------------------------------------------------
+
+/**
+ * Whole-word keyword match.
+ *
+ * Substring matching (the previous behaviour) fired "war" on "wartime"
+ * and "warning", and "bomb" on "bombastic" — a wargame tabletop exercise
+ * came back flagged as a casualty story. Word boundaries fix that class of
+ * false positive; the plural/tense variants that boundaries then exclude
+ * are listed explicitly in the keyword arrays instead.
+ */
+function containsWord(text: string, keywords: readonly string[]): boolean {
+  const words = new Set(text.toLowerCase().split(/[^a-z0-9']+/).filter(Boolean));
+  return keywords.some((kw) => (kw.includes(" ") ? text.toLowerCase().includes(kw) : words.has(kw)));
+}
 
 function clusterText(cluster: EventCluster): string {
   const summaries = cluster.items.slice(0, 3).map((i) => i.summary).join(" ");

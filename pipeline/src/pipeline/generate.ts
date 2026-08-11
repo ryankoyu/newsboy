@@ -73,6 +73,7 @@ async function generateStandard(
   const drafts: GeneratedArticleDraft[] = [];
   for (const event of events) {
     const rewrite = await rewriteAllLevels(event.eventId, event.category, event.facts, llm);
+    const paragraphPlan = rewrite.paragraphPlan;
     const gatedVersions: GatedVersionWithUsage[] = [];
     for (const version of rewrite.versions) {
       const gated = await gateVersion(
@@ -82,6 +83,7 @@ async function generateStandard(
         event.facts,
         event.sourceItems,
         llm,
+        paragraphPlan,
       );
       gatedVersions.push(gated);
     }
@@ -122,6 +124,9 @@ async function generateViaBatch(
   }
 
   const draftsById = new Map<string, ArticleVersionDraft[]>();
+  // Beats per event, so a gate retry can put the regenerated level back on the
+  // same paragraphs as its siblings.
+  const planById = new Map<string, string[]>();
   const draftUsageById = new Map<string, CallUsage>();
   const draftModeById = new Map<string, "batch" | "standard">();
   for (const s of round1.succeeded) {
@@ -136,6 +141,7 @@ async function generateViaBatch(
         words: s.versions[level].words,
       })),
     );
+    planById.set(s.eventId, s.paragraphPlan ?? []);
     draftUsageById.set(s.eventId, s.usage);
     draftModeById.set(s.eventId, "batch");
   }
@@ -150,6 +156,7 @@ async function generateViaBatch(
       if (!event) continue;
       const rewrite = await rewriteAllLevels(event.eventId, event.category, event.facts, llm);
       fallbackDrafts.set(failure.eventId, rewrite.versions);
+      planById.set(failure.eventId, rewrite.paragraphPlan);
       draftUsageById.set(failure.eventId, rewrite.usage);
       draftModeById.set(failure.eventId, "standard");
     }
@@ -172,6 +179,7 @@ async function generateViaBatch(
   for (const event of events) {
     const versions = draftsById.get(event.eventId) ?? fallbackDrafts.get(event.eventId);
     if (!versions) continue; // shouldn't happen — every event is in one map or the other
+    const paragraphPlan = planById.get(event.eventId) ?? [];
     const gated: GatedVersionWithUsage[] = [];
     for (const version of versions) {
       const result = await gateVersion(
@@ -181,6 +189,7 @@ async function generateViaBatch(
         event.facts,
         event.sourceItems,
         llm,
+        paragraphPlan,
       );
       gated.push(result);
     }
