@@ -15,6 +15,18 @@ import type { CSSProperties, ReactNode } from "react";
 const DISPLAY = "var(--font-display), Georgia, serif";
 
 
+/**
+ * The name of the paper.
+ *
+ * Newsboy is the app — the thing you install, the thing the app store lists.
+ * The paper it hands you is its own object with its own name, the way a
+ * newsstand is not the same thing as the title it sells. Keeping the two
+ * apart is what lets the masthead be typeset furniture rather than a logo.
+ *
+ * The trailing period is part of the mark.
+ */
+export const PAPER_NAME = "The Daily News.";
+
 /** The masthead. Blackletter, and used NOWHERE else in the system. */
 export function Nameplate({ size = 34 }: { size?: number }) {
   return (
@@ -27,8 +39,7 @@ export function Nameplate({ size = 34 }: { size?: number }) {
         color: "var(--ink-strong)",
       }}
     >
-      {/* The trailing period is part of the mark. */}
-      Newsboy.
+      {PAPER_NAME}
     </div>
   );
 }
@@ -141,9 +152,9 @@ export function Cut({
     <figure style={{ margin }}>
       <div className="np-cut">
         {src ? (
-          // eslint-disable-next-line @next/next/no-img-element -- the cut is a
-          // fixed-width block inside a ruled frame; next/image's wrapper adds
-          // layout the newsprint rules do not allow.
+          // The cut is a fixed-width block inside a ruled frame; next/image's
+          // wrapper adds layout the newsprint rules do not allow.
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={src}
             alt=""

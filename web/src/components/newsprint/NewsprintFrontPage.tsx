@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import Link from "next/link";
 import type { ArticleWithDetails, CefrLevel, EditionWithArticles } from "@/lib/types";
 import { useSession } from "@/lib/useSession";
@@ -37,6 +38,10 @@ export function NewsprintFrontPage({
 }) {
   const { session } = useSession();
   const level = session.getLevel();
+  /** Selected section slug, or null for "Latest". Not persisted — the front
+   *  page opens on the whole edition every time, the way a paper does. */
+  const [section, setSection] = useState<string | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const articles = [...(edition?.articles ?? [])].sort(
     (a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0)
@@ -47,17 +52,28 @@ export function NewsprintFrontPage({
   const rightHeads = articles.slice(3, 5);
   const rest = articles.slice(5);
 
-  // Section strip: the sections that actually appear in today's edition.
-  // Not navigation — there is no category filter in the app — so these are
-  // set as a masthead strip and carry no link.
+  // Section strip: the sections that actually appear in today's edition —
+  // never a fixed list, so the strip cannot advertise a section the day has
+  // no stories in. Picking one filters the list below; "Latest" clears it.
   const sections = Array.from(
     new Map(
       articles
         .map((a) => a.category)
         .filter((c): c is NonNullable<typeof c> => Boolean(c))
-        .map((c) => [c.slug, c.label])
+        .map((c) => [c.slug, c])
     ).values()
   );
+
+  // The rows under the lead. Unfiltered they are the stories the hero block
+  // did not already print (the lead and its four side-heads); filtered they
+  // are the whole section, because a reader who taps "Korea" wants Korea's
+  // stories and not "Korea, minus the four already shown above".
+  const listArticles = section
+    ? articles.filter((a) => a.category?.slug === section)
+    : rest;
+  const listHeading = section
+    ? sections.find((c) => c.slug === section)?.label ?? "Stories"
+    : "More Top Stories";
 
   return (
     <div style={{ display: "flex", justifyContent: "center", background: "var(--paper-desk)" }}>
@@ -102,37 +118,39 @@ export function NewsprintFrontPage({
           }}
           className="briefly-hscroll"
         >
-          <span
-            style={{
-              fontFamily: DISPLAY,
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: "0.07em",
-              textTransform: "uppercase",
-              color: "var(--ink-strong)",
-              borderBottom: "2px solid var(--ink-strong)",
-              paddingBottom: 4,
-              whiteSpace: "nowrap",
-            }}
-          >
-            Latest
-          </span>
-          {sections.map((label) => (
-            <span
-              key={label}
-              style={{
-                fontFamily: DISPLAY,
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: "0.07em",
-                textTransform: "uppercase",
-                color: "var(--ink-muted)",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {label}
-            </span>
-          ))}
+          {[{ slug: null, label: "Latest" }, ...sections].map((entry) => {
+            const active = entry.slug === section;
+            return (
+              <button
+                key={entry.slug ?? "latest"}
+                type="button"
+                aria-pressed={active}
+                onClick={() => {
+                  setSection(entry.slug);
+                  // The strip sits above the fold and the list it filters sits
+                  // below it, so a tap that only changed the rows would look
+                  // like it did nothing.
+                  listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                style={{
+                  border: "none",
+                  background: "none",
+                  padding: "0 0 4px",
+                  cursor: "pointer",
+                  fontFamily: DISPLAY,
+                  fontSize: 12,
+                  fontWeight: active ? 700 : 600,
+                  letterSpacing: "0.07em",
+                  textTransform: "uppercase",
+                  color: active ? "var(--ink-strong)" : "var(--ink-muted)",
+                  borderBottom: active ? "2px solid var(--ink-strong)" : "2px solid transparent",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {entry.label}
+              </button>
+            );
+          })}
         </div>
 
         {!edition || !lead ? (
@@ -214,7 +232,7 @@ export function NewsprintFrontPage({
               </p>
             )}
 
-            {rest.length > 0 && (
+            <div ref={listRef} style={{ scrollMarginTop: 12 }}>
               <>
                 <div
                   style={{
@@ -238,7 +256,7 @@ export function NewsprintFrontPage({
                       color: "var(--ink-strong)",
                     }}
                   >
-                    More Top Stories
+                    {listHeading}
                   </h2>
                   <Link
                     href="/archive"
@@ -248,11 +266,29 @@ export function NewsprintFrontPage({
                   </Link>
                 </div>
 
-                {rest.map((article) => (
-                  <StoryRow key={article.id} article={article} level={level} />
-                ))}
+                {listArticles.length === 0 ? (
+                  <p
+                    style={{
+                      margin: "16px 0 0",
+                      fontFamily: "var(--font-ui)",
+                      fontSize: 12.5,
+                      color: "var(--ink-muted)",
+                    }}
+                  >
+                    오늘은 이 섹션에 실린 기사가 없어요.
+                  </p>
+                ) : (
+                  listArticles.map((article, i) => (
+                    <StoryRow
+                      key={article.id}
+                      article={article}
+                      level={level}
+                      last={i === listArticles.length - 1}
+                    />
+                  ))
+                )}
               </>
-            )}
+            </div>
           </>
         )}
       </div>
@@ -279,10 +315,18 @@ function LeadHeadline({ article, level }: { article: ArticleWithDetails; level: 
           letterSpacing: "-0.005em",
           textAlign: "center",
           textTransform: "uppercase",
+          textWrap: "balance",
           color: "var(--ink-strong)",
         }}
       >
-        {version.title}
+        {/* The banner is the way into the story — a reader taps the headline
+            long before finding "이어서 읽기" at the foot of the block. */}
+        <Link
+          href={`/article/${article.slug}?level=${version.level}`}
+          style={{ color: "inherit", textDecoration: "none" }}
+        >
+          {version.title}
+        </Link>
       </h1>
       {article.event_summary && (
         <p

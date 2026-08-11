@@ -268,18 +268,22 @@ export function NewsprintBroadsheet({
  * Banner size ramp.
  *
  * The handoff fixes the banner at 64px with `white-space: nowrap` and says it
- * must stay on one line — which works for the prototype's short 1902 headline
- * and clips a real one. Clipping loses words, so the size steps down by title
- * length instead. A newspaper does exactly this: the banner is set to the
- * headline, not the other way round.
+ * must stay on one line. That holds for the prototype's short 1902 headline
+ * and breaks on a real one: "South Korea Sells a Lot More to the World" ran
+ * off the right edge of the sheet.
+ *
+ * Counting characters cannot fix it. Character count is not width — a title
+ * of caps and Ms is far wider than the same count in lowercase and Is, and
+ * the ramp has no idea which it is holding. So the banner wraps instead, and
+ * the ramp only keeps a long headline from swallowing the page. Wrapping a
+ * banner across two lines is ordinary newspaper practice; running one off the
+ * paper is not.
  */
 function bannerSize(title: string): number {
   const n = title.length;
   if (n <= 30) return 64;
-  if (n <= 42) return 54;
-  if (n <= 56) return 44;
-  if (n <= 72) return 36;
-  return 30;
+  if (n <= 48) return 56;
+  return 46;
 }
 
 /** Banner headline + deck, closed by a double rule. */
@@ -300,12 +304,18 @@ function Banner({ article, level }: { article: ArticleWithDetails; level: CefrLe
           letterSpacing: "-0.012em",
           textAlign: "center",
           textTransform: "uppercase",
-          // One line, always — the size ramp above is what keeps it fitting.
-          whiteSpace: "nowrap",
+          // Wraps rather than overflowing; `balance` keeps a two-line banner
+          // from leaving one word stranded on the second line.
+          textWrap: "balance",
           color: "var(--ink-strong)",
         }}
       >
-        {version.title}
+        <Link
+          href={`/article/${article.slug}?level=${version.level}`}
+          style={{ color: "inherit", textDecoration: "none" }}
+        >
+          {version.title}
+        </Link>
       </h1>
       {article.event_summary && (
         <div
