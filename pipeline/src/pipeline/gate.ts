@@ -19,6 +19,7 @@ import type {
   GatedVersion,
   QualityCheckResult,
   RawItem,
+  CheckKind,
 } from "../types.js";
 import type { LLMProvider } from "../llm/provider.js";
 import type { CallUsage } from "../llm/cost.js";
@@ -34,6 +35,14 @@ export const MAX_REWRITE_ATTEMPTS = 3;
 export interface GatedVersionWithUsage extends GatedVersion {
   /** Usage from any retry calls made inside this gate loop (empty if the version passed on the first try). */
   retryUsage: CallUsage;
+  /**
+   * The failing check kinds for each attempt that triggered a regeneration,
+   * oldest first. Empty when the version passed on the first try, so its
+   * length equals rewriteAttempts - 1.
+   */
+  retryReasons: CheckKind[][];
+  /** Usage of every Haiku CEFR boundary judgment made in this gate loop. */
+  cefrJudgeUsages: CallUsage[];
 }
 
 function buildFeedback(checks: QualityCheckResult[]): string {
@@ -64,11 +73,26 @@ export async function gateVersion(
   let currentVersion = version;
   let attempts = 0;
   let retryUsage = emptyUsage();
+  // Which checks failed on each attempt that led to a regeneration. The
+  // stored checks array only describes the FINAL state, so a version that
+  // failed CEFR once and then passed left no trace of why it cost a second
+  // Opus call — which made retry spend impossible to attribute.
+  const retryReasons: CheckKind[][] = [];
+  // The CEFR heuristic escalates ambiguous texts to a Haiku judgment. Those
+  // calls were never priced; collected here so the caller can record them.
+  const cefrJudgeUsages: CallUsage[] = [];
 
   while (true) {
     attempts++;
 
-    const cefrResult = await checkCefr(currentVersion.content, currentVersion.level, llm);
+    const cefrResult = await checkCefr(
+      currentVersion.content,
+      currentVersion.level,
+      llm,
+      (usage) => {
+        if (usage) cefrJudgeUsages.push(usage);
+      },
+    );
     const ngramResult = checkNgramOverlap(currentVersion.content, sourceItems);
     const twoSourceResult = checkTwoSourceRule(facts);
     const wordMatchResult = checkWordMatch(currentVersion.content, currentVersion.words);
@@ -125,6 +149,8 @@ export async function gateVersion(
         passed: allPassed,
         rewriteAttempts: attempts,
         retryUsage,
+        retryReasons,
+        cefrJudgeUsages,
       };
     }
 
@@ -133,6 +159,9 @@ export async function gateVersion(
     // COST OPTIMIZATION: only the failing level is regenerated here (never
     // all three), and llm.rewrite() sends a compact fact summary rather than
     // the full source material — see AnthropicLLMProvider.rewrite().
+    retryReasons.push(
+      checks.filter((c) => !c.passed && c.kind !== "two_source").map((c) => c.kind),
+    );
     const feedback = buildFeedback(checks.filter((c) => c.kind !== "two_source"));
     const rewritten = await llm.rewrite({
       eventId,

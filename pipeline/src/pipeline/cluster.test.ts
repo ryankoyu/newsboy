@@ -110,7 +110,9 @@ describe("clusterEvents", () => {
     const llm = {
       judgeSameEvent: async () => {
         called = true;
-        return true;
+        // Providers return the judgment alongside the call usage; the mock
+        // makes no call, so it reports no usage.
+        return { sameEvent: true };
       },
     };
 

@@ -6,6 +6,8 @@
  * the DB columns so the StorageAdapter implementations are thin mappers,
  * not translators.
  */
+import type { CallUsage } from "./llm/cost.js";
+
 
 export type CefrLevel = "A2" | "B1" | "B2";
 
@@ -219,6 +221,8 @@ export interface ExtractedFact {
 export interface FactExtractionResult {
   eventId: string;
   facts: ExtractedFact[];
+  /** Usage of the Sonnet extraction call (absent for the mock provider). */
+  usage?: CallUsage;
 }
 
 // ---------------------------------------------------------------------------

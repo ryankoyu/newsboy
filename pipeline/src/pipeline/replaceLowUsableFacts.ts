@@ -42,6 +42,7 @@ import type {
   SelectedEvent,
 } from "../types.js";
 import type { LLMProvider } from "../llm/provider.js";
+import type { CallUsage } from "../llm/cost.js";
 import { extractFacts, usableFactCount } from "./extract.js";
 
 /** Below this many 2-source-confirmed facts, an event is not worth rewriting — see module doc comment. */
@@ -62,6 +63,8 @@ export interface ResolveUsableEventsResult {
   log: ExtractReplacementLogEntry[];
   /** heldBack candidates NOT consumed as replacements — still available for a future run. */
   remainingHeldBack: EventCluster[];
+  /** Usage of every extraction call made here, including discarded candidates. */
+  extractionUsages: CallUsage[];
 }
 
 /**
@@ -99,6 +102,11 @@ export async function resolveUsableEvents(
 
   const replacementLog: ExtractReplacementLogEntry[] = [];
   const resolved: ResolvedEvent[] = [];
+  // Every extraction attempt is a real Sonnet call — including the ones for
+  // candidates that get discarded for too few usable facts. They are all
+  // collected so run.ts can price the extract stage; before this, none of
+  // them reached the ledger at all.
+  const extractionUsages: CallUsage[] = [];
 
   for (const originalEvent of eventsToProcess) {
     let candidateEvent: SelectedEvent | EventCluster = originalEvent;
@@ -111,7 +119,8 @@ export async function resolveUsableEvents(
     let originalUsableCount: number | null = null;
 
     while (!settled) {
-      const { facts } = await extractFacts(candidateEvent, llm);
+      const { facts, usage } = await extractFacts(candidateEvent, llm);
+      if (usage) extractionUsages.push(usage);
       const usable = usableFactCount(facts);
       if (originalUsableCount === null) originalUsableCount = usable;
       log(
@@ -195,5 +204,5 @@ export async function resolveUsableEvents(
 
   const remainingHeldBack = heldBack.filter((c) => !consumedIds.has(c.id));
 
-  return { resolved, log: replacementLog, remainingHeldBack };
+  return { resolved, log: replacementLog, remainingHeldBack, extractionUsages };
 }

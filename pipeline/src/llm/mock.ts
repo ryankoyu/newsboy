@@ -24,6 +24,10 @@ import type {
   SameEventInput,
   Top10Candidate,
   Top10Selection,
+  SameEventResult,
+  CefrBandResult,
+  Top10SelectionResult,
+  ExtractFactsResult,
 } from "./provider.js";
 import type { CefrLevel, ExtractedFact, WordEntry } from "../types.js";
 
@@ -80,7 +84,7 @@ function groupSimilarSentences(items: ExtractFactsInput["items"]): Array<{
 export class MockLLMProvider implements LLMProvider {
   readonly name = "mock";
 
-  async judgeSameEvent(input: SameEventInput): Promise<boolean> {
+  async judgeSameEvent(input: SameEventInput): Promise<SameEventResult> {
     // Conservative default: mock treats boundary cases as distinct events
     // unless titles share an obvious substring, keeping cluster() testable
     // without pretending to have real semantic judgment.
@@ -89,10 +93,11 @@ export class MockLLMProvider implements LLMProvider {
     const bWords = new Set(normalize(input.b.title).split(/\s+/).filter((w) => w.length > 3));
     let shared = 0;
     for (const w of aWords) if (bWords.has(w)) shared++;
-    return shared >= 2;
+    // No API call, so no usage to report.
+    return { sameEvent: shared >= 2 };
   }
 
-  async selectTop10(candidates: Top10Candidate[]): Promise<Top10Selection[]> {
+  async selectTop10(candidates: Top10Candidate[]): Promise<Top10SelectionResult> {
     // Rank by outlet count (proxy for cross-source importance), then keep
     // category diversity by taking at most 3 per category before backfilling.
     const sorted = [...candidates].sort((a, b) => b.outletCount - a.outletCount);
@@ -114,14 +119,16 @@ export class MockLLMProvider implements LLMProvider {
       picked.push(c);
     }
 
-    return picked.slice(0, 10).map((c, idx) => ({
+    // The mock makes no API call, so there is no usage to report.
+    const selections = picked.slice(0, 10).map((c, idx) => ({
       id: c.id,
       rankInEdition: idx + 1,
       rationale: `[mock] outletCount=${c.outletCount}, category=${c.category} — selected for cross-source corroboration and category balance.`,
     }));
+    return { selections };
   }
 
-  async extractFacts(input: ExtractFactsInput): Promise<ExtractedFact[]> {
+  async extractFacts(input: ExtractFactsInput): Promise<ExtractFactsResult> {
     const groups = groupSimilarSentences(input.items);
     const facts: ExtractedFact[] = groups
       .slice(0, 12) // cap — mirrors R3's ~10-12 facts per event
@@ -136,7 +143,7 @@ export class MockLLMProvider implements LLMProvider {
           searchSummaryOnly: true, // mock only ever sees RSS summaries, never full text
         } satisfies ExtractedFact;
       });
-    return facts;
+    return { facts };
   }
 
   /**
@@ -257,7 +264,7 @@ export class MockLLMProvider implements LLMProvider {
   async judgeCefrBand(input: {
     text: string;
     targetLevel: "A2" | "B1" | "B2";
-  }): Promise<{ withinBand: boolean; reasoning: string }> {
+  }): Promise<CefrBandResult> {
     return {
       withinBand: true,
       reasoning: "[mock] no real CEFR judgment performed — heuristic checker is authoritative in demo mode.",

@@ -37,6 +37,10 @@ import type {
   SameEventInput,
   Top10Candidate,
   Top10Selection,
+  SameEventResult,
+  CefrBandResult,
+  Top10SelectionResult,
+  ExtractFactsResult,
 } from "./provider.js";
 import type { ExtractedFact, WordEntry, CefrLevel } from "../types.js";
 import type { CallUsage } from "./cost.js";
@@ -179,17 +183,17 @@ export class AnthropicLLMProvider implements LLMProvider {
     return { text: textBlock.text, usage: usageFromResponse(response) };
   }
 
-  async judgeSameEvent(input: SameEventInput): Promise<boolean> {
+  async judgeSameEvent(input: SameEventInput): Promise<SameEventResult> {
     const system =
       "You judge whether two news headlines/summaries describe the same real-world " +
       'event. Respond with strict JSON only: {"sameEvent": true|false}.';
     const user = JSON.stringify(input);
-    const { text } = await this.complete("haiku", system, user);
+    const { text, usage } = await this.complete("haiku", system, user);
     const parsed = extractJson<{ sameEvent: boolean }>(text);
-    return parsed.sameEvent;
+    return { sameEvent: parsed.sameEvent, usage };
   }
 
-  async selectTop10(candidates: Top10Candidate[]): Promise<Top10Selection[]> {
+  async selectTop10(candidates: Top10Candidate[]): Promise<Top10SelectionResult> {
     const system =
       "You select the 10 most important news events for a daily English-learning " +
       "digest read mainly by Korean adults. Criteria: (1) global importance, " +
@@ -198,12 +202,12 @@ export class AnthropicLLMProvider implements LLMProvider {
       'Respond with strict JSON only: {"selections": [{"id": "...", "rankInEdition": 1, "rationale": "..."}]} ' +
       "with exactly 10 entries, ranked 1-10.";
     const user = JSON.stringify(candidates);
-    const { text } = await this.complete("sonnet", system, user);
+    const { text, usage } = await this.complete("sonnet", system, user);
     const parsed = extractJson<{ selections: Top10Selection[] }>(text);
-    return parsed.selections;
+    return { selections: parsed.selections, usage };
   }
 
-  async extractFacts(input: ExtractFactsInput): Promise<ExtractedFact[]> {
+  async extractFacts(input: ExtractFactsInput): Promise<ExtractFactsResult> {
     const system =
       `${FABRICATION_GUARDRAIL} ` +
       "Extract only facts that are explicitly stated in the provided items. For each " +
@@ -214,9 +218,9 @@ export class AnthropicLLMProvider implements LLMProvider {
       'Respond with strict JSON only: {"facts": [{"statement": "...", "confirmedByOutlets": ["..."], ' +
       '"sourceCount": 0, "usedInText": true, "note": "...", "searchSummaryOnly": false}]}.';
     const user = JSON.stringify(input);
-    const { text } = await this.complete("sonnet", system, user);
+    const { text, usage } = await this.complete("sonnet", system, user);
     const parsed = extractJson<{ facts: ExtractedFact[] }>(text);
-    return parsed.facts;
+    return { facts: parsed.facts, usage };
   }
 
   /**
@@ -272,12 +276,12 @@ export class AnthropicLLMProvider implements LLMProvider {
   async judgeCefrBand(input: {
     text: string;
     targetLevel: "A2" | "B1" | "B2";
-  }): Promise<{ withinBand: boolean; reasoning: string }> {
+  }): Promise<CefrBandResult> {
     const system =
       "You are a CEFR reading-level assessor. Judge whether the given text fits the " +
       'target CEFR band. Respond with strict JSON only: {"withinBand": true|false, "reasoning": "..."}.';
     const user = JSON.stringify(input);
-    const { text } = await this.complete("haiku", system, user);
-    return extractJson<{ withinBand: boolean; reasoning: string }>(text);
+    const { text, usage } = await this.complete("haiku", system, user);
+    return { ...extractJson<{ withinBand: boolean; reasoning: string }>(text), usage };
   }
 }

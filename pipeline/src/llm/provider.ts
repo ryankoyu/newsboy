@@ -102,17 +102,49 @@ export interface GenerateAllLevelsOutput {
   usage?: CallUsage;
 }
 
+/** A same-event judgment plus the usage of the call that produced it. */
+export interface SameEventResult {
+  sameEvent: boolean;
+  usage?: CallUsage;
+}
+
+/** A CEFR band judgment plus the usage of the call that produced it. */
+export interface CefrBandResult {
+  withinBand: boolean;
+  reasoning: string;
+  usage?: CallUsage;
+}
+
+/** Selections plus the usage of the call that produced them. */
+export interface Top10SelectionResult {
+  selections: Top10Selection[];
+  /** Present when the concrete provider tracks token usage (Anthropic; absent for Mock). */
+  usage?: CallUsage;
+}
+
+/** Extracted facts plus the usage of the call that produced them. */
+export interface ExtractFactsResult {
+  facts: ExtractedFact[];
+  usage?: CallUsage;
+}
+
 export interface LLMProvider {
   readonly name: string;
 
   /** [2] Boundary-case same-event judgment (Haiku tier). */
-  judgeSameEvent(input: SameEventInput): Promise<boolean>;
+  judgeSameEvent(input: SameEventInput): Promise<SameEventResult>;
 
-  /** [3] Top 10 selection with category balance (Sonnet tier). */
-  selectTop10(candidates: Top10Candidate[]): Promise<Top10Selection[]>;
+  /**
+   * [3] Top 10 selection with category balance (Sonnet tier).
+   *
+   * Returns usage alongside the selections so the run ledger can price this
+   * call. It used to return the bare array, which is why select never showed
+   * up in a cost summary even though it makes a real Sonnet call.
+   */
+  selectTop10(candidates: Top10Candidate[]): Promise<Top10SelectionResult>;
 
-  /** [4] Fact extraction with provenance tagging (Sonnet tier). */
-  extractFacts(input: ExtractFactsInput): Promise<ExtractedFact[]>;
+  /** [4] Fact extraction with provenance tagging (Sonnet tier). Usage as above. */
+  extractFacts(input: ExtractFactsInput): Promise<ExtractFactsResult>;
 
   /**
    * [5] Combined single-call generation of all three CEFR levels + words
@@ -131,10 +163,7 @@ export interface LLMProvider {
   rewrite(input: RewriteInput): Promise<RewriteOutput>;
 
   /** [6a] CEFR boundary judgment when the heuristic checker is inconclusive (Haiku tier). */
-  judgeCefrBand(input: { text: string; targetLevel: "A2" | "B1" | "B2" }): Promise<{
-    withinBand: boolean;
-    reasoning: string;
-  }>;
+  judgeCefrBand(input: { text: string; targetLevel: "A2" | "B1" | "B2" }): Promise<CefrBandResult>;
 
   /**
    * [3] Layer 2 learnability + demerit scoring (Haiku tier) — STUB, not yet

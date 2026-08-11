@@ -27,6 +27,7 @@
 
 import type { CefrLevel } from "../types.js";
 import type { LLMProvider } from "../llm/provider.js";
+import type { CallUsage } from "../llm/cost.js";
 import { A2_CORE_WORDS, ADVANCED_MARKER_WORDS } from "./data/wordbands.js";
 
 export interface CefrHeuristicResult {
@@ -141,6 +142,12 @@ export async function checkCefr(
   text: string,
   level: CefrLevel,
   llm: LLMProvider,
+  /**
+   * Reports the Haiku boundary-judgment call usage, when one is made. The
+   * heuristic resolves most texts without any API call, so this fires only
+   * for the ambiguous ones.
+   */
+  onUsage?: (usage: CallUsage | undefined) => void,
 ): Promise<{ passed: boolean; score: number; detail: Record<string, unknown> }> {
   const heuristic = checkCefrHeuristic(text, level);
   if (!heuristic.ambiguous) {
@@ -148,6 +155,7 @@ export async function checkCefr(
   }
 
   const judgment = await llm.judgeCefrBand({ text, targetLevel: level });
+  onUsage?.(judgment.usage);
   return {
     passed: judgment.withinBand,
     score: heuristic.score,
