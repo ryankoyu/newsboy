@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 
 /**
@@ -87,43 +90,87 @@ export function Hairline({ margin = "14px 0 12px" }: { margin?: string }) {
 }
 
 /**
- * An engraving slot. Every image in the handoff is a placeholder — no real
- * assets have been sourced yet, and the rule is that when they are, they must
- * be black-and-white engraving tone inside a 1px rule.
+ * Where a cut for a given article lives.
+ *
+ * Keyed on the article id rather than the slug or the rank: ids are derived
+ * from the PIPELINE rank and stay stable when the desk reorders the front
+ * page or re-publishes, while a slug moves with the headline and a display
+ * rank moves with the desk's decisions.
+ *
+ * Drop a file at this path and it appears; leave it out and the slot falls
+ * back to its labelled placeholder. No data-model change and no upload step —
+ * which also means nothing validates that the image matches the story, so
+ * this is a staging arrangement, not the finished pipeline.
+ */
+export function cutPath(articleId: string): string {
+  return `/newsprint/cuts/${articleId}.png`;
+}
+
+/**
+ * An engraving slot.
+ *
+ * Renders the article's cut when one has been placed, and the labelled
+ * placeholder when it has not. Real images must be black-and-white engraving
+ * tone inside the 1px rule — the paper takes no colour photography.
  */
 export function Cut({
   height = 220,
   label,
   caption,
+  articleId,
 }: {
   height?: number;
   label: string;
   caption?: string;
+  /** When set, look for this article's cut before falling back to the label. */
+  articleId?: string;
 }) {
+  const [missing, setMissing] = useState(false);
+  const src = articleId && !missing ? cutPath(articleId) : null;
+
   return (
     <figure style={{ margin: "14px 0 0" }}>
       <div className="np-cut">
-        <div
-          style={{
-            height,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            border: "1px solid rgba(70,60,44,0.4)",
-          }}
-        >
-          <span
+        {src ? (
+          // eslint-disable-next-line @next/next/no-img-element -- the cut is a
+          // fixed-width block inside a ruled frame; next/image's wrapper adds
+          // layout the newsprint rules do not allow.
+          <img
+            src={src}
+            alt=""
+            onError={() => setMissing(true)}
             style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 10,
-              lineHeight: 1.8,
-              textAlign: "center",
-              color: "#5c5443",
+              display: "block",
+              width: "100%",
+              height,
+              objectFit: "cover",
+              border: "1px solid rgba(70,60,44,0.4)",
+              filter: "grayscale(1) contrast(1.15)",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              height,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1px solid rgba(70,60,44,0.4)",
             }}
           >
-            {label}
-          </span>
-        </div>
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 10,
+                lineHeight: 1.8,
+                textAlign: "center",
+                color: "#5c5443",
+              }}
+            >
+              {label}
+            </span>
+          </div>
+        )}
       </div>
       {caption && (
         <figcaption

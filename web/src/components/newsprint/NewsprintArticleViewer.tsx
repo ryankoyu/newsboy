@@ -241,6 +241,7 @@ export function NewsprintArticleViewer({
         </div>
 
         <Cut
+          articleId={article.id}
           height={220}
           label={"ENGRAVING\n1200×880\n기사 삽화"}
           caption={article.category?.label ?? undefined}

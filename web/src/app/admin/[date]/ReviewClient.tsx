@@ -25,6 +25,7 @@ const BADGE_STYLE: Record<CheckBadgeState, { bg: string; fg: string; label: stri
   pass: { bg: "var(--level-a2-bg)", fg: "var(--level-a2-fg)", label: "통과" },
   fail: { bg: "#F6DCD3", fg: "var(--color-danger)", label: "실패" },
   ambiguous: { bg: "var(--color-accent-soft)", fg: "var(--color-accent)", label: "보류" },
+  short: { bg: "var(--color-accent-soft)", fg: "var(--color-accent)", label: "분량 미달" },
   not_run: { bg: "var(--color-surface-alt)", fg: "var(--color-text-muted)", label: "미실행" },
 };
 
