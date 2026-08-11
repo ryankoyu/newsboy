@@ -15,10 +15,15 @@
 name: daily-pipeline
 
 on:
-  schedule:
-    # KST 새벽 5시 = UTC 20:00 (전날). GitHub cron is UTC only.
-    # 5am KST: 그날 아침 검수 전에 밤사이 뉴스까지 수집된 상태로 준비됨.
-    - cron: "0 20 * * *"
+  # PAUSED while the Supabase path is being tested (2026-08-11). A run costs
+  # about $1.04 of Anthropic credit, so an unattended nightly cron spends real
+  # money on output nobody is reading yet. Manual runs only until the desk is
+  # actually publishing from the database.
+  #
+  # To resume, uncomment — KST 5am = UTC 20:00 the day before (cron is UTC),
+  # early enough that the night's news is collected before the morning desk.
+  # schedule:
+  #   - cron: "0 20 * * *"
   workflow_dispatch:
     inputs:
       llm_provider:
