@@ -47,6 +47,16 @@ const WORD_COUNT_BANDS: Record<CefrLevel, { min: number; max: number }> = {
   B2: { min: 400, max: 560 },
 };
 
+/**
+ * How far under its band a level may fall and still pass, as a fraction of
+ * the band minimum. 0.8 lets a B2 down to 320 of its 400 floor; below that
+ * the text is not a B2-length piece whatever its vocabulary looks like.
+ *
+ * Cross-level ordering (B2 longer than its own B1) is NOT checked here — a
+ * gate sees one version at a time and has no view of its siblings.
+ */
+const SHORT_UNDERSHOOT_FLOOR = 0.8;
+
 /** Rough sentence-length ceilings per level — proxy for syntactic complexity. */
 const AVG_SENTENCE_LENGTH_CEILING: Record<CefrLevel, number> = {
   A2: 14,
@@ -89,7 +99,26 @@ export function checkCefrHeuristic(text: string, level: CefrLevel): CefrHeuristi
   const advancedWordHits = [...ADVANCED_MARKER_WORDS].filter((w) => lowerText.includes(w));
 
   const band = WORD_COUNT_BANDS[level];
-  const withinWordCountBand = wordCount >= band.min && wordCount <= band.max;
+  // Undershoot and overshoot are different failures.
+  //
+  // Over the band is a level violation: 250 words at A2 is too much reading
+  // for that learner however well written, so it still fails.
+  //
+  // Under the band usually means the event had little corroborated material
+  // to write from. The 2026-07-14 rank-8 story came back at 338 against a
+  // 400-560 B2 band after three rewrites, with every other CEFR dimension
+  // passing — the only ways to reach 400 from five facts are to repeat
+  // itself or to invent, and the guardrail forbids the second. Failing that
+  // outright pushes the writer toward padding, so a modest undershoot passes
+  // and is flagged for the desk instead.
+  //
+  // The floor stops that becoming permission for anything: below it the
+  // piece is too thin to be the level it claims, and still fails.
+  const shortFloor = Math.round(band.min * SHORT_UNDERSHOOT_FLOOR);
+  const overBand = wordCount > band.max;
+  const belowBand = wordCount < band.min;
+  const tooShort = wordCount < shortFloor;
+  const withinWordCountBand = !overBand && !tooShort;
   const withinSentenceLength = avgSentenceLength <= AVG_SENTENCE_LENGTH_CEILING[level];
   const meetsBasicRatio = basicWordRatio >= MIN_BASIC_WORD_RATIO[level];
   const noAdvancedMarkers = advancedWordHits.length === 0;
@@ -124,6 +153,9 @@ export function checkCefrHeuristic(text: string, level: CefrLevel): CefrHeuristi
     detail: {
       band,
       withinWordCountBand,
+      /** Under the band but above the floor: passed, worth a human's eye. */
+      belowBand: belowBand && !tooShort,
+      shortFloor,
       withinSentenceLength,
       meetsBasicRatio,
       noAdvancedMarkers,

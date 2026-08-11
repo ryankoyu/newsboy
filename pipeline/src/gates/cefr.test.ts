@@ -60,3 +60,35 @@ describe("checkCefrHeuristic", () => {
     }
   });
 });
+
+describe("word-count band: undershoot vs overshoot", () => {
+  // Real case: 2026-07-14 rank 8 came back at 338 against a 400-560 B2 band
+  // after three rewrites, every other CEFR dimension passing. Five facts do
+  // not stretch to 400 words without repetition or invention.
+  const wordsFor = (n: number) =>
+    Array.from({ length: n }, (_, i) => (i % 9 === 8 ? "and." : "the")).join(" ");
+
+  it("passes a modest undershoot and flags it for the desk", () => {
+    const r = checkCefrHeuristic(wordsFor(338), "B2");
+    expect(r.detail.withinWordCountBand).toBe(true);
+    expect(r.detail.belowBand).toBe(true);
+  });
+
+  it("fails a text below the floor — short has a limit", () => {
+    // 0.8 x 400 = 320, so 300 is under the floor.
+    const r = checkCefrHeuristic(wordsFor(300), "B2");
+    expect(r.detail.withinWordCountBand).toBe(false);
+    expect(r.detail.belowBand).toBe(false);
+  });
+
+  it("still fails an overshoot — too long is a level violation, not thin material", () => {
+    const r = checkCefrHeuristic(wordsFor(300), "A2");
+    expect(r.detail.withinWordCountBand).toBe(false);
+  });
+
+  it("does not flag a text inside its band", () => {
+    const r = checkCefrHeuristic(wordsFor(450), "B2");
+    expect(r.detail.withinWordCountBand).toBe(true);
+    expect(r.detail.belowBand).toBe(false);
+  });
+});

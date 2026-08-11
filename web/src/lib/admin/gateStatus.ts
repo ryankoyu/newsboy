@@ -37,7 +37,7 @@ export const ALL_CHECK_KINDS: CheckKind[] = [
   "word_count",
 ];
 
-export type CheckBadgeState = "pass" | "fail" | "ambiguous" | "not_run";
+export type CheckBadgeState = "pass" | "fail" | "ambiguous" | "short" | "not_run";
 
 /**
  * Per-check badge state. "ambiguous" surfaces the cefr heuristic's own
@@ -50,8 +50,16 @@ export type CheckBadgeState = "pass" | "fail" | "ambiguous" | "not_run";
  */
 export function checkBadgeState(check: QualityCheckResult | undefined): CheckBadgeState {
   if (!check) return "not_run";
-  const heuristic = (check.detail as { heuristic?: { ambiguous?: boolean } } | null)?.heuristic;
+  const heuristic = (
+    check.detail as {
+      heuristic?: { ambiguous?: boolean; detail?: { belowBand?: boolean } };
+    } | null
+  )?.heuristic;
   if (heuristic?.ambiguous) return "ambiguous";
+  // Under the band but above the floor: the gate passed it deliberately
+  // (gates/cefr.ts SHORT_UNDERSHOOT_FLOOR — a thin event is not padded to
+  // length), but the desk should still see that it is short.
+  if (check.passed && heuristic?.detail?.belowBand) return "short";
   return check.passed ? "pass" : "fail";
 }
 
