@@ -52,7 +52,11 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # 22, not 20: @supabase/realtime-js reaches for a global WebSocket,
+          # which Node only provides from 22 on. On 20 the pipeline died with
+          # "Node.js detected but native WebSocket not found" before it wrote
+          # a single row — the first thing STORAGE=supabase ever tried to do.
+          node-version: "22"
           cache: npm
           cache-dependency-path: pipeline/package-lock.json
 
