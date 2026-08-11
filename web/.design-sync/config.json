@@ -1,0 +1,18 @@
+{
+  "projectId": "af83fdb4-7b22-441c-be5a-f102e09309a4",
+  "shape": "package",
+  "pkg": "web",
+  "globalName": "Newsboy",
+  "buildCmd": "node .design-sync/styles/prepare-css.mjs",
+  "srcDir": "src/components",
+  "tsconfig": ".design-sync/tsconfig.ds.json",
+  "cssEntry": ".design-sync/.cache/newsboy.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "AppShell": { "cardMode": "column", "viewport": "1200x820" },
+    "SideNav": { "cardMode": "single", "viewport": "1200x420" },
+    "TabBar": { "cardMode": "single", "viewport": "420x360" },
+    "SmartDictionary": { "cardMode": "single", "primaryStory": "OnSeedWord" },
+    "SentenceActionPopover": { "cardMode": "single", "primaryStory": "NotSaved" }
+  }
+}
