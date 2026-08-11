@@ -15,9 +15,13 @@ export function versionAtLevel(article: ArticleWithDetails, level: CefrLevel) {
 
 /**
  * One ruled story row — design_handoff_newsprint_skin §1, "Story rows":
- * an 84px cut, the headline in condensed display serif, a dek, and a meta
- * line. Read stories dim to .62 and print the 읽음 marker, the same treatment
- * the handoff gives mastered wordbook entries.
+ * the headline in condensed display serif, a dek, and a meta line. Read
+ * stories dim to .62 and print the 읽음 marker, the same treatment the
+ * handoff gives mastered wordbook entries.
+ *
+ * The handoff sets an 84px cut in the left column. Dropped: only the day's
+ * lead carries an engraving (chrome.tsx `Cut`), so every row here would have
+ * printed an empty frame. Type alone also lets the headline run full width.
  *
  * Shared by the front page's "More Top Stories" and the scrap drawer in
  * My Index, so the two lists cannot drift apart.
@@ -42,16 +46,13 @@ export function StoryRow({
     <Link
       href={`/article/${article.slug}?level=${version.level}`}
       style={{
-        display: "grid",
-        gridTemplateColumns: "84px 1fr",
-        gap: 12,
+        display: "block",
         padding: "13px 0",
         borderBottom: last ? undefined : "1px solid var(--rule-hair)",
         textDecoration: "none",
         opacity: isRead ? 0.62 : 1,
       }}
     >
-      <div className="np-cut" style={{ padding: 0, width: 84, height: 84 }} aria-hidden />
       <div>
         <h3
           lang="en"

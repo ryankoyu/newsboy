@@ -7,7 +7,7 @@ import { useSession } from "@/lib/useSession";
 import { countUniqueOutlets } from "@/lib/sourceOutlets";
 import { LevelBadge } from "@/components/LevelBadge";
 import { versionAtLevel } from "@/components/newsprint/StoryRow";
-import { formatFolioDate } from "@/components/newsprint/chrome";
+import { Cut, formatFolioDate } from "@/components/newsprint/chrome";
 
 /**
  * Front page, desktop broadsheet — design_handoff_newsprint_skin §2.
@@ -238,7 +238,6 @@ export function NewsprintBroadsheet({
                       article={article}
                       level={level}
                       ruled={i > 0}
-                      withCut={i === 1}
                     />
                   ))}
                 </div>
@@ -383,44 +382,14 @@ function LeadStory({ article, level }: { article: ArticleWithDetails; level: Cef
         </p>
         <JumpLine slug={article.slug} level={version.level as CefrLevel} />
       </div>
-      <div>
-        <div className="np-cut" style={{ padding: 0 }}>
-          <div
-            style={{
-              height: 330,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: 10,
-                letterSpacing: "0.08em",
-                lineHeight: 1.7,
-                textAlign: "center",
-                color: "#5c5443",
-              }}
-            >
-              {"ENGRAVING\n1000×1300\n대표 삽화"}
-            </span>
-          </div>
-        </div>
-        <div
-          style={{
-            textAlign: "center",
-            fontFamily: DISPLAY,
-            fontSize: 9,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "var(--ink-soft)",
-            marginTop: 6,
-          }}
-        >
-          {article.category?.label ?? "Today"}
-        </div>
-      </div>
+      {/* The one engraving on the sheet — the lead's, and nowhere else. */}
+      <Cut
+        articleId={article.id}
+        height={330}
+        margin="0"
+        label={"ENGRAVING\n1000×1300\n대표 삽화"}
+        caption={article.category?.label ?? "Today"}
+      />
     </div>
   );
 }
@@ -505,12 +474,10 @@ function TierColumn({
   article,
   level,
   ruled,
-  withCut,
 }: {
   article: ArticleWithDetails;
   level: CefrLevel;
   ruled: boolean;
-  withCut: boolean;
 }) {
   const { session } = useSession();
   const version = versionAtLevel(article, level);
@@ -546,15 +513,6 @@ function TierColumn({
           {article.category?.label ? ` · ${article.category.label}` : ""}
         </span>
       </div>
-      {withCut && (
-        <div className="np-cut" style={{ padding: 0, marginBottom: 8 }}>
-          <div style={{ height: 110, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 8.5, color: "#5c5443" }}>
-              CUT 620×520
-            </span>
-          </div>
-        </div>
-      )}
       <p
         lang="en"
         style={{

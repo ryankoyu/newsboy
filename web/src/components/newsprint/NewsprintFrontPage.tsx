@@ -6,7 +6,7 @@ import { useSession } from "@/lib/useSession";
 import { formatPastEditionLabel } from "@/lib/editionDate";
 import { EmptyState } from "@/components/EmptyState";
 import { NewsprintTabBar } from "@/components/newsprint/NewsprintTabBar";
-import { FolioLine, Nameplate, Ornament, formatFolioDate } from "@/components/newsprint/chrome";
+import { Cut, FolioLine, Nameplate, Ornament, formatFolioDate } from "@/components/newsprint/chrome";
 import { ArchiveIcon, GearIcon } from "@/components/newsprint/icons";
 import { StoryRow, versionAtLevel as versionOf } from "@/components/newsprint/StoryRow";
 
@@ -166,43 +166,14 @@ export function NewsprintFrontPage({
                   }}
                 >
                   <SideHeadStack articles={leftHeads} level={level} side="left" />
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <div className="np-cut" style={{ padding: 0 }}>
-                      <div
-                        style={{
-                          height: 196,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          textAlign: "center",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontFamily: "var(--font-mono)",
-                            fontSize: 9,
-                            letterSpacing: "0.08em",
-                            lineHeight: 1.6,
-                            color: "#5c5443",
-                          }}
-                        >
-                          {"ENGRAVING\n820×1080\n대표 삽화"}
-                        </span>
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        textAlign: "center",
-                        fontFamily: DISPLAY,
-                        fontSize: 8.5,
-                        letterSpacing: "0.1em",
-                        textTransform: "uppercase",
-                        color: "var(--ink-soft)",
-                      }}
-                    >
-                      {lead.category?.label ?? "Today"}
-                    </div>
-                  </div>
+                  {/* The one engraving on the page — the lead's, and nowhere else. */}
+                  <Cut
+                    articleId={lead.id}
+                    height={196}
+                    margin="0"
+                    label={"ENGRAVING\n820×1080\n대표 삽화"}
+                    caption={lead.category?.label ?? "Today"}
+                  />
                   <SideHeadStack articles={rightHeads} level={level} side="right" />
                 </div>
 

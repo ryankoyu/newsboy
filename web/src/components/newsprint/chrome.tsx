@@ -112,24 +112,33 @@ export function cutPath(articleId: string): string {
  * Renders the article's cut when one has been placed, and the labelled
  * placeholder when it has not. Real images must be black-and-white engraving
  * tone inside the 1px rule — the paper takes no colour photography.
+ *
+ * ONLY THE DAY'S LEAD CARRIES A CUT. Every other story — story rows, second
+ * tier columns, the reader page of a non-lead article — is set in type alone.
+ * Ten engravings a day is ten chances to illustrate a story with something
+ * that isn't in it, and a page of thumbnails reads as a feed rather than as
+ * a front page. One cut, on the story the desk chose to lead with.
  */
 export function Cut({
   height = 220,
   label,
   caption,
   articleId,
+  margin = "14px 0 0",
 }: {
   height?: number;
   label: string;
   caption?: string;
   /** When set, look for this article's cut before falling back to the label. */
   articleId?: string;
+  /** Outer margin — set to "0" when the slot is placed by a grid or flex parent. */
+  margin?: string;
 }) {
   const [missing, setMissing] = useState(false);
   const src = articleId && !missing ? cutPath(articleId) : null;
 
   return (
-    <figure style={{ margin: "14px 0 0" }}>
+    <figure style={{ margin }}>
       <div className="np-cut">
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element -- the cut is a

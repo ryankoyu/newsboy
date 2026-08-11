@@ -127,6 +127,10 @@ export function NewsprintArticleViewer({
   );
   const currentIndex = rankedArticles.findIndex((a) => a.id === article.id);
   const nextArticle = currentIndex >= 0 ? rankedArticles[currentIndex + 1] ?? null : null;
+  // Only the day's lead carries an engraving (chrome.tsx `Cut`). Opened
+  // without its edition — a direct link, a shared URL — there is nothing to
+  // compare against, so the page sets in type rather than guessing.
+  const isLead = rankedArticles.length > 0 && rankedArticles[0]?.id === article.id;
   const nextVersion =
     nextArticle?.versions.find((v) => v.level === level) ?? nextArticle?.versions[0] ?? null;
 
@@ -240,12 +244,14 @@ export function NewsprintArticleViewer({
           </span>
         </div>
 
-        <Cut
-          articleId={article.id}
-          height={220}
-          label={"ENGRAVING\n1200×880\n기사 삽화"}
-          caption={article.category?.label ?? undefined}
-        />
+        {isLead && (
+          <Cut
+            articleId={article.id}
+            height={220}
+            label={"ENGRAVING\n1200×880\n기사 삽화"}
+            caption={article.category?.label ?? undefined}
+          />
+        )}
 
         {/* ── Level switcher. An app control, so it keeps Newsboy's look. ── */}
         <div style={{ display: "flex", justifyContent: "center", margin: "16px 0 0" }}>
