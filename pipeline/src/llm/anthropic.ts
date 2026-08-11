@@ -236,9 +236,18 @@ export class AnthropicLLMProvider implements LLMProvider {
       user,
       COMBINED_OUTPUT_SCHEMA,
     );
-    const parsed = extractJson<Record<CefrLevel, RawLevelOutput>>(text);
+    const parsed = extractJson<
+      Record<CefrLevel, RawLevelOutput> & { paragraphPlan?: unknown }
+    >(text);
+    // The plan is required by the schema, but a model can still return an
+    // empty or malformed list — an absent plan degrades to today's behaviour
+    // (levels aligned by shared facts only) rather than failing the run.
+    const paragraphPlan = Array.isArray(parsed.paragraphPlan)
+      ? parsed.paragraphPlan.filter((b): b is string => typeof b === "string" && b.trim() !== "")
+      : [];
 
     return {
+      paragraphPlan,
       versions: {
         A2: toRewriteOutput(parsed.A2),
         B1: toRewriteOutput(parsed.B1),
@@ -262,6 +271,8 @@ export class AnthropicLLMProvider implements LLMProvider {
       category: input.category,
       level: input.level,
       feedback: input.feedback,
+      // Omitted when empty so the retry prompt's conditional wording holds.
+      paragraphPlan: input.paragraphPlan?.length ? input.paragraphPlan : undefined,
     });
     const { text, usage } = await this.completeStructured(
       "opus",

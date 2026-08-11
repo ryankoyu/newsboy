@@ -79,6 +79,29 @@ const WORD_RULES =
  * than the ~$0.003/call it would save at this size. Verify actual behavior
  * on the first real run via usage.cache_read_input_tokens.
  */
+/**
+ * The paragraph plan is what keeps the three levels comparable.
+ *
+ * Generating each level independently from the same fact list already lines
+ * the content up roughly — real output has the same facts in roughly the same
+ * order — but paragraphs drift apart after the second or third beat, so
+ * "paragraph 3 of A2" and "paragraph 3 of B2" are not the same moment in the
+ * story. That drift is what stops a reader switching level mid-article, and
+ * what stops the two levels being shown side by side.
+ *
+ * The fix is a shared PLAN, not a shared TEXT. Each level is still written
+ * for its own reader — A2 repeats nouns where B2 uses pronouns, and shorter
+ * sentences need a different information order, so an A2 produced by cutting
+ * B2 down reads worse than one written natively. Only the beat list is shared.
+ */
+const PARAGRAPH_PLAN_RULE =
+  "First decide a paragraph plan: a short list of beats (one clause each) " +
+  "covering the facts in the order the story should be told. ALL THREE levels " +
+  "must follow that same plan, one paragraph per beat, so paragraph N of A2 " +
+  "and paragraph N of B2 cover the same beat. Within each paragraph, write " +
+  "natively for that level — do NOT translate or shorten one level to make " +
+  "another. Return the plan as \"paragraphPlan\".";
+
 export const COMBINED_SYSTEM_PROMPT =
   `${FABRICATION_GUARDRAIL} ` +
   "You will write a COMPLETE set of three English news articles about ONE event, at three " +
@@ -88,11 +111,13 @@ export const COMBINED_SYSTEM_PROMPT =
   `Level A2 target: ${LEVEL_TARGETS.A2}. ` +
   `Level B1 target: ${LEVEL_TARGETS.B1}. ` +
   `Level B2 target: ${LEVEL_TARGETS.B2}. ${WORD_COUNT_ENFORCEMENT} ` +
+  `${PARAGRAPH_PLAN_RULE} ` +
   "Each level needs its own brand-new headline (never reuse a source headline, and the " +
   "three levels' headlines do not need to match each other word-for-word). Each level also " +
   "needs its own 5 key vocabulary words with Korean meaning, an example sentence, and a " +
   `pronunciation hint. ${WORD_RULES} ` +
-  'Respond with strict JSON only, in exactly this shape: {"A2": {"title": "...", ' +
+  'Respond with strict JSON only, in exactly this shape: {"paragraphPlan": ["...", "..."], ' +
+  '"A2": {"title": "...", ' +
   '"content": "...", "wordCount": 0, "words": [{"term": "...", "meaningKo": "...", ' +
   '"example": "...", "pronunciation": "...", "sortOrder": 0, "isKey": false, "pos": "n."}]}, ' +
   '"B1": {same shape as A2}, "B2": {same shape as A2}}. Top-level keys must be exactly ' +
@@ -106,7 +131,10 @@ export const COMBINED_SYSTEM_PROMPT =
 export const SINGLE_LEVEL_SYSTEM_PROMPT =
   `${FABRICATION_GUARDRAIL} ` +
   "Write a completely new English news article at the CEFR level given in the request, " +
-  "using ONLY the facts provided — do not add outside facts. Target word counts: " +
+  "using ONLY the facts provided — do not add outside facts. " +
+  "When the request carries a paragraphPlan, follow it exactly: one paragraph per beat, " +
+  "in that order, so this level stays aligned with the other two. " +
+  "Target word counts: " +
   `A2: ${LEVEL_TARGETS.A2}. B1: ${LEVEL_TARGETS.B1}. B2: ${LEVEL_TARGETS.B2}. ${WORD_COUNT_ENFORCEMENT} ` +
   "Write a brand-new headline (never reuse a source headline). Also produce 5 key " +
   `vocabulary words with Korean meaning, an example sentence, and a pronunciation hint. ${WORD_RULES} ` +
@@ -154,11 +182,12 @@ const levelOutputSchema = {
 export const COMBINED_OUTPUT_SCHEMA = {
   type: "object",
   properties: {
+    paragraphPlan: { type: "array", items: { type: "string" } },
     A2: levelOutputSchema,
     B1: levelOutputSchema,
     B2: levelOutputSchema,
   },
-  required: ["A2", "B1", "B2"],
+  required: ["paragraphPlan", "A2", "B1", "B2"],
   additionalProperties: false,
 };
 

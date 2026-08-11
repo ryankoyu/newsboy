@@ -69,6 +69,12 @@ export async function gateVersion(
   facts: ExtractedFact[],
   sourceItems: RawItem[],
   llm: LLMProvider,
+  /**
+   * Beats the sibling levels were written to. A regenerated level has to
+   * land back on the same paragraphs, otherwise the levels that needed
+   * rework are exactly the ones that end up misaligned.
+   */
+  paragraphPlan?: string[],
 ): Promise<GatedVersionWithUsage> {
   let currentVersion = version;
   let attempts = 0;
@@ -169,6 +175,7 @@ export async function gateVersion(
       facts,
       level: currentVersion.level,
       feedback,
+      paragraphPlan,
     });
     if (rewritten.usage) retryUsage = addUsage(retryUsage, rewritten.usage);
     currentVersion = {

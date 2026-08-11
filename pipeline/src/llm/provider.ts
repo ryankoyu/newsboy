@@ -74,6 +74,12 @@ export interface RewriteInput {
   level: "A2" | "B1" | "B2";
   /** Present when this is a gate-failure retry (A1 §3.2: feed back which metric was exceeded). */
   feedback?: string;
+  /**
+   * The beat list the other two levels were written to. Passed on retries so
+   * a regenerated level lands back on the same paragraphs — without it, the
+   * levels that needed rework are exactly the ones that lose alignment.
+   */
+  paragraphPlan?: string[];
 }
 
 export interface RewriteOutput {
@@ -98,6 +104,8 @@ export interface GenerateAllLevelsInput {
 
 export interface GenerateAllLevelsOutput {
   versions: Record<"A2" | "B1" | "B2", RewriteOutput>;
+  /** Beats every level was written to, in order. Empty if the model omitted it. */
+  paragraphPlan: string[];
   /** Combined usage for the single call that produced all three levels. */
   usage?: CallUsage;
 }

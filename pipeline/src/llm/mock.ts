@@ -248,6 +248,9 @@ export class MockLLMProvider implements LLMProvider {
    */
   async generateAllLevels(input: GenerateAllLevelsInput): Promise<GenerateAllLevelsOutput> {
     return {
+      // One beat per fact — enough for pipeline code to exercise the plan
+      // path; the mock does no real planning.
+      paragraphPlan: input.facts.slice(0, 6).map((f) => f.statement.slice(0, 60)),
       versions: {
         A2: this.renderLevel(input.facts, "A2"),
         B1: this.renderLevel(input.facts, "B1"),
