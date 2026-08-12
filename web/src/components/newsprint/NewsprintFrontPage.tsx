@@ -183,15 +183,29 @@ export function NewsprintFrontPage({
                 <Ornament margin="12px 0 11px" />
 
                 {/* ── Hero: side-heads | engraving | side-heads ── */}
+                {/* Hero: side-heads flank the engraving — but only the
+                    columns that have stories in them. A day that produced
+                    one article would otherwise reserve two empty thirds and
+                    print the cut squeezed into the middle, which reads as a
+                    broken layout rather than a quiet news day. The grid is
+                    built from the columns that exist. */}
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "1fr 1.35fr 1fr",
+                    gridTemplateColumns: [
+                      leftHeads.length > 0 ? "1fr" : null,
+                      "1.35fr",
+                      rightHeads.length > 0 ? "1fr" : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" "),
                     gap: 9,
                     alignItems: "start",
                   }}
                 >
-                  <SideHeadStack articles={leftHeads} level={level} side="left" />
+                  {leftHeads.length > 0 && (
+                    <SideHeadStack articles={leftHeads} level={level} side="left" />
+                  )}
                   {/* The one engraving on the page — the lead's, and nowhere else. */}
                   <Cut
                     articleId={lead.id}
@@ -200,7 +214,9 @@ export function NewsprintFrontPage({
                     label={"ENGRAVING\n820×1080\n대표 삽화"}
                     caption={lead.category?.label ?? "Today"}
                   />
-                  <SideHeadStack articles={rightHeads} level={level} side="right" />
+                  {rightHeads.length > 0 && (
+                    <SideHeadStack articles={rightHeads} level={level} side="right" />
+                  )}
                 </div>
 
                 <div style={{ margin: "13px 0 11px", height: 1, background: "var(--rule-mid)" }} />
@@ -240,6 +256,13 @@ export function NewsprintFrontPage({
               </p>
             )}
 
+            {/* The section head only earns its rule when there is something
+                under it, or when the reader filtered and deserves to be told
+                the filter came back empty. A thin edition — which the
+                two-source rule makes the ordinary case, not the exception —
+                otherwise printed "More Top Stories" over nothing, which
+                reads as a page that failed to load. */}
+            {(listArticles.length > 0 || section !== null) && (
             <div ref={listRef} style={{ scrollMarginTop: 12 }}>
               <>
                 <div
@@ -297,6 +320,7 @@ export function NewsprintFrontPage({
                 )}
               </>
             </div>
+            )}
           </>
         )}
       </div>
