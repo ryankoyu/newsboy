@@ -7,7 +7,7 @@
 
 | # | 불일치 | 조정 결정 |
 |---|---|---|
-| 1 | A1은 `fact_provenance` 단일 테이블, A2는 `facts` + `fact_sources` 2테이블(M:N) | **A2가 스키마의 단일 기준.** A1 문서의 `fact_provenance`는 A2의 `facts`+`fact_sources`를 가리키는 것으로 읽는다. |
+| 1 | A1은 `fact_provenance` 단일 테이블, A2는 `facts` + `fact_sources` 2테이블(M:N) | **설계 문서 사이에서는 A2가 스키마의 기준.** A1 문서의 `fact_provenance`는 A2의 `facts`+`fact_sources`를 가리키는 것으로 읽는다.<br>⚠️ **2026-08-11 보정**: 코드가 생긴 뒤로 실제 스키마의 단일 기준은 **`supabase/migrations/`** 다. A2 §4의 DDL 초안은 `0001_schema.sql`의 밑그림이고, 그 뒤 `0002`~`0005`가 얹혀 있다 — **마이그레이션은 총 5개다**(`supabase/migrations/` 실측: `0001_schema.sql` · `0002_user_library.sql` · `0003_article_status_held.sql` · `0004_words_pos_and_categories_seed.sql` · `0005_pipeline_checkpoints.sql`). 얹힌 내용: `article_status`에 `held`, `check_kind` 5종, `words.pos`/`is_key`, `categories` 시드, 그리고 `0005`의 `pipeline_checkpoints` 테이블(`0005_pipeline_checkpoints.sql:22`, `pipeline/src/storage/supabase.ts`가 `:4`·`:218`·`:666`·`:681`·`:698`·`:733`에서 읽고 쓴다). *(**2026-08-12 7차 정정** — 6차가 "4개 → 5개"를 README·DEPLOYMENT·a2 세 곳에서 고치면서 이 문서의 사본을 빠뜨렸다. 이 문서는 스스로를 "설계 충돌 시 우선 기준"이라 선언하므로 여기가 낡으면 다른 문서를 되돌리는 근거가 된다.)* 스키마를 확인할 일이 있으면 마이그레이션을 볼 것 — 대조표는 a2-data-model.md 상단에 있다. |
 | 2 | A1이 언급한 `events`(사건 클러스터)·`pipeline_runs`(모니터링) 테이블이 A2 스키마에 없음 | `events`는 불필요 — A2의 `articles`(사건 단위) + `sources`(N:1)가 같은 역할. **`pipeline_runs`는 A2 스키마에 추가 채택** (일일 실행 기록·단계별 상태·오류 로그, 운영 모니터링에 필요). Phase 3 구현 시 반영. |
 | 3 | (확인 결과 일치) A3의 화면 요소 ↔ A2 스키마: Saved 탭=bookmarks, 퀴즈=quizzes/quiz_options, 사전 팝업=words(발음 포함) 모두 대응됨 | 조치 불요 |
 

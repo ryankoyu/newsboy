@@ -12,7 +12,7 @@ BRIEFLY — Version 0.1 / 2026-07-10
 
 ## 0. 한 줄 요약
 
-Next.js(프론트+API) + Supabase(인증·DB·스토리지) 위에, **매일 1회 실행되는 파이프라인**이 RSS를 모아 사건별로 묶고 Top 10을 뽑아 레벨별로 재작성한 뒤, **운영자(창업자)가 웹 검수 화면에서 승인해야만** 발행되는 구조. 파이프라인은 별도 서버리스가 아니라 **Supabase에 붙은 단일 Node 워커 + 스케줄러**로 돌린다. 마이크로서비스 없음. 상태는 전부 DB의 `status` 컬럼으로 추적한다.
+Next.js(프론트+API) + Supabase(인증·DB·스토리지) 위에, **매일 1회 실행되는 파이프라인**이 RSS를 모아 사건별로 묶고 Top 10을 뽑아 레벨별로 재작성한 뒤, **운영자(창업자)가 웹 검수 화면에서 승인해야만** 발행되는 구조. 파이프라인은 별도 서버리스가 아니라 **Supabase에 붙은 단일 Node 워커 + 스케줄러**로 돌린다. 마이크로서비스 없음. 콘텐츠 상태는 DB의 `status` 컬럼으로 추적한다. (파이프라인 **단계** 진행 상태는 `status` 컬럼이 아니라 `pipeline_checkpoints` 테이블의 `payload`에 담긴다 — §2 참조.)
 
 ---
 
@@ -58,7 +58,8 @@ Next.js(프론트+API) + Supabase(인증·DB·스토리지) 위에, **매일 1�
 │                          │  승인 → status=published    │                │
 │                          └────────────────────────────┘                │
 │                                                                         │
-│   외부 호출: RSS/GDELT(수집) · Claude API(추출·재작성·품질) · 사전 API  │
+│   외부 호출: RSS(수집) · GDELT(점수 신호만) ·                           │
+│              Claude API(추출·재작성·품질) · 사전 API                    │
 └───────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -93,13 +94,19 @@ Next.js(프론트+API) + Supabase(인증·DB·스토리지) 위에, **매일 1�
 
 - 파이프라인은 **웹 요청 흐름과 분리된 배치 작업**이다. 사용자 트래픽과 무관하게 하루 1번, 수 분~수십 분 돌고 끝난다.
 - 따라서 "상시 켜진 서버"가 아니라 **스케줄에 의해 기동되는 단발 워커**가 맞다. 실행 위치 후보는 §5에서 결정지로 제시.
-- LLM 호출이 길게(재작성+재시도 루프) 이어질 수 있으므로, 짧은 함수 타임아웃(예: 서버리스 10~60초)에 갇히면 안 된다 `[문서]`. → **단계별로 쪼개 실행**하고 각 단계 결과를 DB에 커밋(중단돼도 이어서 재개 가능)하는 구조로 설계한다.
+- LLM 호출이 길게(재작성+재시도 루프) 이어질 수 있으므로, 짧은 함수 타임아웃(예: 서버리스 10~60초)에 갇히면 안 된다 `[문서]`. → **단계별로 쪼개 실행**하고 각 단계 결과를 커밋(중단돼도 이어서 재개 가능)하는 구조로 설계한다. (Supabase 실행에서는 실제로 DB에 커밋한다 — `pipeline_checkpoints`, §2 참조. 로컬 실행은 JSON 파일.)
 
 ---
 
 ## 2. 일일 콘텐츠 파이프라인 (단계별 실행·실패처리)
 
-핵심 원칙: **각 단계는 DB에 상태를 남기고 끝난다.** 어느 단계에서 죽어도 마지막 성공 지점부터 재개한다. 사람 승인(7단계) 없이는 절대 발행되지 않는다(브리핑·소싱전략의 공개 콘텐츠 승인 원칙).
+핵심 원칙: **각 단계는 성공 지점을 체크포인트로 남기고 끝난다.** 중단된 실행은 마지막 성공 지점부터 재개한다. 사람 승인(7단계) 없이는 절대 발행되지 않는다(브리핑·소싱전략의 공개 콘텐츠 승인 원칙).
+
+> 📌 **2026-08-12 — 체크포인트가 러너 밖으로 나왔다(위 이탈 해소).** 이 자리에는 원래 "설계는 DB라고 썼는데 구현은 러너 로컬 JSON 파일"이라는 경고가 있었다. 그 파일 방식은 §6에서 고른 실행 환경(GitHub Actions)이 임시 러너라서, job 이 죽고 다시 dispatch 되면 체크포인트가 통째로 사라졌다 — 즉 이 절의 핵심 원칙이 정작 운영 환경에서만 성립하지 않았다.
+>
+> 지금은 **어디에 두느냐를 저장소 어댑터가 정한다.** Supabase 어댑터(`storage/supabase.ts`)는 `pipeline_checkpoints` 테이블에 쓴다(`supabase/migrations/0005_pipeline_checkpoints.sql` — 에디션 날짜 1행, `payload jsonb`에 `PipelineCheckpoint` 전체, RLS는 service_role 전용). LocalFile 어댑터는 `storage/checkpointFile.ts`의 JSON 파일을 그대로 쓴다 — 그 실행은 파일을 가진 바로 그 기계에서 도니까. 규칙은 하나다: **그 어댑터의 실행이 프로세스가 죽은 뒤에도 닿을 수 있는 곳에 둔다.**
+>
+> 남은 단서 두 가지. (a) 단계 진행을 추적하는 `status` 컬럼은 여전히 없다 — 진행 상태는 `payload` 안에 어느 단계 키가 채워졌는가로 표현된다. (b) 실제로 중단된 Actions job 을 재개해 본 기록은 아직 없다(확인 근거는 단위 테스트뿐). 현재 상태 판정은 feature-status.md §1-A "단계 체크포인트 · 중단 지점 재개" 참조.
 
 ```
 소스 상태 흐름:  collected → clustered → selected → extracted →
@@ -107,7 +114,8 @@ Next.js(프론트+API) + Supabase(인증·DB·스토리지) 위에, **매일 1�
 ```
 
 ### [1] RSS 수집
-- 소싱전략 §1 화이트리스트(BBC·Guardian·Al Jazeera·NPR·Korea Herald·연합영문·TechCrunch·Verge·Ars 등) + Google News RSS 주제쿼리 + GDELT.
+- 소싱전략 §1 화이트리스트(BBC·Guardian·Al Jazeera·NPR·Korea Herald·연합영문·TechCrunch·Verge·Ars 등) + Google News RSS 주제쿼리. 구현은 `pipeline/src/config/sources.ts` 의 피드 35개다 `[관찰]`.
+- **GDELT 는 수집 소스가 아니다.** 이 문서의 이전 판은 GDELT 를 화이트리스트 옆에 수집원으로 적었으나, 구현은 의도적으로 그렇게 하지 않았다 — GDELT 의 기사 집합을 그대로 받으면 약관을 아무도 확인하지 않은 임의 도메인의 본문을 끌어오게 되고, 이는 이 절의 마지막 항목("크롤링·페이월 우회 금지 — RSS/공개만", 소싱전략 §1)이 금지하는 일이다. 그래서 GDELT 는 [3] Top10 선정 단계의 **Layer 2 "글로벌 영향력" 점수 신호로만** 쓴다(top10-curation.md §1 Layer 2 · `pipeline/src/pipeline/globalImpact.ts`, 근거 주석은 같은 파일 머리말). 기사 수·보도 국가 수라는 메타데이터만 읽고, GDELT 의 본문은 기사에 한 글자도 들어가지 않는다 `[관찰]`.
 - **실패 처리(R3 실증: 403/타임아웃 빈발)**: 소스별 재시도(지수 백오프), 타임아웃 상한, **안정 소스 화이트리스트 우선**. 특정 소스가 죽어도 파이프라인 전체는 진행. 수집 성공한 raw를 `sources` 테이블에 저장(URL·발행시각·본문·수집상태).
 - 크롤링·페이월 우회 금지(소싱전략 §1 법무 기준) — RSS/공개만.
 
@@ -154,7 +162,7 @@ Next.js(프론트+API) + Supabase(인증·DB·스토리지) 위에, **매일 1�
 | 클러스터/선정 | 소스 충돌·부족 | 전문>요약 우선, 2소스 미달 보류 |
 | 재작성 | 레벨 드리프트 | 게이트 불합격→재작성 루프(상한 후 사람 보류) |
 | LLM 호출 | 레이트리밋/일시오류 | SDK 자동 재시도 + 지수 백오프 |
-| 전체 | 중간 크래시 | status 컬럼으로 마지막 성공 단계부터 재개 |
+| 전체 | 중간 크래시 | 체크포인트로 마지막 성공 단계부터 재개 — Supabase 실행은 `pipeline_checkpoints` 테이블(0005), 로컬 실행은 `pipeline/output/checkpoints/<날짜>.json`. **DB의 status 컬럼이 아니다** — 진행 상태는 `payload` 안의 단계 키다(§2) |
 
 ---
 
@@ -257,7 +265,8 @@ Next.js(프론트+API) + Supabase(인증·DB·스토리지) 위에, **매일 1�
    - A) **GitHub Actions 스케줄** — cron으로 하루 1회 Node 워커 실행. 무료(공개/사적 한도 내)·설정 단순·로그 자동. 긴 LLM 루프도 넉넉한 타임아웃. **1인 운영 최적 `[추측]`.**
    - B) Supabase 예약 함수(pg_cron/Edge) — DB 근접이나 긴 배치엔 타임아웃 제약 `[문서]`.
    - C) 소형 상시 워커(Fly/Railway) — 유연하나 상시 비용·운영 부담.
-   - → **A 권장**, 단계별 DB 커밋으로 재개 가능하게.
+   - → **A 권장**, 단계별 커밋으로 재개 가능하게.
+   - ⚠️ **2026-08-12 실측**: A를 골랐고 실제로 그 위에서 돈다. 한동안 재개 체크포인트가 러너의 로컬 파일이어서 **job 이 죽고 다시 dispatch 되면 처음부터 돌았다** — A를 고른 근거였던 "단계별 커밋으로 재개 가능하게"가 정작 A에서만 깨져 있었다. 같은 날 체크포인트를 `pipeline_checkpoints` 테이블로 옮겨 해소했다(§2). 다만 실제로 중단된 job 을 재개해 본 기록은 아직 없다.
 
 2. **백엔드**: Supabase(권장) vs bkend.ai. 둘 다 1인 운영 가능. Supabase는 대시보드로 데이터를 직접 보고 고치기 쉬워 **검수·디버깅 우위**. 팀에 bkend 플러그인이 있으니 강한 락인 회피를 원하면 재검토 가능 — 다만 MVP는 Supabase 권장.
 
@@ -268,7 +277,17 @@ Next.js(프론트+API) + Supabase(인증·DB·스토리지) 위에, **매일 1�
 ---
 
 ## 부록 — 테이블 목록 수준 (상세는 A2)
-`users`(레벨) · `sources` · `events`(사건 클러스터) · `articles` · `article_versions`(A2/B1/B2) · `fact_provenance` · `words`(사전) · `quizzes` · `pipeline_runs`(모니터링).
+
+> ⚠️ **2026-08-12 경고 — 아래 목록은 2026-07-10 설계 시점의 가안이고, 실제로 적용된 스키마와 다르다.** 스키마의 단일 기준은 이 문서도 a2도 아니고 **`supabase/migrations/`** 다.
+>
+> 아래 목록이 실제와 어긋나는 지점 3곳:
+> - **`users` 테이블은 없다.** 회원 레벨은 `profiles` 테이블에 있다 (`0001_schema.sql:164`, `level cefr_level not null default 'A2'`).
+> - **`events` 테이블은 없다.** 사건 클러스터는 DB에 저장되지 않고 **파이프라인 실행 중 메모리 안에서만** 존재한다 (`pipeline/src/pipeline/cluster.ts` — 어휘 Jaccard + 48시간 창).
+> - **`fact_provenance` 테이블은 없다.** 사실→소스 추적은 `facts`(`0001_schema.sql:81`)와 `fact_sources`(`:93`) **두 테이블로 분리**돼 구현됐다.
+>
+> 실제 적용 테이블 (`0001` + `0002`, 17개): `categories` · `editions` · `articles` · `article_versions` · `sources` · `facts` · `fact_sources` · `words` · `quizzes` · `quiz_options` · `quality_checks` · `pipeline_runs` · `profiles` · `reading_progress` · `saved_words` · `bookmarks` · `saved_sentences`.
+
+*(설계 가안, 2026-07-10 — 위 경고와 대조해 읽을 것)* `users`(레벨) · `sources` · `events`(사건 클러스터) · `articles` · `article_versions`(A2/B1/B2) · `fact_provenance` · `words`(사전) · `quizzes` · `pipeline_runs`(모니터링).
 
 ---
 

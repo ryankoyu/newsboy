@@ -1,8 +1,26 @@
 # A2 — 데이터 모델 설계 (Supabase / Postgres)
 
-BRIEFLY — Version 0.1 / 2026-07-10
+BRIEFLY — Version 0.1 / 2026-07-10 · **2026-08-11 실 스키마 대조 주석 추가**
 작성: 데이터 모델 설계 에이전트 (A2)
 입력 문서: [project-brief.md](../project-brief.md) (9장 기능, 16장 MVP) · [news-sourcing-strategy.md](../news-sourcing-strategy.md) (§2 재작성 원칙 — provenance) · [r3-pipeline-experiment.md](../research/r3-pipeline-experiment.md) (산출물 실물)
+
+---
+
+## ⚠️ 이 문서와 실제 스키마의 관계 (2026-08-11)
+
+design-decisions.md §1-1은 이 문서를 "스키마의 단일 기준"으로 선언했지만, **실제로 DB에 적용되는 단일 기준은 `supabase/migrations/`다.** 마이그레이션 **5개**(`0001_schema.sql` · `0002_user_library.sql` · `0003_article_status_held.sql` · `0004_words_pos_and_categories_seed.sql` · `0005_pipeline_checkpoints.sql`, 2026-08-12 디스크 실측)가 순서대로 실행된 결과가 진짜 스키마이고, 이 문서의 §4 DDL 초안은 그중 `0001_schema.sql`의 밑그림에 해당한다.
+
+아래 §4의 DDL과 실제 마이그레이션이 다른 지점을 표로 정리해 뒀다(표의 행 수가 곧 차이 건수다 — 예전 판이 적어 둔 "3곳"은 표가 늘어난 뒤에도 그대로였다). 스키마를 확인할 일이 있으면 **이 문서가 아니라 `supabase/migrations/`를 볼 것.**
+
+| 항목 | 이 문서 §4 | 실제 (`supabase/migrations/`) |
+|---|---|---|
+| `article_status` | 6종 (`ingest`·`generated`·`review`·`approved`·`published`·`rejected`) | **7종** — `0003_article_status_held.sql`이 `review` 뒤에 **`held`** 추가 |
+| `check_kind` | 2종 (`cefr`·`ngram_overlap`) | **5종** — `0001_schema.sql:13`이 `two_source`·`word_match`·**`word_count`** 포함 |
+| `words` 컬럼 | **7개** — `id`·`version_id`·`term`·`meaning_ko`·`example`·`pronunciation`·`sort_order` (`pos`·`is_key` 없음) | **9개** — `0001_schema.sql:101-109`의 7개 + `0004`가 `is_key boolean not null default false`, `pos text`(nullable) 추가 |
+| `categories` | 마스터 테이블 정의만 | `0004`가 시드 10행(world/korea/ai/tech/business/finance/science/sports/culture/lifestyle) 삽입 |
+| `pipeline_checkpoints` | **없음** | `0005_pipeline_checkpoints.sql:22`이 신설 — 중단된 파이프라인 실행이 마지막 성공 단계부터 이어서 돌기 위한 단계 체크포인트 (2026-08-12 추가) |
+
+> ⚠️ **2026-08-12 정정** — 위 `words` 행은 2026-08-11 판에 「6개 → 8개」로 적혀 있었다. 실제로는 이 문서 §4의 DDL이 **7개**, 마이그레이션 적용 결과가 **9개**다. 스키마 차이를 경고하려고 만든 표 자체가 양쪽 모두 하나씩 적게 세고 있었다 — 이 표를 근거로 삼기 전에 `supabase/migrations/`를 직접 볼 것.
 
 ---
 
@@ -61,6 +79,7 @@ BRIEFLY — Version 0.1 / 2026-07-10
 
    [파이프라인 운영]
    articles.status ─── ingest → generated → review → approved → published
+                                         └→ held (게이트 미통과, 사람이 판단)  ※ 0003 에서 추가
    quality_checks (CEFR 점수·중복률 게이트 결과)  ── FK → article_versions
 ```
 
@@ -116,9 +135,16 @@ BRIEFLY — Version 0.1 / 2026-07-10
 -- ENUM 타입
 -- =========================================================
 create type cefr_level     as enum ('A2', 'B1', 'B2');
+-- ⚠️ 실제 스키마는 아래와 다르다 — supabase/migrations/ 가 단일 기준. 문서 상단 대조표 참조.
 create type article_status as enum ('ingest', 'generated', 'review', 'approved', 'published', 'rejected');
+-- 실제: 'review' 뒤에 'held' 가 하나 더 있다 (0003_article_status_held.sql).
+--       재작성 재시도를 다 쓰고도 2소스 게이트를 통과 못 한 기사. 'review' 와 같은
+--       "사람이 본다" 종착지이되 왜 걸렸는지를 구분해 남긴다.
 create type edition_status as enum ('draft', 'published');
 create type check_kind     as enum ('cefr', 'ngram_overlap'); -- 품질 게이트 종류
+-- 실제: 5종이다 (0001_schema.sql:13) —
+--       ('cefr', 'ngram_overlap', 'two_source', 'word_match', 'word_count').
+--       word_count 는 B2 분량 미달(feature-status G6) 대응으로 2026-07-17 추가.
 
 -- =========================================================
 -- 공개 콘텐츠
@@ -212,6 +238,11 @@ create table words (
   example       text,                          -- 예문
   pronunciation text,                          -- 'LAY-off'
   sort_order    smallint not null default 0
+  -- ⚠️ 실제 스키마에는 컬럼 2개가 더 있다 (0004_words_pos_and_categories_seed.sql):
+  --   is_key boolean not null default false  -- 루비 글로스로 본문 첫 등장에 표시할 핵심어
+  --   pos    text                            -- 품사 'n.'|'v.'|'adj.'|'adv.'|'phrase' (nullable)
+  -- 재작성 프롬프트가 두 값을 required 로 요구하는데 컬럼이 없어서, 돈 주고 뽑은 값을
+  -- 저장 어댑터가 버리고 있었다. 이 컬럼 이전 단어는 pos 가 없고 백필하지 않는다(값을 만들지 않는다).
 );
 create index on words (version_id);
 
@@ -238,7 +269,7 @@ create index on quiz_options (quiz_id);
 create table quality_checks (
   id          uuid primary key default gen_random_uuid(),
   version_id  uuid not null references article_versions(id) on delete cascade,
-  kind        check_kind not null,             -- 'cefr' | 'ngram_overlap'
+  kind        check_kind not null,             -- 실제: 'cefr' | 'ngram_overlap' | 'two_source' | 'word_match' | 'word_count'
   score       numeric,                         -- CEFR 점수 or 중복률(%)
   passed      boolean not null,
   detail      jsonb,                           -- 세부(초과 어휘 목록 등)

@@ -1,11 +1,15 @@
 # Cut prompts
 
-Prompts for generating the engravings that fill the article slots. Paste one
+Prompts for generating the engraving that fills the lead's slot. Paste one
 into an image model, tone the result black-and-white, save it as
-`<article-id>.png` in this folder.
+`<article-id>.png` in `web/public/newsprint/cuts/`.
 
-Kept here rather than in chat so the style block and the rules stay with the
-images they govern.
+Only the day's lead article has a slot — one image per edition, not ten. See
+README.md ("Only the day's lead article has a slot") before generating a set.
+
+Kept in the repo rather than in chat so the style block and the rules stay
+with the images they govern — but outside `web/public/`, which is served to
+the open internet as-is. See README.md next to this file.
 
 ---
 
@@ -44,8 +48,9 @@ forward. Deliberate, not an oversight.
    how papers used engravings before wire photos.
 4. **No logos, flags, or brand marks** — trademark, and the paper carries no
    insignia.
-5. **Some stories take no cut.** Leave the file out and the slot falls back to
-   its placeholder.
+5. **Some leads take no cut.** Leave the file out and the slot falls back to
+   its labelled placeholder. (Non-lead stories have no slot at all, so there is
+   nothing to leave out for them.)
 6. **The caption names the picture. It does not claim anything about the
    event.**
 
@@ -54,6 +59,11 @@ forward. Deliberate, not an oversight.
 ## Written for the 2026-07-13 edition
 
 Each entry: the prompt subject, then its caption.
+
+These ten were drafted when the design still assumed a cut per story. Only the
+lead has a slot now, so on any given day exactly one of these is the one that
+prints — the rest are kept as worked examples of the style and of the "no cut"
+judgement (see #9), not as a set to generate.
 
 ### 1. US lawmaker detained in the West Bank
 > Terraced olive groves on a dry limestone hillside, low stone retaining walls,
