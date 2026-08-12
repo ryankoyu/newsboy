@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import { dataProvider } from "@/lib/data";
+import { getLatestEditionOrNull } from "@/lib/data/resilient";
 import { SkinnedHomeView } from "@/components/newsprint/SkinnedHomeView";
 import { isEditionPast } from "@/lib/editionDate";
 
@@ -13,7 +13,10 @@ export default async function Home() {
   // (next/dist/docs/01-app/03-api-reference/04-functions/connection.md).
   await connection();
 
-  const edition = await dataProvider.getLatestEdition();
+  // Reads that are allowed to come back empty but never to take the page
+  // down — the database is a live dependency now, and the home page is the
+  // one screen a reader arrives at cold.
+  const edition = await getLatestEditionOrNull();
   // docs/feature-status.md G4: home must not always claim the edition is
   // "today's" — check the actual edition date the same way ArticleViewer
   // does, so a stale/late edition shows the same "past brief" state on
