@@ -42,6 +42,36 @@ export async function excludeArticleAction(
   return { ok: true };
 }
 
+/**
+ * 반려 — send one article back to the pipeline to be written again
+ * (production-readiness.md §2 "기사별 승인/반려(재생성 요청)/제외").
+ *
+ * The note is not commentary: pipeline/src/pipeline/regenerate.ts hands it to
+ * the rewrite call as the instruction for the new draft, which is why an
+ * empty one is refused here as well as in the repository. Nothing is
+ * regenerated inside this request — the console records the request and the
+ * pipeline worker (npm run regenerate -- <date>) answers it, because a
+ * three-level Opus rewrite is minutes of work, not a button's worth.
+ */
+export async function requestRegenerationAction(
+  editionDate: string,
+  articleId: string,
+  note: string
+): Promise<ActionResult> {
+  await requireAdminSession();
+  if (!note || note.trim().length === 0) {
+    return { ok: false, error: "재생성 요청 사유를 입력해 주세요. (무엇을 고쳐야 하는지)" };
+  }
+  try {
+    await localFsEditionRepository.setArticleDecision(editionDate, articleId, "regenerate", note);
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+  revalidatePath(`/admin/${editionDate}`);
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
 export async function resetArticleDecisionAction(
   editionDate: string,
   articleId: string

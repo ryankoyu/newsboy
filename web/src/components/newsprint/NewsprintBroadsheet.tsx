@@ -37,9 +37,12 @@ export function NewsprintBroadsheet({
   const { session } = useSession();
   const level = session.getLevel();
 
-  const articles = [...(edition?.articles ?? [])].sort(
-    (a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0)
-  );
+  // Version-less articles are dropped before layout, exactly as on the mobile
+  // front page: every component below returns null for one, which on a fixed
+  // three-column sheet leaves a hole in the grid rather than a shorter page.
+  const articles = [...(edition?.articles ?? [])]
+    .filter((a) => a.versions.length > 0)
+    .sort((a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0));
   const lead = articles[0] ?? null;
   const leftColumn = articles.slice(1, 3);
   const rightColumn = articles.slice(3, 5);

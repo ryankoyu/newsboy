@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CefrLevel, Word } from "@/lib/types";
 import type { DictionaryEntry } from "@/components/SmartDictionary";
 import { SentenceActionPopover } from "@/components/SentenceActionPopover";
@@ -57,6 +57,9 @@ export function NewsprintArticleBody({
     index: number;
     rect: DOMRect | null;
   } | null>(null);
+  // The word that opened the panel, so closing it can hand focus back
+  // instead of dropping the reader at the top of the document.
+  const wordTriggerRef = useRef<HTMLElement | null>(null);
 
   const sequences = buildWordSequences(words);
 
@@ -73,14 +76,20 @@ export function NewsprintArticleBody({
   // this component, and one render pass only needs to dedupe once.
   const shownKeyWordIds = new Set<string>();
 
-  function openWord(entry: Word | null, text: string, paragraph: number) {
+  function openWord(entry: Word | null, text: string, paragraph: number, trigger: HTMLElement) {
     session.markWordSeen(text);
+    wordTriggerRef.current = trigger;
     setActiveSentence(null);
     setActiveWord({
       entry: entry ?? { term: text, pronunciation: null, meaning_ko: null, example: null },
       paragraph,
     });
     refresh();
+  }
+
+  function closeWord() {
+    setActiveWord(null);
+    wordTriggerRef.current?.focus();
   }
 
   function openSentence(index: number, el: HTMLElement) {
@@ -128,7 +137,7 @@ export function NewsprintArticleBody({
                       saved={session.isWordSaved(runText)}
                       curated
                       gloss={showGloss ? run.entry.meaning_ko : null}
-                      onActivate={() => openWord(run.entry, runText, pIdx)}
+                      onActivate={(el) => openWord(run.entry, runText, pIdx, el)}
                     />
                   );
                   tIdx = run.endIdx + 1;
@@ -144,7 +153,7 @@ export function NewsprintArticleBody({
                         saved={session.isWordSaved(tok.text)}
                         curated={false}
                         gloss={null}
-                        onActivate={() => openWord(null, tok.text, pIdx)}
+                        onActivate={(el) => openWord(null, tok.text, pIdx, el)}
                       />
                     ) : (
                       <span key={tIdx}>{tok.text}</span>
@@ -180,7 +189,14 @@ export function NewsprintArticleBody({
           {/* The panel lands directly under the paragraph the word is in, so
               the reader's eye does not lose its place. */}
           {activeWord?.paragraph === pIdx && (
-            <InlineDictionary entry={activeWord.entry} onClose={() => setActiveWord(null)} />
+            // Keyed on the term: tapping a second word in the same paragraph
+            // must remount the panel, or it keeps the first word's focus and
+            // never re-announces.
+            <InlineDictionary
+              key={activeWord.entry.term}
+              entry={activeWord.entry}
+              onClose={closeWord}
+            />
           )}
         </div>
       ))}
@@ -219,7 +235,8 @@ function WordToken({
   /** Has a curated dictionary entry — only these carry the dotted rule. */
   curated: boolean;
   gloss: string | null;
-  onActivate: () => void;
+  /** Receives the token element so the panel can return focus to it. */
+  onActivate: (trigger: HTMLElement) => void;
 }) {
   const body = (
     <span
@@ -231,13 +248,13 @@ function WordToken({
       onClick={(e) => {
         // Word clicks win over the sentence handler wrapping them.
         e.stopPropagation();
-        onActivate();
+        onActivate(e.currentTarget);
       }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           e.stopPropagation();
-          onActivate();
+          onActivate(e.currentTarget);
         }
       }}
     >
@@ -257,6 +274,14 @@ function WordToken({
  * The dictionary, set as a ruled box in the column rather than a floating
  * card. Row 1 word + IPA + save, row 2 Korean gloss, row 3 the example
  * sentence in italic (handoff, "Article Reader").
+ *
+ * It is typeset into the column, but it is still a panel that opens on a tap
+ * and closes again, so it carries the same contract `SmartDictionary` does in
+ * the standard skin: announced as a dialog, focused on open, dismissed with
+ * Escape, focus handed back to the word that opened it. What it does NOT
+ * claim is `aria-modal` — nothing behind it is inert, the rest of the article
+ * stays readable, and saying otherwise would tell a screen reader the page
+ * had gone away when it had not.
  */
 function InlineDictionary({
   entry,
@@ -268,9 +293,33 @@ function InlineDictionary({
   const { session, refresh } = useSession();
   const saved = session.isWordSaved(entry.term);
   const pos = "pos" in entry ? entry.pos : null;
+  const panelRef = useRef<HTMLElement>(null);
+
+  // Held in a ref so the effect below can run once per opened word. Bound to
+  // `onClose` directly it would re-run on every render — including the one
+  // after "단어장 담기" — and yank focus off the button just pressed.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    // Focus lands on the panel, so the next screen-reader utterance is the
+    // definition rather than wherever the reader happened to be.
+    panelRef.current?.focus();
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onCloseRef.current();
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
     <aside
+      ref={panelRef}
+      role="dialog"
+      aria-label={`${entry.term} 사전`}
+      tabIndex={-1}
       style={{
         margin: "12px 0",
         border: "1px solid var(--rule-mid)",

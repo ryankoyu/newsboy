@@ -78,10 +78,24 @@ export interface PipelineSourceRef {
   outlet: string;
   title: string;
   fetchMethod: string;
+  /** RSS snippet, kept so a regeneration can re-run the n-gram gate. Absent in older editions. */
+  summary?: string;
+  publishedAt?: string | null;
+  outletKey?: string;
+  country?: string;
 }
 
-/** Operator's decision for one article, layered on top of the pipeline's own `status`. */
-export type ReviewDecision = "pending" | "approved" | "excluded";
+/**
+ * Operator's decision for one article, layered on top of the pipeline's own
+ * `status`.
+ *
+ * "regenerate" is 반려 (production-readiness.md §2 "승인/반려(재생성 요청)/제외"):
+ * the desk rejects this draft and asks the pipeline to write it again, with a
+ * note saying what was wrong. It is not a terminal state like "excluded" —
+ * pipeline/src/pipeline/regenerate.ts answers the request and returns the
+ * article to "pending".
+ */
+export type ReviewDecision = "pending" | "approved" | "excluded" | "regenerate";
 
 export interface PipelineArticle {
   id: string;
@@ -98,6 +112,13 @@ export interface PipelineArticle {
   reviewDecision?: ReviewDecision;
   /** Required when reviewDecision === "excluded". */
   excludeReason?: string;
+  /** Required when reviewDecision === "regenerate": what the desk wants fixed. */
+  regenerateNote?: string;
+  /** Set when the request was filed; cleared by the pipeline once it answers. */
+  regenerateRequestedAt?: string;
+  /** Written by the pipeline: how many times this article has been rewritten on request. */
+  regenerationCount?: number;
+  regeneratedAt?: string;
 }
 
 export type PipelineEditionStatus = "draft" | "published";
@@ -140,6 +161,12 @@ export interface CandidateReportEntry {
   subjectKey: string | null;
   outcome: "selected" | "backfilled" | "rejected" | "held_back_two_source";
   rank: number | null;
+  /**
+   * Rank the Layer 3 편집회의 proposed for this candidate, or null/absent when
+   * the LLM did not name it. A proposed rank next to outcome="rejected" is a
+   * Layer 1 rule overruling the AI — top10-curation.md §1 "AI는 제안, 룰은 강제".
+   */
+  llmProposedRank?: number | null;
   rejectionReasons: string[];
 }
 

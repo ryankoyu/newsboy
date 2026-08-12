@@ -13,6 +13,8 @@ export interface EditionListItem {
   articleCount: number;
   approvedCount: number;
   excludedCount: number;
+  /** Articles sent back to the pipeline for a rewrite (반려) and not yet answered. */
+  regenerateCount: number;
   pendingCount: number;
   heldCount: number;
   publishedAt?: string;
@@ -30,12 +32,19 @@ export interface EditionRepository {
 
   getEdition(editionDate: string): Promise<PipelineEdition | null>;
 
-  /** Sets one article's operator decision (and optional exclude reason). Persists immediately. */
+  /**
+   * Sets one article's operator decision. Persists immediately.
+   *
+   * `reason` is required for the two decisions that carry one: "excluded"
+   * (why it is dropped) and "regenerate" (what the rewrite must fix — the
+   * pipeline hands this note to the model, so an empty one would send the
+   * article back with no instruction).
+   */
   setArticleDecision(
     editionDate: string,
     articleId: string,
     decision: ReviewDecision,
-    excludeReason?: string | null
+    reason?: string | null
   ): Promise<PipelineEdition>;
 
   /** Marks the edition published (or reverts to draft — used by the manual verification/rollback step). */

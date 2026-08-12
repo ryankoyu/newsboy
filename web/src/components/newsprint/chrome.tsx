@@ -118,11 +118,25 @@ export function cutPath(articleId: string): string {
 }
 
 /**
+ * The notice every printed cut carries.
+ *
+ * docs/news-sourcing-strategy.md §3: no press photography, ever — stock or
+ * illustration only, and labelled as such. An engraving set beside a news
+ * headline is read as a photograph of the event unless the page says
+ * otherwise, so the label is not a footnote to the policy, it IS the policy.
+ * Kept here beside the only <img> in the app so the two cannot drift apart.
+ */
+export const ILLUSTRATION_NOTICE = "일러스트이며 실제 보도사진이 아닙니다.";
+
+/**
  * An engraving slot.
  *
  * Renders the article's cut when one has been placed, and the labelled
  * placeholder when it has not. Real images must be black-and-white engraving
  * tone inside the 1px rule — the paper takes no colour photography.
+ *
+ * A rendered cut always carries ILLUSTRATION_NOTICE; the placeholder does not,
+ * since a box reading "ENGRAVING 820×1080" is nobody's idea of a photograph.
  *
  * ONLY THE DAY'S LEAD CARRIES A CUT. Every other story — story rows, second
  * tier columns, the reader page of a non-lead article — is set in type alone.
@@ -192,19 +206,40 @@ export function Cut({
           </div>
         )}
       </div>
-      {caption && (
-        <figcaption
-          style={{
-            textAlign: "center",
-            fontFamily: DISPLAY,
-            fontSize: 9,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "var(--ink-soft)",
-            margin: "6px 0 0",
-          }}
-        >
-          {caption}
+      {(caption || src) && (
+        <figcaption style={{ textAlign: "center", margin: "6px 0 0" }}>
+          {caption && (
+            <span
+              style={{
+                display: "block",
+                fontFamily: DISPLAY,
+                fontSize: 9,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "var(--ink-soft)",
+              }}
+            >
+              {caption}
+            </span>
+          )}
+          {src && (
+            // Set below the category line and lighter than it: a printed
+            // credit, not a warning banner. It still has to survive being
+            // read, so it stays inside the caption rather than a tooltip.
+            <span
+              style={{
+                display: "block",
+                fontFamily: "var(--font-ui)",
+                fontSize: 9.5,
+                lineHeight: 1.5,
+                letterSpacing: "0.01em",
+                color: "var(--ink-muted)",
+                margin: caption ? "2px 0 0" : 0,
+              }}
+            >
+              {ILLUSTRATION_NOTICE}
+            </span>
+          )}
         </figcaption>
       )}
     </figure>

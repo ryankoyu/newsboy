@@ -10,8 +10,26 @@
  * call so they can never disagree again.
  */
 export function isEditionPast(editionDate: string): boolean {
-  const todayStr = new Date().toISOString().slice(0, 10);
-  return editionDate !== todayStr;
+  return editionDate !== kstToday();
+}
+
+/**
+ * "Today" is a Korean calendar day, not the server's and not UTC.
+ *
+ * The readers are in Korea, so the day an edition belongs to is the Korean
+ * one. Comparing against a UTC date (what `toISOString()` gives) made every
+ * edition look stale between 00:00 and 09:00 KST — precisely the window the
+ * app tells readers to expect the brief in ("보통 아침 8시경 도착"). A
+ * local-timezone comparison would be wrong the other way round: production
+ * renders on a UTC box, not in Seoul.
+ *
+ * Offset arithmetic on the epoch, so the result does not depend on the
+ * timezone the process happens to run in. Korea has no DST, so the +9 is
+ * fixed all year.
+ */
+function kstToday(): string {
+  const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+  return new Date(Date.now() + KST_OFFSET_MS).toISOString().slice(0, 10);
 }
 
 /** "지난 브리핑" label used by the article viewer (no weekday). */

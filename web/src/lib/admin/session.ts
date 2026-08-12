@@ -13,6 +13,7 @@ import {
   ADMIN_SESSION_COOKIE,
   ADMIN_SESSION_TTL_MS,
   createSessionToken,
+  revokeSession,
   verifySessionToken,
 } from "./auth";
 
@@ -41,5 +42,8 @@ export async function setAdminSessionCookie(): Promise<void> {
 
 export async function clearAdminSessionCookie(): Promise<void> {
   const store = await cookies();
+  // Revoke before deleting: dropping the cookie only stops *this* browser
+  // from sending it, while the token itself stays valid until its expiry.
+  revokeSession(store.get(ADMIN_SESSION_COOKIE)?.value);
   store.delete(ADMIN_SESSION_COOKIE);
 }

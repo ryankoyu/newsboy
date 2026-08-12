@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { ArticleWithDetails, CefrLevel, EditionWithArticles, Word } from "@/lib/types";
 import { estimateReadingMinutes } from "@/lib/data";
-import { useSession } from "@/lib/useSession";
+import { useSession, notifySessionChange } from "@/lib/useSession";
 import { READING_SCALE_VALUE, sessionStore } from "@/lib/session";
 import { countUniqueOutlets } from "@/lib/sourceOutlets";
 import { groupSourcesByOutlet } from "@/lib/sourceOutlets";
+import { isEditionPast, formatPastEditionLabel } from "@/lib/editionDate";
+import { computeWeeklyBrief } from "@/lib/weeklyBrief";
 import { LevelBadge } from "@/components/LevelBadge";
 import { FontSizePopover } from "@/components/FontSizePopover";
 import { LevelSwitcher } from "@/components/LevelSwitcher";
@@ -22,7 +24,7 @@ import {
   RuledBox,
   formatFolioDate,
 } from "@/components/newsprint/chrome";
-import { BackIcon, BookmarkIcon, MoreIcon, SpeakerIcon } from "@/components/newsprint/icons";
+import { BackIcon, BookmarkIcon } from "@/components/newsprint/icons";
 
 /**
  * Article reader, newsprint skin — design_handoff_newsprint_skin §3
@@ -34,8 +36,16 @@ import { BackIcon, BookmarkIcon, MoreIcon, SpeakerIcon } from "@/components/news
  * three-column action bar sits fixed at the foot.
  *
  * Read-tracking, level resolution and reading-scale behave exactly as in the
- * standard `ArticleViewer` — this is a re-skin, not a re-spec.
+ * standard `ArticleViewer` — this is a re-skin, not a re-spec. That cuts both
+ * ways: everything the standard reader gives a reader has to be reachable
+ * here too, because light mode IS this skin (useNewsprintSkin) and a feature
+ * missing from the paper is a feature missing from the product. The word
+ * index, today's progress, the completion block, the past-edition line and
+ * the provenance link are all set in type below for that reason.
  */
+
+const DISPLAY = "var(--font-display), Georgia, serif";
+
 export function NewsprintArticleViewer({
   article,
   initialLevel,
@@ -50,7 +60,7 @@ export function NewsprintArticleViewer({
   edition?: EditionWithArticles | null;
 }) {
   const router = useRouter();
-  const { session } = useSession();
+  const { session, refresh } = useSession();
   const bodyRef = useRef<HTMLDivElement>(null);
   const markedRef = useRef(false);
 
@@ -107,6 +117,10 @@ export function NewsprintArticleViewer({
       if (ratio >= 0.9 || (elapsed >= 30 && ratio >= 0.5)) {
         sessionStore.markRead(article.id);
         markedRef.current = true;
+        // Without this the store changes and nothing re-renders: today's
+        // progress would sit one article behind, and the completion block on
+        // the last article would only appear after a reload.
+        notifySessionChange();
       }
     }
 
@@ -118,6 +132,28 @@ export function NewsprintArticleViewer({
     };
   }, [article.id]);
 
+  // An article with no version at all cannot be typeset — say so rather than
+  // dereferencing undefined and taking the whole page down with it. Placed
+  // after every hook, so the hook order never changes between renders.
+  if (!version) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", background: "var(--paper-desk)" }}>
+        <div className="np-paper" style={{ width: 430, maxWidth: "100%", padding: "40px 18px" }}>
+          <p
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 13.5,
+              textAlign: "center",
+              color: "var(--ink-muted)",
+            }}
+          >
+            이 기사의 레벨 버전을 찾을 수 없습니다.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const minutes = estimateReadingMinutes(version.level as CefrLevel, version.word_count);
   const words = wordsByVersion[version.id] ?? [];
   const outlets = groupSourcesByOutlet(article.sources);
@@ -127,6 +163,14 @@ export function NewsprintArticleViewer({
   );
   const currentIndex = rankedArticles.findIndex((a) => a.id === article.id);
   const nextArticle = currentIndex >= 0 ? rankedArticles[currentIndex + 1] ?? null : null;
+  const isLastInEdition = currentIndex >= 0 && currentIndex === rankedArticles.length - 1;
+  const readArticleIds = new Set(session.getReadArticles());
+  const readCountToday = rankedArticles.filter((a) => readArticleIds.has(a.id)).length;
+  const allReadToday =
+    rankedArticles.length > 0 && rankedArticles.every((a) => readArticleIds.has(a.id));
+  const briefComplete = isLastInEdition && allReadToday;
+  const isPastEdition = Boolean(edition && isEditionPast(edition.edition_date));
+  const saved = session.isBookmarked(article.id);
   // Only the day's lead carries an engraving (chrome.tsx `Cut`). Opened
   // without its edition — a direct link, a shared URL — there is nothing to
   // compare against, so the page sets in type rather than guessing.
@@ -175,6 +219,22 @@ export function NewsprintArticleViewer({
         </header>
 
         {dateLabel && <FolioLine dateLabel={dateLabel} />}
+
+        {/* A back number has to say so on its own face — the folio date above
+            is set in English furniture, which is not a warning. */}
+        {isPastEdition && edition && (
+          <p
+            style={{
+              margin: "8px 0 0",
+              textAlign: "center",
+              fontFamily: "var(--font-ui)",
+              fontSize: 11.5,
+              color: "var(--ink-muted)",
+            }}
+          >
+            {formatPastEditionLabel(edition.edition_date)} 브리핑
+          </p>
+        )}
 
         {/* ── Headline block ── */}
         <h1
@@ -253,9 +313,34 @@ export function NewsprintArticleViewer({
           />
         )}
 
-        {/* ── Level switcher. An app control, so it keeps Newsboy's look. ── */}
-        <div style={{ display: "flex", justifyContent: "center", margin: "16px 0 0" }}>
+        {/* ── Level switcher. An app control, so it keeps Newsboy's look. ──
+            Today's progress sits beside it, exactly where the standard reader
+            puts it — quiet, no bar, no urgency. */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: rankedArticles.length > 0 ? "space-between" : "center",
+            gap: 12,
+            margin: "16px 0 0",
+          }}
+        >
           <LevelSwitcher value={level} onChange={handleLevelChange} />
+          {rankedArticles.length > 0 && (
+            <span
+              aria-label={`오늘의 브리핑 진행 ${readCountToday} / ${rankedArticles.length}`}
+              style={{
+                fontFamily: DISPLAY,
+                fontSize: 11,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                whiteSpace: "nowrap",
+                color: "var(--ink-muted)",
+              }}
+            >
+              {readCountToday} / {rankedArticles.length}
+            </span>
+          )}
         </div>
 
         <Hairline />
@@ -272,8 +357,32 @@ export function NewsprintArticleViewer({
 
         <Ornament />
 
+        <WordIndex words={words} />
+
         {outlets.length > 0 && (
           <RuledBox head="Sources">
+            {/* The trust notice the standard skin prints above its source
+                list (enhancement-plan.md Batch 1 #1). It is the one claim the
+                product makes about itself, and /about is the only place that
+                explains it — leaving both off the paper left the default
+                reader with no way to check either. */}
+            <p
+              style={{
+                margin: "0 0 10px",
+                paddingBottom: 9,
+                borderBottom: "1px solid var(--rule-hair)",
+                fontFamily: "var(--font-ui)",
+                fontSize: 11.5,
+                lineHeight: 1.6,
+                color: "var(--ink-muted)",
+              }}
+            >
+              이 기사는 {outlets.length}개 매체에서 교차 확인된 사실을 바탕으로 새로
+              작성되었습니다.{" "}
+              <Link href="/about" style={{ color: "var(--action)", textDecoration: "none" }}>
+                우리가 뉴스를 만드는 방법 →
+              </Link>
+            </p>
             <div
               style={{
                 display: "flex",
@@ -301,7 +410,13 @@ export function NewsprintArticleViewer({
           </RuledBox>
         )}
 
-        {nextArticle && nextVersion && (
+        {/* The completion block replaces the jump line once every article in
+            today's brief is read and this is the last of them — it is the ONLY
+            way into the weekly brief and the streak, so a paper without it is
+            a product with the feature switched off. */}
+        {briefComplete && <BriefCompleteBlock totalToday={rankedArticles.length} />}
+
+        {!briefComplete && nextArticle && nextVersion && (
           <section style={{ margin: "18px 0 0", borderTop: "3px double var(--rule-strong)", paddingTop: 12 }}>
             <h2
               style={{
@@ -348,7 +463,11 @@ export function NewsprintArticleViewer({
         )}
       </div>
 
-      {/* ── Foot bar. Sits on paper, so it takes --paper-tabbar. ── */}
+      {/* ── Foot bar. Sits on paper, so it takes --paper-tabbar. ──
+          The handoff draws three columns: 듣기 / 저장 / 더보기. Only one of
+          them is a thing this app can do — there is no text-to-speech in the
+          codebase and no overflow menu — so the bar carries the save action
+          alone rather than printing two buttons that do nothing. */}
       <nav
         aria-label="기사 액션"
         style={{
@@ -364,36 +483,288 @@ export function NewsprintArticleViewer({
           style={{
             width: 430,
             maxWidth: "100%",
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
+            display: "flex",
+            justifyContent: "center",
             borderTop: "2px solid var(--rule-strong)",
             background: "var(--paper-tabbar)",
             padding: "11px 0 16px",
           }}
         >
-          {[
-            { Icon: SpeakerIcon, label: "듣기" },
-            { Icon: BookmarkIcon, label: "저장" },
-            { Icon: MoreIcon, label: "더보기" },
-          ].map((item) => (
-            <div
-              key={item.label}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 3,
-                fontFamily: "var(--font-ui)",
-                fontSize: 11,
-                color: "var(--ink)",
-              }}
-            >
-              <item.Icon size={18} />
-              {item.label}
-            </div>
-          ))}
+          <button
+            type="button"
+            onClick={() => {
+              session.toggleBookmark(article.id);
+              refresh();
+            }}
+            aria-pressed={saved}
+            aria-label={saved ? "저장 취소" : "저장"}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 3,
+              minWidth: 96,
+              minHeight: 44,
+              border: "none",
+              background: "none",
+              padding: "0 20px",
+              cursor: "pointer",
+              fontFamily: "var(--font-ui)",
+              fontSize: 11,
+              color: saved ? "var(--action)" : "var(--ink)",
+            }}
+          >
+            {/* The flag inks solid when saved, so the state does not rest on
+                colour alone. */}
+            <BookmarkIcon size={18} filled={saved} />
+            {saved ? "저장됨" : "저장"}
+          </button>
         </div>
       </nav>
+    </div>
+  );
+}
+
+/**
+ * "Words in this Story", set as a ruled index.
+ *
+ * The standard reader ends with `WordListSection`; the paper printed only a
+ * count in the meta line, which meant the day's vocabulary was reachable only
+ * by finding each word inside the justified body. Each entry can be taken
+ * into the wordbook from here, the same toggle the inline dictionary uses.
+ *
+ * Nothing is invented: a word with no gloss says so, exactly as the panel and
+ * My Index do.
+ */
+function WordIndex({ words }: { words: Word[] }) {
+  const { session, refresh } = useSession();
+  if (words.length === 0) return null;
+
+  return (
+    <RuledBox head={`Words in This Story (${words.length})`}>
+      <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+        {words.map((word, i) => {
+          const saved = session.isWordSaved(word.term);
+          return (
+            <li
+              key={word.id}
+              style={{
+                padding: i === 0 ? "0 0 9px" : "9px 0",
+                borderBottom: i === words.length - 1 ? undefined : "1px solid var(--rule-hair)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                <span
+                  lang="en"
+                  style={{
+                    fontFamily: DISPLAY,
+                    fontWeight: 800,
+                    fontStretch: "82%",
+                    fontSize: 16,
+                    color: "var(--ink-strong)",
+                  }}
+                >
+                  {word.term}
+                </span>
+                {word.pronunciation && (
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: 11,
+                      color: "var(--ink-muted)",
+                    }}
+                  >
+                    {word.pronunciation}
+                  </span>
+                )}
+                <span style={{ flex: 1 }} />
+                <button
+                  type="button"
+                  onClick={() => {
+                    session.toggleSavedWord({
+                      term: word.term,
+                      meaning_ko: word.meaning_ko ?? null,
+                      savedAt: new Date().toISOString(),
+                    });
+                    refresh();
+                  }}
+                  aria-pressed={saved}
+                  aria-label={`${word.term} ${saved ? "단어장에서 빼기" : "단어장 담기"}`}
+                  style={{
+                    border: "none",
+                    background: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 11,
+                    color: "var(--action)",
+                  }}
+                >
+                  {saved ? "빼기" : "담기"}
+                </button>
+              </div>
+              <p
+                style={{
+                  margin: "3px 0 0",
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 12.5,
+                  lineHeight: 1.55,
+                  color: word.meaning_ko ? "var(--ink)" : "var(--ink-muted)",
+                }}
+              >
+                {word.meaning_ko
+                  ? `${word.pos ? `${word.pos} ` : ""}${word.meaning_ko}`
+                  : "뜻 준비 중"}
+              </p>
+            </li>
+          );
+        })}
+      </ul>
+    </RuledBox>
+  );
+}
+
+/**
+ * The end-of-brief block — the newsprint setting of `BriefCompleteCard`.
+ *
+ * Same data and the same deliberately light tone (a count, never a countdown
+ * to losing it), typeset instead of carded: the standard card's radius,
+ * shadow and emoji are three things the paper does not take.
+ */
+function BriefCompleteBlock({ totalToday }: { totalToday: number }) {
+  const { session, hydrated } = useSession();
+
+  const stats = useMemo(() => {
+    if (!hydrated) return null;
+    return computeWeeklyBrief({
+      readEvents: session.getReadEvents(),
+      savedWords: session.getSavedWords(),
+      savedSentences: session.getSavedSentences(),
+    });
+  }, [hydrated, session]);
+
+  return (
+    <section
+      role="status"
+      aria-label="오늘의 브리핑 완주"
+      style={{ margin: "18px 0 0", border: "3px double var(--rule-strong)", padding: "16px 16px 18px" }}
+    >
+      <h2
+        style={{
+          margin: 0,
+          fontFamily: DISPLAY,
+          fontWeight: 800,
+          fontStretch: "72%",
+          fontSize: 26,
+          lineHeight: 1.05,
+          letterSpacing: "0.02em",
+          textAlign: "center",
+          textTransform: "uppercase",
+          color: "var(--ink-strong)",
+        }}
+      >
+        오늘의 브리핑 끝!
+      </h2>
+      <p
+        style={{
+          margin: "9px 0 0",
+          textAlign: "center",
+          fontFamily: "var(--font-ui)",
+          fontSize: 12.5,
+          color: "var(--ink-soft)",
+        }}
+      >
+        오늘 {totalToday}개 기사를 모두 읽었어요
+      </p>
+
+      <Ornament margin="13px 0 0" />
+
+      {stats && (
+        <>
+          <h3
+            style={{
+              margin: "13px 0 0",
+              fontFamily: DISPLAY,
+              fontWeight: 800,
+              fontStretch: "74%",
+              fontSize: 12,
+              letterSpacing: "0.13em",
+              textTransform: "uppercase",
+              textAlign: "center",
+              color: "var(--ink)",
+            }}
+          >
+            나의 주간 브리핑
+          </h3>
+          <dl
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: 8,
+              margin: "10px 0 0",
+            }}
+          >
+            <WeeklyStat label="읽은 기사" value={stats.articlesRead} />
+            <WeeklyStat label="새 단어" value={stats.wordsSaved} />
+            <WeeklyStat label="저장 문장" value={stats.sentencesSaved} />
+          </dl>
+          {stats.streakDays > 0 && (
+            <p
+              style={{
+                margin: "11px 0 0",
+                textAlign: "center",
+                fontFamily: "var(--font-ui)",
+                fontSize: 11.5,
+                color: "var(--ink-muted)",
+              }}
+            >
+              {stats.streakDays}일 연속으로 브리핑을 읽고 있어요.
+            </p>
+          )}
+        </>
+      )}
+
+      <div style={{ display: "flex", alignItems: "center", gap: 9, margin: "14px 0 0" }}>
+        <div style={{ flex: 1, height: 1, background: "var(--rule-hair)" }} />
+        <Link
+          href="/"
+          style={{ fontFamily: "var(--font-ui)", fontSize: 11.5, color: "var(--action)" }}
+        >
+          홈으로 →
+        </Link>
+        <div style={{ flex: 1, height: 1, background: "var(--rule-hair)" }} />
+      </div>
+    </section>
+  );
+}
+
+function WeeklyStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div style={{ border: "1px solid var(--rule)", padding: "8px 4px 7px", textAlign: "center" }}>
+      <dt
+        style={{
+          margin: 0,
+          fontFamily: "var(--font-ui)",
+          fontSize: 10.5,
+          color: "var(--ink-muted)",
+        }}
+      >
+        {label}
+      </dt>
+      <dd
+        style={{
+          margin: "3px 0 0",
+          fontFamily: DISPLAY,
+          fontWeight: 900,
+          fontStretch: "76%",
+          fontSize: 22,
+          lineHeight: 1,
+          color: "var(--ink-strong)",
+        }}
+      >
+        {value}
+      </dd>
     </div>
   );
 }

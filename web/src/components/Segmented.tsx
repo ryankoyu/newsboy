@@ -1,8 +1,18 @@
 "use client";
 
+import { useRef } from "react";
+
 /**
  * Generic segmented control primitive — a3-ui-ux.md §1-4 "탭(레벨 스위처 & 하단 네비)".
  * Used by LevelSwitcher. role="tablist" per §4-1 accessibility spec.
+ *
+ * The tabs carry a roving tabindex — only the selected one is in the tab
+ * order — which is only half the pattern: without arrow keys, Tab lands on
+ * the selection and there is no way to reach the other options at all. This
+ * is the app's level switcher and its type-size control, so a keyboard user
+ * losing them loses the two settings the product is built around. Arrow /
+ * Home / End move the selection and take focus with it, the automatic-
+ * activation tablist behaviour (WAI-ARIA APG).
  */
 export interface SegmentedOption<T extends string> {
   value: T;
@@ -22,6 +32,42 @@ export function Segmented<T extends string>({
   onChange: (v: T) => void;
   ariaLabel: string;
 }) {
+  const tabsRef = useRef<Array<HTMLButtonElement | null>>([]);
+
+  /** Select the option at `index` and move focus onto it. */
+  function selectAt(index: number) {
+    const opt = options[index];
+    if (!opt) return;
+    onChange(opt.value);
+    tabsRef.current[index]?.focus();
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, index: number) {
+    // Both axes are handled: the control is horizontal, but a screen-reader
+    // user who has been taught "arrows move within a tablist" should not
+    // have to know which way this one is laid out.
+    switch (e.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        e.preventDefault();
+        selectAt((index + 1) % options.length);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        e.preventDefault();
+        selectAt((index - 1 + options.length) % options.length);
+        break;
+      case "Home":
+        e.preventDefault();
+        selectAt(0);
+        break;
+      case "End":
+        e.preventDefault();
+        selectAt(options.length - 1);
+        break;
+    }
+  }
+
   return (
     <div
       role="tablist"
@@ -34,15 +80,19 @@ export function Segmented<T extends string>({
         gap: 2,
       }}
     >
-      {options.map((opt) => {
+      {options.map((opt, index) => {
         const selected = opt.value === value;
         return (
           <button
             key={opt.value}
+            ref={(el) => {
+              tabsRef.current[index] = el;
+            }}
             role="tab"
             aria-selected={selected}
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(opt.value)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
             style={{
               flex: 1,
               border: "none",

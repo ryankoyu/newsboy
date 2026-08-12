@@ -61,6 +61,14 @@ export async function publishEdition(
     );
   }
 
+  // A 반려 that the pipeline hasn't answered yet is not an exclusion — the
+  // operator asked for a rewrite, not for the story to be dropped. Publishing
+  // now ships the edition without it, so say so rather than let an edition of
+  // nine go out looking like an edition of ten.
+  const awaitingRegeneration = edition.articles.filter(
+    (a) => a.reviewDecision === "regenerate"
+  );
+
   const publishedAt = new Date().toISOString();
 
   const categories = await readJson<Array<{ id: number; slug: string }>>("categories.json");
@@ -127,6 +135,15 @@ export async function publishEdition(
     publishedAt,
     approvedCount: approved.length,
     excludedCount: edition.articles.filter((a) => a.reviewDecision === "excluded").length,
-    warnings: bundle.warnings,
+    warnings: [
+      ...bundle.warnings,
+      ...(awaitingRegeneration.length > 0
+        ? [
+            `재생성 요청 대기 ${awaitingRegeneration.length}건은 이번 발행에 포함되지 않았습니다 ` +
+              `(#${awaitingRegeneration.map((a) => a.rankInEdition).join(", #")}). ` +
+              "파이프라인에서 재생성한 뒤 다시 발행하면 반영됩니다.",
+          ]
+        : []),
+    ],
   };
 }

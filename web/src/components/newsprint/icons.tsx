@@ -74,34 +74,27 @@ export function HomeIcon(props: IconProps) {
   );
 }
 
-/** My library — a bookmark. */
-export function BookmarkIcon(props: IconProps) {
+/**
+ * My library — a bookmark. `filled` inks the flag solid, which is how the
+ * reader's save button says "saved" without colour doing the work alone.
+ */
+export function BookmarkIcon({ filled, ...props }: IconProps & { filled?: boolean }) {
   return (
     <Svg {...props}>
-      <path d="M7 4h10v16l-5-4-5 4z" />
+      <path d="M7 4h10v16l-5-4-5 4z" fill={filled ? "currentColor" : undefined} />
     </Svg>
   );
 }
 
-/** Listen — a speaker with its two arcs. */
-export function SpeakerIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M4 9.5h3.4L12 5.6v12.8L7.4 14.5H4z" />
-      <path d="M15.4 9.4a3.8 3.8 0 0 1 0 5.2M17.9 7.2a7.2 7.2 0 0 1 0 9.6" />
-    </Svg>
-  );
-}
-
-export function MoreIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <circle cx="5.5" cy="12" r="1.1" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
-      <circle cx="18.5" cy="12" r="1.1" fill="currentColor" stroke="none" />
-    </Svg>
-  );
-}
+/*
+ * There was a SpeakerIcon ("듣기") and a MoreIcon ("더보기") here, drawn for
+ * the reader's foot bar. Neither had anything behind it: the app has no
+ * text-to-speech anywhere (nothing in the codebase touches speechSynthesis)
+ * and there is no overflow menu to open. A printed icon for a feature that
+ * does not exist is the same promise a fabricated fact is, so the buttons
+ * went and the glyphs went with them. Draw them back when there is something
+ * to attach them to.
+ */
 
 export function BackIcon(props: IconProps) {
   return (

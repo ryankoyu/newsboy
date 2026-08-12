@@ -2,12 +2,19 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import type { CandidateReportEntry, CefrLevel, PipelineArticle, PipelineEdition } from "@/lib/admin/pipelineTypes";
+import type {
+  CandidateReportEntry,
+  CefrLevel,
+  PipelineArticle,
+  PipelineEdition,
+  ReviewDecision,
+} from "@/lib/admin/pipelineTypes";
 import { ALL_CHECK_KINDS, checkBadgeState, deriveGateStatus, findCheck, type CheckBadgeState } from "@/lib/admin/gateStatus";
 import {
   approveArticleAction,
   excludeArticleAction,
   publishEditionAction,
+  requestRegenerationAction,
   resetArticleDecisionAction,
   setLeadArticleAction,
   approveAllPendingAction,
@@ -51,11 +58,14 @@ function CheckBadge({ kind, state }: { kind: string; state: CheckBadgeState }) {
   );
 }
 
-function DecisionBadge({ decision }: { decision: "pending" | "approved" | "excluded" }) {
+function DecisionBadge({ decision }: { decision: ReviewDecision }) {
   const map = {
     pending: { bg: "var(--color-surface-alt)", fg: "var(--color-text-muted)", label: "대기" },
     approved: { bg: "var(--level-a2-bg)", fg: "var(--level-a2-fg)", label: "승인됨" },
     excluded: { bg: "#F6DCD3", fg: "var(--color-danger)", label: "제외됨" },
+    // Not a verdict but an open request — the pipeline still owes this one a
+    // rewrite, so it reads as in-progress rather than pass/fail.
+    regenerate: { bg: "var(--color-accent-soft)", fg: "var(--color-accent)", label: "재생성 요청됨" },
   } as const;
   const s = map[decision];
   return (
@@ -100,7 +110,8 @@ export function ReviewClient({
     null;
   const approvedCount = articles.filter((a) => a.reviewDecision === "approved").length;
   const excludedCount = articles.filter((a) => a.reviewDecision === "excluded").length;
-  const pendingCount = articles.length - approvedCount - excludedCount;
+  const regenerateCount = articles.filter((a) => a.reviewDecision === "regenerate").length;
+  const pendingCount = articles.length - approvedCount - excludedCount - regenerateCount;
 
   function handleApproveAll() {
     setPublishErr(null);
@@ -173,8 +184,16 @@ export function ReviewClient({
         </div>
         <div style={{ textAlign: "right" }}>
           <div style={{ fontSize: "var(--fs-sm)", color: "var(--color-text-secondary)", marginBottom: 6 }}>
-            승인 {approvedCount} · 제외 {excludedCount} · 대기 {pendingCount} / 전체 {articles.length}
+            승인 {approvedCount} · 제외 {excludedCount} · 재생성 요청 {regenerateCount} · 대기 {pendingCount} / 전체{" "}
+            {articles.length}
           </div>
+          {regenerateCount > 0 && (
+            /* The console files the request; the pipeline worker answers it. */
+            <div style={{ fontSize: "var(--fs-xs)", color: "var(--color-accent)", marginBottom: 6 }}>
+              재생성 요청 {regenerateCount}건 대기 중 — 파이프라인에서{" "}
+              <code>npm run regenerate -- {edition.editionDate}</code> 실행 후 다시 검수하세요.
+            </div>
+          )}
           {/* Saves clicks on a long edition; the confirm states what it skips. */}
           <button
             type="button"
@@ -257,6 +276,8 @@ function ArticleCard({
   const [level, setLevel] = useState<CefrLevel>("A2");
   const [reasonOpen, setReasonOpen] = useState(false);
   const [reason, setReason] = useState("");
+  const [regenOpen, setRegenOpen] = useState(false);
+  const [regenNote, setRegenNote] = useState("");
   const [pending, startTransition] = useTransition();
   const [err, setErr] = useState<string | null>(null);
 
@@ -282,6 +303,21 @@ function ArticleCard({
       const res = await excludeArticleAction(editionDate, article.id, reason);
       if (!res.ok) setErr(res.error ?? "제외 실패");
       else setReasonOpen(false);
+    });
+  }
+
+  // 반려: the note travels to the model as the rewrite instruction, so it is
+  // required — an empty one would send the article back saying nothing.
+  function requestRegeneration() {
+    if (regenNote.trim().length === 0) {
+      setErr("무엇을 고쳐야 하는지 적어 주세요. 이 내용이 재작성 지시로 전달됩니다.");
+      return;
+    }
+    setErr(null);
+    startTransition(async () => {
+      const res = await requestRegenerationAction(editionDate, article.id, regenNote);
+      if (!res.ok) setErr(res.error ?? "재생성 요청 실패");
+      else setRegenOpen(false);
     });
   }
 
@@ -496,6 +532,13 @@ function ArticleCard({
                 {k}: {typeof v === "number" ? v.toFixed(2) : String(v)}
               </li>
             ))}
+            {/* Layer 3: what the AI proposed, next to what the rules decided. */}
+            <li>
+              AI 편집회의 제안 순위:{" "}
+              {typeof selection.llmProposedRank === "number"
+                ? `${selection.llmProposedRank}위`
+                : "제안 없음"}
+            </li>
           </ul>
           {selection.rejectionReasons.length > 0 && (
             <p style={{ fontSize: "var(--fs-xs)", color: "var(--color-text-muted)", marginTop: 6 }}>
@@ -543,6 +586,28 @@ function ArticleCard({
           }}
         >
           제외
+        </button>
+        {/*
+          반려 stays available on a gate-held article — held can never be
+          approved, so a rewrite request is the only way that article moves.
+        */}
+        <button
+          type="button"
+          onClick={() => setRegenOpen((o) => !o)}
+          disabled={pending || decision === "excluded"}
+          style={{
+            height: 36,
+            padding: "0 var(--sp-4)",
+            borderRadius: "var(--r-sm)",
+            border: "1px solid var(--color-accent)",
+            background: decision === "regenerate" ? "var(--color-accent-soft)" : "transparent",
+            color: "var(--color-accent)",
+            fontWeight: 700,
+            fontSize: "var(--fs-sm)",
+            cursor: pending || decision === "excluded" ? "not-allowed" : "pointer",
+          }}
+        >
+          반려 (재생성 요청)
         </button>
         {/* The pipeline ranks the ten; the desk decides which one leads. */}
         <button
@@ -626,9 +691,59 @@ function ArticleCard({
         </div>
       )}
 
+      {regenOpen && (
+        <div style={{ marginTop: "var(--sp-2)", display: "flex", gap: "var(--sp-2)" }}>
+          <input
+            value={regenNote}
+            onChange={(e) => setRegenNote(e.target.value)}
+            placeholder="무엇을 고쳐야 하나요? (필수 — 재작성 지시로 전달됩니다)"
+            style={{
+              flex: 1,
+              height: 36,
+              padding: "0 var(--sp-3)",
+              borderRadius: "var(--r-sm)",
+              border: "1px solid var(--color-border-strong)",
+              fontSize: "var(--fs-sm)",
+            }}
+          />
+          <button
+            type="button"
+            onClick={requestRegeneration}
+            disabled={pending}
+            style={{
+              height: 36,
+              padding: "0 var(--sp-4)",
+              borderRadius: "var(--r-sm)",
+              border: "none",
+              background: "var(--color-accent)",
+              color: "var(--color-text-invert)",
+              fontWeight: 700,
+              fontSize: "var(--fs-sm)",
+              cursor: pending ? "not-allowed" : "pointer",
+            }}
+          >
+            요청
+          </button>
+        </div>
+      )}
+
       {decision === "excluded" && article.excludeReason && (
         <p style={{ marginTop: "var(--sp-2)", fontSize: "var(--fs-sm)", color: "var(--color-danger)" }}>
           제외 사유: {article.excludeReason}
+        </p>
+      )}
+
+      {decision === "regenerate" && article.regenerateNote && (
+        <p style={{ marginTop: "var(--sp-2)", fontSize: "var(--fs-sm)", color: "var(--color-accent)" }}>
+          재생성 요청: {article.regenerateNote} — 파이프라인이 아직 처리하지 않았습니다.
+        </p>
+      )}
+
+      {/* Answered request: the draft on screen is the rewrite, not the one that was rejected. */}
+      {decision !== "regenerate" && (article.regenerationCount ?? 0) > 0 && (
+        <p style={{ marginTop: "var(--sp-2)", fontSize: "var(--fs-xs)", color: "var(--color-text-muted)" }}>
+          재생성 {article.regenerationCount}회 완료
+          {article.regenerateNote ? ` (마지막 요청: ${article.regenerateNote})` : ""}
         </p>
       )}
     </section>

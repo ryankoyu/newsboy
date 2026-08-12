@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import type { CefrLevel } from "@/lib/types";
 import type { ReadingScale, ThemePref } from "@/lib/session";
@@ -26,10 +27,25 @@ import { FolioLine, Nameplate } from "@/components/newsprint/chrome";
 const DISPLAY = "var(--font-display), Georgia, serif";
 
 export function NewsprintSettingsView() {
-  const { session, refresh } = useSession();
+  const { session, refresh, hydrated } = useSession();
   const level = session.getLevel();
   const fontSize = session.getFontSize();
   const theme = session.getTheme();
+
+  // Keep <html data-theme> in sync when the theme changes from this screen —
+  // the same effect SettingsView carries. Without it, switching dark→light
+  // here swapped in the paper but left the dark palette on the controls until
+  // a reload. Gated on hydration so the pre-hydration fallback ("system")
+  // doesn't wipe the attribute the head script already applied.
+  useEffect(() => {
+    if (!hydrated) return;
+    const root = document.documentElement;
+    if (theme === "system") {
+      root.removeAttribute("data-theme");
+    } else {
+      root.setAttribute("data-theme", theme);
+    }
+  }, [theme, hydrated]);
 
   return (
     <div style={{ display: "flex", justifyContent: "center", background: "var(--paper-desk)" }}>
@@ -64,6 +80,22 @@ export function NewsprintSettingsView() {
               refresh();
             }}
           />
+          {/* The only in-app route to the level test besides the front page's
+              house notice — and that notice disappears once dismissed, so
+              without this link a reader who tapped ✕ could never find it. */}
+          <Link
+            href="/onboarding"
+            style={{
+              display: "inline-block",
+              marginTop: 11,
+              fontFamily: "var(--font-ui)",
+              fontSize: 12.5,
+              color: "var(--action)",
+              textDecoration: "none",
+            }}
+          >
+            1분 레벨 진단하기 →
+          </Link>
         </Group>
 
         <Group head="Type Size" note="영어 본문에만 적용돼요.">

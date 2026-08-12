@@ -43,6 +43,7 @@ export default async function AdminHomePage() {
                 <Th>기사 수</Th>
                 <Th>승인</Th>
                 <Th>제외</Th>
+                <Th>재생성 요청</Th>
                 <Th>대기</Th>
                 <Th>게이트 보류</Th>
                 <Th></Th>
@@ -65,6 +66,14 @@ export default async function AdminHomePage() {
                   <Td>{e.articleCount}</Td>
                   <Td>{e.approvedCount}</Td>
                   <Td>{e.excludedCount}</Td>
+                  <Td>
+                    {/* Outstanding 반려: the pipeline owes this edition a rewrite. */}
+                    {e.regenerateCount > 0 ? (
+                      <span style={{ color: "var(--color-accent)", fontWeight: 600 }}>{e.regenerateCount}</span>
+                    ) : (
+                      0
+                    )}
+                  </Td>
                   <Td>{e.pendingCount}</Td>
                   <Td>
                     {e.heldCount > 0 ? (

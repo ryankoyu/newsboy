@@ -43,11 +43,17 @@ export function NewsprintFrontPage({
   const [section, setSection] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const articles = [...(edition?.articles ?? [])].sort(
-    (a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0)
-  );
+  // An article with no versions has no headline, no dek and no body — every
+  // slot on this page would set it as a blank. Worse, the lead's jump line
+  // reads `.level` off its version, so a version-less article at rank 1 took
+  // the whole front page down. Dropped once, here, rather than guarded in
+  // five places.
+  const articles = [...(edition?.articles ?? [])]
+    .filter((a) => a.versions.length > 0)
+    .sort((a, b) => (a.rank_in_edition ?? 0) - (b.rank_in_edition ?? 0));
 
   const lead = articles[0] ?? null;
+  const leadVersion = lead ? versionOf(lead, level) : null;
   const leftHeads = articles.slice(1, 3);
   const rightHeads = articles.slice(3, 5);
   const rest = articles.slice(5);
@@ -153,7 +159,9 @@ export function NewsprintFrontPage({
           })}
         </div>
 
-        {!edition || !lead ? (
+        <OnboardingRule />
+
+        {!edition || !lead || !leadVersion ? (
           <div style={{ padding: "40px 0" }}>
             <EmptyState
               title="오늘의 브리핑을 준비하고 있어요."
@@ -203,7 +211,7 @@ export function NewsprintFrontPage({
                 <div style={{ display: "flex", alignItems: "center", gap: 9, margin: "12px 0 0" }}>
                   <div style={{ flex: 1, height: 1, background: "var(--rule-hair)" }} />
                   <Link
-                    href={`/article/${lead.slug}?level=${versionOf(lead, level).level}`}
+                    href={`/article/${lead.slug}?level=${leadVersion.level}`}
                     style={{
                       fontFamily: "var(--font-ui)",
                       fontSize: 11.5,
@@ -294,6 +302,74 @@ export function NewsprintFrontPage({
       </div>
 
       <NewsprintTabBar />
+    </div>
+  );
+}
+
+/**
+ * The level-diagnosis nudge, set as a house notice.
+ *
+ * The standard skin carries `OnboardingBanner` at the top of home; the paper
+ * carried nothing, and /settings had no link either — so short of typing
+ * /onboarding into the address bar there was no way to reach the level test
+ * at all, and every new reader stayed on the A2 default forever.
+ *
+ * Same policy as the standard banner (design-decisions.md §4.6): never
+ * forced, dismissible for good, gone once onboarding is done.
+ */
+function OnboardingRule() {
+  const { session, refresh, hydrated } = useSession();
+  if (!hydrated) return null;
+  if (session.hasOnboarded() || session.hasDismissedOnboardingBanner()) return null;
+
+  return (
+    <div
+      role="status"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        margin: "12px 0 0",
+        border: "1px solid var(--rule)",
+        padding: "9px 11px",
+      }}
+    >
+      <Link
+        href="/onboarding"
+        style={{
+          flex: 1,
+          fontFamily: DISPLAY,
+          fontWeight: 700,
+          fontStretch: "80%",
+          fontSize: 13,
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+          color: "var(--ink-strong)",
+          textDecoration: "none",
+        }}
+      >
+        1분 레벨 진단하기 →
+      </Link>
+      <button
+        type="button"
+        onClick={() => {
+          session.dismissOnboardingBanner();
+          refresh();
+        }}
+        aria-label="배너 닫기"
+        style={{
+          border: "none",
+          background: "none",
+          padding: "4px 2px",
+          cursor: "pointer",
+          fontFamily: "var(--font-ui)",
+          fontSize: 12,
+          lineHeight: 1,
+          color: "var(--ink-muted)",
+        }}
+      >
+        <span aria-hidden>✕</span>
+      </button>
     </div>
   );
 }

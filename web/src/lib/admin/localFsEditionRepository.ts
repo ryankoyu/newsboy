@@ -47,12 +47,14 @@ export const localFsEditionRepository: EditionRepository = {
       if (!edition) continue;
       let approvedCount = 0;
       let excludedCount = 0;
+      let regenerateCount = 0;
       let pendingCount = 0;
       let heldCount = 0;
       for (const a of edition.articles) {
         const decision: ReviewDecision = a.reviewDecision ?? "pending";
         if (decision === "approved") approvedCount++;
         else if (decision === "excluded") excludedCount++;
+        else if (decision === "regenerate") regenerateCount++;
         else pendingCount++;
         if (deriveGateStatus(a).status === "held") heldCount++;
       }
@@ -62,6 +64,7 @@ export const localFsEditionRepository: EditionRepository = {
         articleCount: edition.articles.length,
         approvedCount,
         excludedCount,
+        regenerateCount,
         pendingCount,
         heldCount,
         publishedAt: edition.publishedAt,
@@ -74,7 +77,7 @@ export const localFsEditionRepository: EditionRepository = {
     return readEditionFile(editionDate);
   },
 
-  async setArticleDecision(editionDate, articleId, decision, excludeReason) {
+  async setArticleDecision(editionDate, articleId, decision, reason) {
     const edition = await readEditionFile(editionDate);
     if (!edition) throw new Error(`Edition not found: ${editionDate}`);
 
@@ -86,12 +89,28 @@ export const localFsEditionRepository: EditionRepository = {
         `Article ${articleId} is held (gate failures) — cannot be approved until resolved.`
       );
     }
-    if (decision === "excluded" && (!excludeReason || excludeReason.trim().length === 0)) {
+    if (decision === "excluded" && (!reason || reason.trim().length === 0)) {
       throw new Error("excludeReason is required when excluding an article.");
     }
+    // A 반려 with no note is a rejection the pipeline cannot act on: the note
+    // IS the instruction handed to the rewrite (regenerate.ts).
+    if (decision === "regenerate" && (!reason || reason.trim().length === 0)) {
+      throw new Error("regenerateNote is required when requesting a rewrite.");
+    }
+    // Deliberately NOT blocked for held articles: a gate-held article can
+    // never be approved, so asking for a rewrite is its only way forward.
 
     article.reviewDecision = decision;
-    article.excludeReason = decision === "excluded" ? excludeReason!.trim() : undefined;
+    article.excludeReason = decision === "excluded" ? reason!.trim() : undefined;
+    if (decision === "regenerate") {
+      article.regenerateNote = reason!.trim();
+      article.regenerateRequestedAt = new Date().toISOString();
+    } else {
+      // Clearing only the timestamp keeps the last note visible as history
+      // ("이 기사는 이런 이유로 한 번 다시 썼다") while marking the request
+      // itself as no longer outstanding — the pipeline keys off the decision.
+      article.regenerateRequestedAt = undefined;
+    }
 
     await writeEditionFile(edition);
     return edition;
@@ -113,6 +132,16 @@ export const localFsEditionRepository: EditionRepository = {
           id: article.id,
           rankInEdition: article.rankInEdition,
           reason: "이미 제외함",
+        });
+        continue;
+      }
+      // Same reasoning for 반려: the operator asked for a rewrite, and bulk
+      // approval must not approve the very draft they rejected.
+      if (decision === "regenerate") {
+        skipped.push({
+          id: article.id,
+          rankInEdition: article.rankInEdition,
+          reason: "재생성 요청 대기 중",
         });
         continue;
       }
@@ -156,6 +185,9 @@ export const localFsEditionRepository: EditionRepository = {
     }
     if (article.reviewDecision === "excluded") {
       throw new Error("제외한 기사는 1면으로 지정할 수 없습니다.");
+    }
+    if (article.reviewDecision === "regenerate") {
+      throw new Error("재생성 요청 중인 기사는 1면으로 지정할 수 없습니다.");
     }
 
     edition.leadArticleId = articleId;

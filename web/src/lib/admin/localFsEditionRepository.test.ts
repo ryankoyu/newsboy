@@ -135,6 +135,153 @@ describe("localFsEditionRepository", () => {
     expect(reverted.publishedAt).toBeUndefined();
   });
 
+  describe("setLeadArticle — the front page takes the same bars as approval", () => {
+    it("stores the chosen id and clears it again with null", async () => {
+      await writeEdition(
+        makeEdition({
+          articles: [makeArticle({ id: "a1" }), makeArticle({ id: "a2", rankInEdition: 2 })],
+        })
+      );
+
+      await repo.setLeadArticle("2026-07-13", "a2");
+      expect((await repo.getEdition("2026-07-13"))?.leadArticleId).toBe("a2");
+
+      await repo.setLeadArticle("2026-07-13", null);
+      expect((await repo.getEdition("2026-07-13"))?.leadArticleId).toBeNull();
+    });
+
+    it("refuses an article that isn't in the edition", async () => {
+      await writeEdition(makeEdition({}));
+      await expect(repo.setLeadArticle("2026-07-13", "ghost")).rejects.toThrow(/not found/i);
+      expect((await repo.getEdition("2026-07-13"))?.leadArticleId).toBeUndefined();
+    });
+
+    it("refuses a gate-held article, leaving the previous lead in place", async () => {
+      await writeEdition(
+        makeEdition({
+          leadArticleId: "a1",
+          articles: [
+            makeArticle({ id: "a1" }),
+            makeArticle({
+              id: "a2",
+              rankInEdition: 2,
+              versions: [
+                {
+                  version: { level: "A2", title: "T", content: "C", wordCount: 10, words: [] },
+                  checks: [{ kind: "cefr", passed: false, score: 0, detail: {} }],
+                  passed: false,
+                  rewriteAttempts: 3,
+                },
+              ],
+            }),
+          ],
+        })
+      );
+
+      await expect(repo.setLeadArticle("2026-07-13", "a2")).rejects.toThrow(/보류/);
+      expect((await repo.getEdition("2026-07-13"))?.leadArticleId).toBe("a1");
+    });
+
+    it("refuses an excluded article", async () => {
+      await writeEdition(
+        makeEdition({
+          articles: [makeArticle({ id: "a1", reviewDecision: "excluded", excludeReason: "중복" })],
+        })
+      );
+      await expect(repo.setLeadArticle("2026-07-13", "a1")).rejects.toThrow(/제외/);
+      expect((await repo.getEdition("2026-07-13"))?.leadArticleId).toBeUndefined();
+    });
+
+    it("refuses when the edition doesn't exist", async () => {
+      await expect(repo.setLeadArticle("2099-01-01", "a1")).rejects.toThrow(/Edition not found/);
+    });
+  });
+
+  describe("approveAllPending", () => {
+    function heldArticle(id: string, rank: number): PipelineArticle {
+      return makeArticle({
+        id,
+        rankInEdition: rank,
+        versions: [
+          {
+            version: { level: "A2", title: "T", content: "C", wordCount: 10, words: [] },
+            checks: [{ kind: "two_source", passed: false, score: 0, detail: {} }],
+            passed: false,
+            rewriteAttempts: 3,
+          },
+        ],
+      });
+    }
+
+    it("approves the undecided ones and leaves every existing decision alone", async () => {
+      await writeEdition(
+        makeEdition({
+          articles: [
+            makeArticle({ id: "pending-1" }),
+            makeArticle({ id: "pending-2", rankInEdition: 2 }),
+            makeArticle({ id: "approved-1", rankInEdition: 3, reviewDecision: "approved" }),
+            makeArticle({
+              id: "excluded-1",
+              rankInEdition: 4,
+              reviewDecision: "excluded",
+              excludeReason: "중복 기사",
+            }),
+            heldArticle("held-1", 5),
+          ],
+        })
+      );
+
+      const result = await repo.approveAllPending("2026-07-13");
+      expect(result.approved).toBe(2);
+      expect(result.skipped.map((s) => s.id).sort()).toEqual(["excluded-1", "held-1"]);
+
+      const byId = Object.fromEntries(
+        (await repo.getEdition("2026-07-13"))!.articles.map((a) => [a.id, a])
+      );
+      expect(byId["pending-1"].reviewDecision).toBe("approved");
+      expect(byId["pending-2"].reviewDecision).toBe("approved");
+      expect(byId["approved-1"].reviewDecision).toBe("approved");
+      // An operator's exclusion survives a bulk approve, reason and all.
+      expect(byId["excluded-1"].reviewDecision).toBe("excluded");
+      expect(byId["excluded-1"].excludeReason).toBe("중복 기사");
+      expect(byId["held-1"].reviewDecision).toBeUndefined();
+    });
+
+    it("names why each skipped article was skipped, with its rank", async () => {
+      await writeEdition(
+        makeEdition({
+          articles: [
+            makeArticle({
+              id: "excluded-1",
+              rankInEdition: 4,
+              reviewDecision: "excluded",
+              excludeReason: "중복",
+            }),
+            heldArticle("held-1", 5),
+          ],
+        })
+      );
+
+      const { skipped } = await repo.approveAllPending("2026-07-13");
+      expect(skipped).toEqual([
+        { id: "excluded-1", rankInEdition: 4, reason: "이미 제외함" },
+        { id: "held-1", rankInEdition: 5, reason: expect.stringContaining("보류") },
+      ]);
+    });
+
+    it("is a no-op that still reports zero when there is nothing to approve", async () => {
+      await writeEdition(
+        makeEdition({ articles: [makeArticle({ id: "a1", reviewDecision: "approved" })] })
+      );
+      const result = await repo.approveAllPending("2026-07-13");
+      expect(result).toEqual({ approved: 0, skipped: [] });
+    });
+
+    it("refuses when the edition doesn't exist", async () => {
+      await expect(repo.approveAllPending("2099-01-01")).rejects.toThrow(/Edition not found/);
+    });
+  });
+
   it("listEditions aggregates decision + held counts across articles, newest date first", async () => {
     await writeEdition(
       makeEdition({

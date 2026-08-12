@@ -183,6 +183,10 @@ export function NewsprintMyView({ edition }: { edition: EditionWithArticles | nu
                     key={`${entry.articleId}-${entry.level}-${entry.sentenceIndex}`}
                     entry={entry}
                     slug={articles.find((a) => a.id === entry.articleId)?.slug ?? null}
+                    onRemove={() => {
+                      session.toggleSavedSentence(entry);
+                      refresh();
+                    }}
                   />
                 ))}
               </section>
@@ -332,41 +336,79 @@ function WordEntry({ entry, onRemove }: { entry: SavedWordEntry; onRemove: () =>
   );
 }
 
-function SentenceEntry({ entry, slug }: { entry: SavedSentenceEntry; slug: string | null }) {
-  const body = (
-    <>
-      <p
-        lang="en"
-        style={{
-          margin: 0,
-          fontSize: 14,
-          lineHeight: 1.6,
-          fontStyle: "italic",
-          color: "var(--ink)",
-        }}
-      >
-        “{entry.text}”
-      </p>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 7 }}>
-        <LevelBadge level={entry.level} />
-        {slug && (
-          <span style={{ marginLeft: "auto", fontFamily: "var(--font-ui)", fontSize: 11, color: "var(--action)" }}>
-            원문 보기 →
-          </span>
-        )}
-      </div>
-    </>
+/**
+ * One saved sentence. The meta row sits OUTSIDE the link to the article —
+ * a "빼기" button nested inside an anchor is both invalid markup and a trap
+ * for anyone driving this by keyboard.
+ */
+function SentenceEntry({
+  entry,
+  slug,
+  onRemove,
+}: {
+  entry: SavedSentenceEntry;
+  slug: string | null;
+  onRemove: () => void;
+}) {
+  const text = (
+    <p
+      lang="en"
+      style={{
+        margin: 0,
+        fontSize: 14,
+        lineHeight: 1.6,
+        fontStyle: "italic",
+        color: "var(--ink)",
+      }}
+    >
+      “{entry.text}”
+    </p>
   );
 
   return (
     <div style={{ padding: "12px 0", borderBottom: "1px solid var(--rule-hair)" }}>
       {slug ? (
         <Link href={`/article/${slug}?level=${entry.level}`} style={{ textDecoration: "none" }}>
-          {body}
+          {text}
         </Link>
       ) : (
-        body
+        text
       )}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 7 }}>
+        <LevelBadge level={entry.level} />
+        <span style={{ flex: 1 }} />
+        {slug && (
+          <Link
+            href={`/article/${slug}?level=${entry.level}`}
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: 11,
+              color: "var(--action)",
+              textDecoration: "none",
+            }}
+          >
+            원문 보기 →
+          </Link>
+        )}
+        {/* Words had a "빼기" and sentences did not, so a sentence saved by
+            mistake stayed in the drawer for good. */}
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label="저장한 문장에서 빼기"
+          style={{
+            border: "none",
+            background: "none",
+            padding: 0,
+            cursor: "pointer",
+            fontFamily: "var(--font-ui)",
+            fontSize: 11,
+            color: "var(--action)",
+          }}
+        >
+          빼기
+        </button>
+      </div>
     </div>
   );
 }
