@@ -1,0 +1,88 @@
+# CI — typecheck, test, build on every push and pull request.
+#
+# Why this exists: until now the only workflow was daily-pipeline.yml, which
+# runs `npm run typecheck` on the pipeline package and nothing else. No test
+# ever ran in CI, and web/ had no workflow at all — so every "N tests pass"
+# claim in the docs was only true if a human happened to run them locally
+# that day. (No count is quoted here on purpose: an earlier draft of this
+# comment cited 341, a number that matched no measurement this repo ever
+# recorded. The current figure lives in docs/feature-status.md §검증 방법,
+# next to the date it was measured.)
+#
+# Deliberately unauthenticated: nothing here needs ANTHROPIC_API_KEY or the
+# SUPABASE_* secrets. Tests use mocks/fixtures, and `next build` reads no
+# secret at build time. A pull request from a fork can therefore run the full
+# suite without being handed the keys.
+
+name: ci
+
+on:
+  push:
+  pull_request:
+
+# A newer push to the same branch makes the older run's answer irrelevant.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pipeline:
+    name: pipeline (typecheck + test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # 22, not 20: @supabase/realtime-js reaches for a global WebSocket,
+          # which Node only provides from 22 on. Keep in sync with
+          # daily-pipeline.yml — a version CI doesn't exercise isn't tested.
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: pipeline/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+  web:
+    name: web (test + build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # `npm run lint` is deliberately NOT a step yet. It currently reports
+      # 14 errors and ~1278 warnings, and all but two of the errors come from
+      # web/ds-bundle/_vendor/react.js — vendored React source that .gitignore
+      # already excludes but eslint still walks. A gate that is red because of
+      # vendored code teaches people to ignore the gate. Add the step once
+      # eslint.config.mjs ignores ds-bundle/.
+      - name: Test
+        run: npm test
+
+      # `next build` runs the TypeScript check, so this is web's typecheck
+      # too — the package has no separate typecheck script.
+      - name: Build
+        run: npm run build

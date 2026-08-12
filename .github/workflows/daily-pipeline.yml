@@ -2,15 +2,15 @@
 # Design: docs/design/a1-architecture.md §5-1 + design-decisions.md §3-1
 # (파이프라인 실행 환경 = GitHub Actions 스케줄).
 #
-# Secrets referenced BY NAME ONLY — no values exist yet (task constraint).
-# Before first real run, add in repo Settings > Secrets and variables > Actions:
+# All three secrets are registered (repo Settings > Secrets and variables >
+# Actions), and the defaults below spend them — anthropic + supabase:
 #   ANTHROPIC_API_KEY          — Anthropic API key (rewrite/extract/select calls)
-#   SUPABASE_URL               — Supabase project URL (once provisioned)
+#   SUPABASE_URL               — Supabase project URL
 #   SUPABASE_SERVICE_ROLE_KEY  — service role key (pipeline writes bypass RLS;
 #                                never the anon key — see storage/supabase.ts)
 #
-# Until those exist, manual runs can use llm_provider=mock + storage=local
-# via workflow_dispatch inputs to exercise the pipeline harmlessly.
+# A run therefore costs real money and writes real rows. To exercise the
+# pipeline harmlessly, dispatch with llm_provider=mock + storage=local.
 
 name: daily-pipeline
 
@@ -70,6 +70,12 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck
+
+      # A run costs about $1.04 of Anthropic credit. Finding out afterwards
+      # that a gate was broken is the expensive way to find out, so the suite
+      # runs before a single API call is made.
+      - name: Test
+        run: npm test
 
       - name: Run daily pipeline
         env:
