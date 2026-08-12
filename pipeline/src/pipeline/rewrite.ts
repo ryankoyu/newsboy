@@ -36,8 +36,10 @@ export async function rewriteAllLevels(
   category: CategorySlug,
   facts: ExtractedFact[],
   llm: LLMProvider,
+  /** Operator note from a 반려(재생성 요청) — set only by regenerate.ts. */
+  deskFeedback?: string,
 ): Promise<RewriteAllLevelsResult> {
-  const result = await llm.generateAllLevels({ eventId, category, facts });
+  const result = await llm.generateAllLevels({ eventId, category, facts, deskFeedback });
 
   let usage = emptyUsage();
   const versions: ArticleVersionDraft[] = LEVELS.map((level) => {

@@ -14,11 +14,30 @@
  *   STORAGE=local (default)          — writes pipeline/output/*.json.
  *   STORAGE=supabase                 — writes the real Supabase schema
  *                                      (requires SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY).
- *                                      Implemented (storage/supabase.ts) but
- *                                      never yet run against a live project —
- *                                      verified only with a mocked-client
- *                                      unit test until a real one exists.
+ *                                      It has written to a live project once:
+ *                                      Actions run 31493703937 (2026-08-11)
+ *                                      logged stage=store ok with 1 article.
+ *                                      That was a partial run, though —
+ *                                      MAX_ARTICLES=2, and the run itself ended
+ *                                      cancelled (see exitNow below). No run has
+ *                                      yet stored a full Top10 with the real LLM,
+ *                                      so treat the write path as proven only for
+ *                                      the shapes storage/supabase.test.ts covers.
  *   MAX_ARTICLES=<n>                 — optional cap for cheaper runs.
+ *   GDELT=false                      — skip the Layer 2 글로벌 영향력 signal
+ *                                      (top10-curation.md §1). On by default:
+ *                                      it is free and keyless, but it is a
+ *                                      third-party endpoint with a 1-req/5s
+ *                                      limit, so it adds a couple of minutes
+ *                                      to the select stage. Turning it off
+ *                                      costs ranking quality, not a run —
+ *                                      the selection report records that the
+ *                                      signal was missing.
+ *   RESUME=false                     — start over instead of resuming this
+ *                                      edition from its last checkpoint
+ *                                      (a1 §2). Default is to resume, since
+ *                                      the alternative is paying twice for
+ *                                      stages that already succeeded.
  *   USE_BATCH_API=true               — use the Anthropic Batch API for the
  *                                      rewrite stage (~50% cheaper, but
  *                                      latency up to ~1h/24h) — see
@@ -39,6 +58,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { SOURCES } from "./config/sources.js";
 import { runPipeline } from "./pipeline/run.js";
+import { createGdeltGlobalImpactProvider } from "./pipeline/globalImpact.js";
 import type { LLMProvider } from "./llm/provider.js";
 import type { StorageAdapter } from "./storage/adapter.js";
 import { AnthropicLLMProvider } from "./llm/anthropic.js";
@@ -92,23 +112,40 @@ function resolveBatchClient(llm: LLMProvider): Anthropic | undefined {
   return new Anthropic({ apiKey: key });
 }
 
-async function main(): Promise<void> {
+/** Returns the process exit code — the caller ends the process (see exitNow). */
+async function main(): Promise<number> {
   const llm = buildLLM();
   const storage = buildStorage();
   const maxArticles = process.env.MAX_ARTICLES ? Number(process.env.MAX_ARTICLES) : undefined;
   const batchClient = resolveBatchClient(llm);
+  const resume = !["false", "0", "no"].includes((process.env.RESUME ?? "").toLowerCase());
+  const gdeltOn = !["false", "0", "no"].includes((process.env.GDELT ?? "").toLowerCase());
+  const globalImpact = gdeltOn
+    ? createGdeltGlobalImpactProvider({ log: (m) => console.log(m) })
+    : undefined;
 
   console.log(
     `[pipeline] starting — llm=${llm.name} storage=${storage.name} sources=${SOURCES.length}` +
       (maxArticles ? ` maxArticles=${maxArticles}` : "") +
-      ` batchApi=${batchClient ? "on" : "off"}`,
+      ` batchApi=${batchClient ? "on" : "off"}` +
+      ` resume=${resume ? "on" : "off"}` +
+      ` gdelt=${gdeltOn ? "on" : "off"}`,
   );
 
-  const run = await runPipeline({ sources: SOURCES, llm, storage, maxArticles, batchClient });
+  const run = await runPipeline({
+    sources: SOURCES,
+    llm,
+    storage,
+    maxArticles,
+    batchClient,
+    globalImpact,
+    resume,
+  });
 
   console.log(`[pipeline] finished — status=${run.status} articles=${run.articlesProduced}`);
   for (const s of run.stages) {
-    console.log(`  - ${s.stage}: ${s.ok ? "ok" : `FAILED (${s.error})`}`);
+    const resumedNote = s.detail?.resumedFromCheckpoint ? " (체크포인트에서 재개 — 재실행 안 함)" : "";
+    console.log(`  - ${s.stage}: ${s.ok ? "ok" : `FAILED (${s.error})`}${resumedNote}`);
   }
 
   // 실행 종료 시 비용 요약 (usage 미보고 provider(mock)는 $0.00으로 나온다).
@@ -128,11 +165,53 @@ async function main(): Promise<void> {
 
   if (run.status === "failed") {
     console.error(`[pipeline] run failed: ${run.errorSummary}`);
-    process.exitCode = 1;
+    return 1;
   }
+  return 0;
 }
 
-main().catch((err) => {
-  console.error("[pipeline] fatal error", err);
-  process.exitCode = 1;
-});
+/**
+ * Wait until a piped stream has actually drained.
+ *
+ * On CI stdout is a pipe, and pipe writes are asynchronous — process.exit()
+ * would drop whatever console.log() left buffered. An empty write's callback
+ * fires once the stream is flushed, so the cost summary survives the exit.
+ */
+function flushStream(stream: NodeJS.WriteStream): Promise<void> {
+  return new Promise((resolve) => {
+    stream.write("", () => resolve());
+  });
+}
+
+/**
+ * End the process instead of waiting for the event loop to drain.
+ *
+ * 2026-08-11 CI: a STORAGE=supabase run logged "finished — status=success"
+ * at 13:15:24 and then sat silent until a human cancelled it 26 minutes
+ * later, burning the whole timeout-minutes budget. Setting process.exitCode
+ * alone only takes effect once nothing is left holding the event loop.
+ *
+ * What holds it is still unidentified. The obvious suspect — the realtime
+ * socket from createClient() — did NOT reproduce: against a dead project,
+ * both a bare createClient() and a failed .from().select() drained and
+ * exited on their own. So this does not try to close the right handle; it
+ * ends the process, which is correct regardless of the culprit — this worker
+ * is a batch job with nothing left to wait for once the edition is stored —
+ * and logs whatever is still open so the next real run names the culprit.
+ */
+async function exitNow(code: number): Promise<never> {
+  const lingering = process.getActiveResourcesInfo();
+  if (lingering.length > 0) {
+    console.log(`[pipeline] 종료 — 아직 열려 있는 핸들: ${lingering.join(", ")}`);
+  }
+  await flushStream(process.stdout);
+  await flushStream(process.stderr);
+  process.exit(code);
+}
+
+main()
+  .then((code) => exitNow(code))
+  .catch(async (err) => {
+    console.error("[pipeline] fatal error", err);
+    await exitNow(1);
+  });

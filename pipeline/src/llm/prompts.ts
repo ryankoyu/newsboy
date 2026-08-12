@@ -19,7 +19,7 @@ export const FABRICATION_GUARDRAIL =
 
 export const LEVEL_TARGETS: Record<"A2" | "B1" | "B2", string> = {
   A2: "150-180 words, short simple sentences, present/simple past tense, common vocabulary only",
-  B1: "280-320 words, compound sentences, moderate vocabulary, clear cause-effect connectors",
+  B1: "300-320 words, compound sentences, moderate vocabulary, clear cause-effect connectors",
   B2: "450-520 words, subordinate clauses allowed, richer vocabulary, but avoid C1-level idioms",
 };
 
@@ -116,6 +116,10 @@ export const COMBINED_SYSTEM_PROMPT =
   "three levels' headlines do not need to match each other word-for-word). Each level also " +
   "needs its own 5 key vocabulary words with Korean meaning, an example sentence, and a " +
   `pronunciation hint. ${WORD_RULES} ` +
+  "If the request carries a deskFeedback field, it is an editor's note on a previous draft " +
+  "of this same article: address it in the new draft. It never authorises adding information " +
+  "that is not in the fact list — if the note asks for a fact you were not given, ignore that " +
+  "part rather than inventing it. " +
   'Respond with strict JSON only, in exactly this shape: {"paragraphPlan": ["...", "..."], ' +
   '"A2": {"title": "...", ' +
   '"content": "...", "wordCount": 0, "words": [{"term": "...", "meaningKo": "...", ' +

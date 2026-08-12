@@ -157,6 +157,13 @@ export interface CandidateReportEntry {
   subjectKey: string | null;
   outcome: "selected" | "backfilled" | "rejected" | "held_back_two_source";
   rank: number | null;
+  /**
+   * Rank the Layer 3 편집회의 gave this candidate, or null when the LLM did
+   * not name it (or the call was skipped/failed). Kept next to `outcome` so
+   * an operator can see where Layer 1's rules overruled the AI's proposal —
+   * top10-curation.md §1: "AI는 제안, 룰은 강제".
+   */
+  llmProposedRank?: number | null;
   rejectionReasons: string[];
 }
 
@@ -293,6 +300,33 @@ export interface GatedVersion {
 // Pipeline article — the unit persisted by StorageAdapter
 // ---------------------------------------------------------------------------
 
+export interface PipelineSourceRef {
+  url: string;
+  outlet: string;
+  title: string;
+  fetchMethod: "rss_summary";
+  /**
+   * The RSS snippet this source contributed. Persisted so the article can be
+   * regenerated later (regenerate.ts) without re-collecting: gate.ts's
+   * n-gram-overlap check compares the rewritten text against these snippets,
+   * and with only titles on hand that check silently weakens to a title
+   * comparison. Optional because edition files written before the operator
+   * regeneration path existed don't carry it.
+   */
+  summary?: string;
+  publishedAt?: string | null;
+  /** Copied from RawItem — same regeneration-fidelity reason as `summary`. */
+  outletKey?: string;
+  country?: string;
+}
+
+/**
+ * Operator decision recorded by the web review console
+ * (production-readiness.md §2). The pipeline never writes these — it reads
+ * them, in regenerate.ts, to find the articles the desk sent back.
+ */
+export type ReviewDecision = "pending" | "approved" | "excluded" | "regenerate";
+
 export interface PipelineArticle {
   id: string;
   slug: string;
@@ -300,15 +334,24 @@ export interface PipelineArticle {
   rankInEdition: number;
   status: ArticleStatus;
   eventSummary: string;
-  sources: Array<{
-    url: string;
-    outlet: string;
-    title: string;
-    fetchMethod: "rss_summary";
-  }>;
+  sources: PipelineSourceRef[];
   facts: ExtractedFact[];
   versions: GatedVersion[];
   createdAt: string;
+  /** Console-written, additive. Absent = "pending". */
+  reviewDecision?: ReviewDecision;
+  /** Required when reviewDecision === "excluded". */
+  excludeReason?: string;
+  /**
+   * Required when reviewDecision === "regenerate": what the desk wants fixed.
+   * Handed to the rewrite call as gate-style feedback (regenerate.ts).
+   */
+  regenerateNote?: string;
+  regenerateRequestedAt?: string;
+  /** How many times the regeneration worker has rewritten this article. */
+  regenerationCount?: number;
+  /** ISO timestamp of the last successful regeneration. */
+  regeneratedAt?: string;
 }
 
 export interface PipelineEdition {
@@ -316,6 +359,9 @@ export interface PipelineEdition {
   editionDate: string; // YYYY-MM-DD
   status: "draft" | "published";
   articles: PipelineArticle[];
+  /** Console-written, additive — see web/src/lib/admin/pipelineTypes.ts. */
+  publishedAt?: string;
+  leadArticleId?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -369,4 +415,58 @@ export interface PipelineRun {
     >;
     usedBatchApi: boolean;
   };
+  /**
+   * Stages this run skipped because a checkpoint from an earlier, failed run
+   * of the same edition already held their output (a1 §2: "어느 단계에서
+   * 죽어도 마지막 성공 지점부터 재개한다"). Their token cost belongs to that
+   * earlier run, so it is NOT in this run's costSummary — a resumed run
+   * reports what IT spent, not the edition's running total.
+   */
+  resumedStages?: PipelineStage[];
+}
+
+// ---------------------------------------------------------------------------
+// Resume checkpoint (a1 §2 "각 단계는 DB에 상태를 남기고 끝난다")
+// ---------------------------------------------------------------------------
+
+/**
+ * One edition's partial pipeline state, written after each stage succeeds and
+ * deleted once the edition is stored.
+ *
+ * This is scratch state for one edition's run, not content: it exists so a
+ * crash in stage [5] doesn't buy stage [2]'s thousands of Haiku same-event
+ * judgments a second time. Nothing here is ever shown to a reader, and a
+ * missing or stale checkpoint only costs money, never correctness — the
+ * pipeline simply starts over.
+ */
+export interface PipelineCheckpoint {
+  editionDate: string;
+  /** The run that last wrote this checkpoint — for tracing, not for matching. */
+  runId: string;
+  updatedAt: string;
+  collect?: CollectResult;
+  cluster?: EventCluster[];
+  select?: {
+    selected: SelectedEvent[];
+    heldBack: EventCluster[];
+    report: SelectionReport;
+  };
+  extract?: {
+    /** Structurally an EventToGenerate[] (pipeline/generate.ts). */
+    events: Array<{
+      eventId: string;
+      category: CategorySlug;
+      facts: ExtractedFact[];
+      sourceItems: RawItem[];
+    }>;
+    resolvedEvents: SelectedEvent[];
+    factsExtracted: number;
+    factsUsedInText: number;
+    replacements: ExtractReplacementLogEntry[];
+  };
+  /**
+   * Articles already written AND gated. Appended per event, so a rewrite
+   * stage that dies on event 7 of 10 keeps the six Opus drafts it paid for.
+   */
+  articles?: PipelineArticle[];
 }

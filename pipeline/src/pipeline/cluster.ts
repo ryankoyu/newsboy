@@ -51,7 +51,26 @@ function jaccard(a: Set<string>, b: Set<string>): number {
 const TIME_WINDOW_HOURS = 48;
 /** Below this, never considered the same event even as a boundary case. */
 const LOW_SIMILARITY_FLOOR = 0.12;
-/** At/above this, treated as same event without an LLM call. */
+/**
+ * At/above this, treated as same event without an LLM call.
+ *
+ * Measured on a real collect (2026-08-11, 1,732 items inside the 48h window,
+ * 1,413,721 pairs): 1,407,276 pairs score below the floor, 5,992 land in the
+ * 0.12–0.32 band, 453 sit at/above the ceiling. So nearly every merge decision
+ * that isn't obvious is bought from Haiku — which is where the cluster stage's
+ * money goes.
+ *
+ * The band is NOT junk, though: reading a random sample of cross-outlet band
+ * pairs turned up real same-event pairs ("DRC Ebola death toll passes 2,000"
+ * ↔ "Congo says 2,000 people have died…", 0.29; "Ukraine says Russia fired
+ * North Korean missiles" ↔ "Russia used North Korean missiles…", 0.24)
+ * sitting next to unrelated ones at the same score ("Volatility tumbles as
+ * markets shrug off Middle East risks" ↔ "Singapore, Thailand attract luxury
+ * yachts as Middle East risks rise", 0.19). Lowering the ceiling would merge
+ * both kinds. Deciding this properly needs a labelled sample — same-event
+ * yes/no on a few hundred band pairs — which nobody has produced yet, so the
+ * value stays where it is rather than moving on a hunch.
+ */
 const HIGH_SIMILARITY_CEILING = 0.32;
 
 function withinTimeWindow(a: RawItem, b: RawItem): boolean {
@@ -84,28 +103,52 @@ export async function clusterEvents(
 
     let bestClusterIdx = -1;
     let bestScore = 0;
+    // Boundary candidate = the BEST match in the band, not the first one
+    // encountered. Keeping the first meant the Haiku call asked about
+    // whichever qualifying cluster happened to be created earliest: money
+    // spent on a weaker candidate, and a "no" that left the better match
+    // unexamined (the item then started its own cluster next to the cluster
+    // it belonged in). boundaryItemIdx is the member that actually scored
+    // highest, so the question we pay for is about the closest headline in
+    // that cluster rather than its first-arrived one.
     let boundaryClusterIdx = -1;
+    let boundaryScore = 0;
+    let boundaryItemIdx = 0;
 
     for (let i = 0; i < clusters.length; i++) {
       const cluster = clusters[i];
-      // Only compare against same-category clusters — cross-category same
-      // event is rare and category drives Top10 balance downstream anyway.
+      // Only compare against same-category clusters. Category comes from the
+      // feed, not the story, so one event really can land in two categories —
+      // measured on the 2026-08-11 collect, allowing cross-category merges
+      // formed 29 mixed clusters and lifted two-source clusters from 14 to 21.
+      // Left off anyway: 22 of those 29 were the same Google News item under
+      // two topic queries (one outletKey, no help to the 2-source gate), one
+      // was a false merge on shared "- ABC News & Headlines" title boilerplate,
+      // and a merged cluster's category — which drives Top10 balance — would
+      // be decided by feed arrival order. Turning it on is a yield/balance
+      // policy call, not a clustering detail.
       if (cluster.items[0].category !== item.category) continue;
       if (!cluster.items.some((existing) => withinTimeWindow(existing, item))) continue;
 
-      // Compare against the cluster's representative (first) item tokens —
-      // cheap proxy for "does this belong here."
+      // Score against every member, not just the first: a cluster's later
+      // items often carry the wording a newcomer matches.
       let maxScore = 0;
-      for (const tokenSet of cluster.tokenSets) {
-        const score = jaccard(itemTokens, tokenSet);
-        if (score > maxScore) maxScore = score;
+      let maxScoreItemIdx = 0;
+      for (let j = 0; j < cluster.tokenSets.length; j++) {
+        const score = jaccard(itemTokens, cluster.tokenSets[j]);
+        if (score > maxScore) {
+          maxScore = score;
+          maxScoreItemIdx = j;
+        }
       }
 
       if (maxScore >= HIGH_SIMILARITY_CEILING && maxScore > bestScore) {
         bestScore = maxScore;
         bestClusterIdx = i;
-      } else if (maxScore >= LOW_SIMILARITY_FLOOR && boundaryClusterIdx === -1) {
+      } else if (maxScore >= LOW_SIMILARITY_FLOOR && maxScore > boundaryScore) {
+        boundaryScore = maxScore;
         boundaryClusterIdx = i;
+        boundaryItemIdx = maxScoreItemIdx;
       }
     }
 
@@ -117,8 +160,9 @@ export async function clusterEvents(
 
     if (boundaryClusterIdx >= 0 && options.llm) {
       const candidate = clusters[boundaryClusterIdx];
+      const reference = candidate.items[boundaryItemIdx];
       const { sameEvent, usage } = await options.llm.judgeSameEvent({
-        a: { title: candidate.items[0].title, summary: candidate.items[0].summary },
+        a: { title: reference.title, summary: reference.summary },
         b: { title: item.title, summary: item.summary },
       });
       // One Haiku call per boundary-case item — the most frequent LLM call in

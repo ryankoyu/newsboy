@@ -2,12 +2,13 @@
   "name": "newsboy-pipeline",
   "version": "0.1.0",
   "private": true,
-  "description": "BRIEFLY daily content pipeline worker (scaffold only — implementation owned by the pipeline team). See docs/design/a1-architecture.md §2 for the 8-stage flow this will implement.",
+  "description": "BRIEFLY daily content pipeline worker. Implements stages [1]-[6] of the 8-stage flow in docs/design/a1-architecture.md §2 (collect · cluster · selectTop10 · extract · generate · gate); [7] approval and [8] publish belong to web/admin. Runs against paid providers — see src/index.ts for the env switches.",
   "type": "module",
   "scripts": {
     "start": "tsx src/index.ts",
     "collect": "tsx src/scripts/run-collect.ts",
     "demo": "tsx src/scripts/run-demo.ts",
+    "regenerate": "tsx src/scripts/run-regenerate.ts",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"

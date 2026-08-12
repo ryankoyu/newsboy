@@ -8,6 +8,12 @@
  *
  * Only the RSS feed's own title/summary fields are read — no full-article
  * scraping (news-sourcing-strategy.md §1 collection principle #2).
+ *
+ * What each feed contributes is bounded twice — by a recency window and by a
+ * per-feed item cap (see RECENCY_WINDOW_HOURS / MAX_ITEMS_PER_FEED). Both
+ * exist for stage [2]'s sake: clustering compares every item against every
+ * cluster and buys an LLM judgment for the ambiguous ones, so an item that
+ * can't belong to today's edition is not free to collect.
  */
 
 import Parser from "rss-parser";
@@ -16,6 +22,70 @@ import type { CategorySlug, CollectResult, RawItem, SourceConfig } from "../type
 const FETCH_TIMEOUT_MS = 15_000;
 const MAX_RETRIES = 3;
 const BASE_BACKOFF_MS = 500;
+
+/**
+ * How old an item may be and still enter the pipeline.
+ *
+ * Measured on a real 35-feed collect (2026-08-11, 2,231 items): 1,490 items
+ * were under 24h old, 192 more under 48h — and 458 were older than that, some
+ * by weeks. Nothing downstream could use them. An item from three weeks ago
+ * can't join today's event cluster, so it became its own one-item cluster and
+ * often cost a Haiku boundary call on the way there. Replaying that run
+ * through the clustering heuristic: 2,231 items → 1,902 clusters → 709
+ * boundary calls; the window alone takes it to 1,732 items and 611 calls.
+ *
+ * 48h rather than 24h because cluster.ts pairs items inside a 48h window — a
+ * tighter collect window would make half of that comparison unreachable, and
+ * it costs corroboration: the same measurement lost 2 of 14 two-source
+ * clusters when the window was cut to 24h, and two-source coverage is exactly
+ * what the Top-10 gate is starving for.
+ */
+export const RECENCY_WINDOW_HOURS = 48;
+
+/**
+ * Per-feed ceiling, applied to whatever survives the recency window.
+ *
+ * RSS is newest-first, so this keeps the newest N of a feed. 80 is the
+ * tightest cap that cost nothing in the 2026-08-11 measurement: at 80 all 14
+ * two-source clusters survived while 123 more items and 72 more boundary LLM
+ * calls disappeared (1,609 items / 539 calls); at 60 the item count fell
+ * further but three of those clusters were lost — the Google News query feeds
+ * that carry corroboration are also the fattest ones (~100 items each). Treat
+ * it as a rail against a feed dumping its archive (the biggest feed today
+ * returns 142), not as a routine trimmer.
+ */
+export const MAX_ITEMS_PER_FEED = 80;
+
+/** Hours since publication; null when the feed gave no usable date. */
+function ageInHours(publishedAt: string | null, now: number): number | null {
+  if (!publishedAt) return null;
+  const published = new Date(publishedAt).getTime();
+  if (Number.isNaN(published)) return null;
+  return (now - published) / 3_600_000;
+}
+
+/**
+ * Recency window + per-feed cap — the two limits that decide how much work
+ * stage [2] does, since clustering is O(n²) over what this returns.
+ *
+ * Undated items are KEPT. Every undated item in the 2026-08-11 measurement
+ * (50 of 2,231) came from a single feed — Nikkei Asia publishes no pubDate at
+ * all — so dropping undated items would quietly delete a whole source and
+ * report it as a healthy zero-item fetch. They ride the cap instead: because
+ * feeds are newest-first, an undated item only survives if it sits near the
+ * top of its feed. cluster.ts makes the same lenient call for the same reason
+ * (withinTimeWindow passes pairs with missing dates).
+ *
+ * Future-dated items (clock skew, timezone-less pubDates) have a negative age
+ * and are kept — a feed running a few hours fast is not a reason to lose it.
+ */
+export function selectFreshItems(items: RawItem[], now: number): RawItem[] {
+  const fresh = items.filter((item) => {
+    const age = ageInHours(item.publishedAt, now);
+    return age === null || age <= RECENCY_WINDOW_HOURS;
+  });
+  return fresh.slice(0, MAX_ITEMS_PER_FEED);
+}
 
 const parser = new Parser({
   timeout: FETCH_TIMEOUT_MS,
@@ -131,6 +201,7 @@ export function stripHtml(input: string | undefined): string {
 
 async function fetchFeedWithRetry(
   source: SourceConfig,
+  now: number,
 ): Promise<{ items: RawItem[]; error?: string }> {
   let lastError: unknown;
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
@@ -147,7 +218,7 @@ async function fetchFeedWithRetry(
         outletKey: source.outletKey,
         country: source.country,
       }));
-      return { items };
+      return { items: selectFreshItems(items, now) };
     } catch (err) {
       lastError = err;
       if (attempt < MAX_RETRIES - 1) {
@@ -159,18 +230,37 @@ async function fetchFeedWithRetry(
   return { items: [], error: message };
 }
 
-export async function collect(sources: SourceConfig[]): Promise<CollectResult> {
+export interface CollectOptions {
+  /**
+   * Clock used for the recency window. Injectable so the window is testable
+   * without freezing global time; production passes nothing.
+   */
+  now?: Date;
+}
+
+export async function collect(
+  sources: SourceConfig[],
+  options: CollectOptions = {},
+): Promise<CollectResult> {
   const items: RawItem[] = [];
   const sourceReport: CollectResult["sourceReport"] = [];
+  // One timestamp for the whole run, not one per feed: a 38-feed sequential
+  // fetch takes minutes, and a moving `now` would apply a slightly different
+  // window to the last feed than to the first.
+  const now = (options.now ?? new Date()).getTime();
 
   // Sequential, deliberately: avoids hammering feeds concurrently and keeps
   // backoff behavior predictable for a daily batch job (no latency pressure).
   for (const source of sources) {
-    const { items: fetched, error } = await fetchFeedWithRetry(source);
+    const { items: fetched, error } = await fetchFeedWithRetry(source, now);
     sourceReport.push({
       outlet: source.outlet,
       url: source.url,
       ok: !error,
+      // itemCount is what SURVIVED the window and cap — the number that
+      // actually reaches clustering, not what the feed returned. A live feed
+      // whose newest item is a week old therefore reports ok=true with 0
+      // items, which is the honest reading: it contributed nothing today.
       itemCount: fetched.length,
       error,
     });

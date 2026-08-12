@@ -57,6 +57,12 @@ export interface GeneratedArticleDraft {
 export interface GenerateOptions {
   llm: LLMProvider;
   /**
+   * Called as soon as one event is fully written AND gated, before the rest
+   * of the batch finishes. run.ts checkpoints on it, so a rewrite stage that
+   * dies on event 7 of 10 doesn't buy the first six Opus drafts twice.
+   */
+  onEventDone?: (draft: GeneratedArticleDraft) => void | Promise<void>;
+  /**
    * When set, generation uses the Batch API instead of per-event calls.
    * Requires a real Anthropic client (batch.ts talks to the SDK directly,
    * since LLMProvider has no batch-submission method of its own).
@@ -69,6 +75,7 @@ export interface GenerateOptions {
 async function generateStandard(
   events: EventToGenerate[],
   llm: LLMProvider,
+  onEventDone?: GenerateOptions["onEventDone"],
 ): Promise<GeneratedArticleDraft[]> {
   const drafts: GeneratedArticleDraft[] = [];
   for (const event of events) {
@@ -87,12 +94,14 @@ async function generateStandard(
       );
       gatedVersions.push(gated);
     }
-    drafts.push({
+    const draft: GeneratedArticleDraft = {
       eventId: event.eventId,
       gatedVersions,
       initialDraftUsage: rewrite.usage,
       initialDraftMode: "standard",
-    });
+    };
+    drafts.push(draft);
+    await onEventDone?.(draft);
   }
   return drafts;
 }
@@ -106,6 +115,7 @@ async function generateViaBatch(
   llm: LLMProvider,
   client: Anthropic,
   log: (message: string) => void,
+  onEventDone?: GenerateOptions["onEventDone"],
 ): Promise<GeneratedArticleDraft[]> {
   const byId = new Map(events.map((e) => [e.eventId, e]));
 
@@ -120,7 +130,7 @@ async function generateViaBatch(
 
   if (round1.batchUnavailable) {
     log("[generate] batch API unavailable — falling back to standard per-event calls for all events");
-    return generateStandard(events, llm);
+    return generateStandard(events, llm, onEventDone);
   }
 
   const draftsById = new Map<string, ArticleVersionDraft[]>();
@@ -194,6 +204,15 @@ async function generateViaBatch(
       gated.push(result);
     }
     gatedByEvent.set(event.eventId, gated);
+    // Checkpoint here too: the batch bought the drafts, but gating them runs
+    // its own Haiku/Opus retry calls, and dying halfway through the gate loop
+    // should not throw away the events already cleared.
+    await onEventDone?.({
+      eventId: event.eventId,
+      gatedVersions: gated,
+      initialDraftUsage: draftUsageById.get(event.eventId) ?? emptyUsage(),
+      initialDraftMode: draftModeById.get(event.eventId) ?? "standard",
+    });
   }
 
   return events.map((event) => ({
@@ -210,7 +229,7 @@ export async function generateAndGateAll(
 ): Promise<GeneratedArticleDraft[]> {
   const log = options.log ?? (() => {});
   if (options.batchClient) {
-    return generateViaBatch(events, options.llm, options.batchClient, log);
+    return generateViaBatch(events, options.llm, options.batchClient, log, options.onEventDone);
   }
-  return generateStandard(events, options.llm);
+  return generateStandard(events, options.llm, options.onEventDone);
 }

@@ -1,10 +1,13 @@
 /**
  * SupabaseStorageAdapter — writes pipeline output into the real Supabase
- * schema (supabase/migrations/0001_schema.sql). No Supabase project is
- * provisioned yet (task constraint), so this has never been run against a
- * live database — it is verified with a query-builder-mocking unit test
- * (storage/supabase.test.ts) that asserts the exact table/column mapping,
- * not with a network integration test.
+ * schema (supabase/migrations/0001_schema.sql, plus 0003/0004 for the
+ * 'held' status and words.pos/is_key, and 0005 for pipeline_checkpoints).
+ * It has run against the live
+ * project: GitHub Actions run 31493703937 (2026-08-11) stored an edition and
+ * one article with STORAGE=supabase. The unit test alongside it
+ * (storage/supabase.test.ts) mocks the query builder to assert the exact
+ * table/column mapping — there is still no network integration test, so a
+ * schema change lands here silently until the next real run.
  *
  * Requires SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY in env (service role,
  * not anon — the pipeline writes bypass RLS per a2-data-model.md §5:
@@ -20,8 +23,20 @@
  * (globally, not per-edition) — see 0001_schema.sql. A second run for the
  * same edition_date must not create duplicate rows. Strategy:
  *
- *   1. `editions` — upsert on edition_date. Same edition row is reused/updated
- *      across re-runs of the same day.
+ *   0. A date whose edition is already `published` is refused outright —
+ *      "replace" would delete human-approved articles. Draft editions are
+ *      fair game to regenerate.
+ *   1. `editions` — upsert on edition_date, with the payload deliberately
+ *      OMITTING `id`. Every run mints a fresh randomUUID() for the in-memory
+ *      PipelineEdition (run.ts), and sending it would make ON CONFLICT
+ *      (edition_date) DO UPDATE rewrite the existing row's primary key.
+ *      articles.edition_id has no ON UPDATE CASCADE (0001_schema.sql), so the
+ *      second run for a date used to die on an FK violation — and the
+ *      "delete the old articles first" step below couldn't help, because it
+ *      runs after the upsert and would have been looking for the new id.
+ *      Leaving `id` out means the DB keeps the row it already has on re-run
+ *      and fills it from gen_random_uuid() on first insert; the returned id
+ *      is what every child row is written against.
  *   2. `articles` — "replace" strategy, not upsert-by-slug: for a re-run of an
  *      edition, we first delete all existing articles whose edition_id
  *      matches this edition (cascade deletes article_versions/sources/facts/
@@ -46,36 +61,71 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type {
   ArticleStatus,
+  CategorySlug,
   CheckKind,
   ExtractedFact,
   GatedVersion,
   PipelineArticle,
+  PipelineCheckpoint,
   PipelineEdition,
   PipelineRun,
   WordEntry,
 } from "../types.js";
+import { CHECKPOINT_MAX_AGE_HOURS } from "./adapter.js";
 import type { StorageAdapter } from "./adapter.js";
 
 /**
- * Article status this adapter is ever allowed to write. Enforced defensively
- * even though PipelineArticle.status is already typed 'review' at the
- * call site (run.ts) — the pipeline must NEVER auto-publish
- * (a1 §2: "사람 승인 없이는 절대 발행되지 않는다"; task constraint: "'approved'/
- * 'published' 쓰는 코드 금지").
+ * Article statuses this adapter is ever allowed to write. Enforced defensively
+ * even though run.ts already narrows the type at the call site — the pipeline
+ * must NEVER auto-publish (a1 §2: "사람 승인 없이는 절대 발행되지 않는다";
+ * task constraint: "'approved'/'published' 쓰는 코드 금지").
+ *
+ * 'held' is allowed alongside 'review' because it is the same destination —
+ * a human looks at it in web/ admin — just flagged with why it got there
+ * (post-rewrite two-source failure, run.ts articleStatusForGatedVersions).
+ * Rejecting it made the guard fire on a status the pipeline itself produces,
+ * and since saveEdition() checks every article up front, one 'held' article
+ * threw away the entire run's output before a single row was written.
+ * 'approved'/'published' stay out — blocking those is the whole point.
  */
-const ALLOWED_ARTICLE_STATUS: ArticleStatus = "review";
+const ALLOWED_ARTICLE_STATUSES: readonly ArticleStatus[] = ["review", "held"];
 const ALLOWED_EDITION_STATUS = "draft";
 
 function assertNeverAutoPublish(status: string, kind: "article" | "edition"): void {
-  const allowed = kind === "article" ? ALLOWED_ARTICLE_STATUS : ALLOWED_EDITION_STATUS;
-  if (status !== allowed) {
+  const allowed: readonly string[] =
+    kind === "article" ? ALLOWED_ARTICLE_STATUSES : [ALLOWED_EDITION_STATUS];
+  if (!allowed.includes(status)) {
     throw new Error(
       `[SupabaseStorageAdapter] refusing to write ${kind} status='${status}' — ` +
-        `this adapter may only write status='${allowed}'. Approval/publish is a ` +
-        `human action performed in web/ admin, never by the pipeline.`,
+        `this adapter may only write status=${allowed.map((s) => `'${s}'`).join("|")}. ` +
+        `Approval/publish is a human action performed in web/ admin, never by ` +
+        `the pipeline.`,
     );
   }
 }
+
+/**
+ * pipeline CategorySlug -> categories.slug (supabase/migrations/0004 seed).
+ *
+ * The pipeline curates into 5 buckets while categories carries the web's
+ * 10-slug list, so the compound buckets collapse onto their primary member.
+ * Kept identical to web/src/lib/admin/seedTransform.ts's CATEGORY_SLUG_MAP —
+ * the seed importer and this adapter write into the same column, and two
+ * different mappings would give the same story two different categories
+ * depending on which path stored it.
+ */
+const CATEGORY_SLUG_MAP: Record<CategorySlug, string> = {
+  world: "world",
+  korea: "korea",
+  "ai-tech": "ai",
+  business: "business",
+  "culture-sports": "culture",
+};
+
+/** Reverse of CATEGORY_SLUG_MAP, for reading rows back in getEdition(). */
+const PIPELINE_CATEGORY_BY_DB_SLUG: Record<string, CategorySlug> = Object.fromEntries(
+  Object.entries(CATEGORY_SLUG_MAP).map(([pipelineSlug, dbSlug]) => [dbSlug, pipelineSlug]),
+) as Record<string, CategorySlug>;
 
 // ---------------------------------------------------------------------------
 // Row shapes (mirrors supabase/migrations/0001_schema.sql column names)
@@ -83,6 +133,12 @@ function assertNeverAutoPublish(status: string, kind: "article" | "edition"): vo
 
 interface EditionRow {
   id: string;
+  edition_date: string;
+  status: "draft" | "published";
+}
+
+/** Upsert payload — `id` is intentionally absent, see the file header. */
+interface EditionUpsertRow {
   edition_date: string;
   status: "draft" | "published";
 }
@@ -137,6 +193,8 @@ interface WordRow {
   example: string | null;
   pronunciation: string | null;
   sort_order: number;
+  is_key: boolean;
+  pos: string | null;
 }
 
 interface QualityCheckRow {
@@ -154,6 +212,19 @@ interface PipelineRunRow {
   error: string | null;
   started_at: string;
   finished_at: string | null;
+}
+
+/**
+ * pipeline_checkpoints (supabase/migrations/0005). One row per edition date;
+ * `payload` is the whole PipelineCheckpoint, and edition_date/run_id/
+ * updated_at are the same values lifted out so the row is legible in the
+ * Supabase dashboard and expiry can be a plain indexed comparison.
+ */
+interface PipelineCheckpointRow {
+  edition_date: string;
+  run_id: string;
+  payload: PipelineCheckpoint;
+  updated_at: string;
 }
 
 /** Splits article body into sentences for the `sentences` jsonb column (a2-data-model.md §2-3 / 0001_schema.sql). */
@@ -194,9 +265,38 @@ export class SupabaseStorageAdapter implements StorageAdapter {
       assertNeverAutoPublish(article.status, "article");
     }
 
-    // 1. Upsert the edition row (unique on edition_date).
-    const editionRow: EditionRow = {
-      id: edition.id,
+    // 0. Refuse to replace an edition a human already published.
+    //
+    //    Until the id-overwrite bug below was fixed, a same-day re-run died
+    //    on an FK violation before it could touch anything — the crash was
+    //    accidentally acting as a guard. With re-runs working, the "replace"
+    //    strategy would happily delete a published edition's articles and
+    //    swap in fresh unreviewed drafts. Undoing an approval is a human
+    //    action (a1 §2); the pipeline stops here and says so instead.
+    const { data: existingData, error: existingError } = await this.client
+      .from("editions")
+      .select("id, status")
+      .eq("edition_date", edition.editionDate)
+      .maybeSingle();
+    if (existingError) {
+      throw new Error(
+        `[SupabaseStorageAdapter] editions pre-check select failed: ${existingError.message}`,
+      );
+    }
+    const existing = existingData as { id: string; status?: string } | null;
+    if (existing?.status === "published") {
+      throw new Error(
+        `[SupabaseStorageAdapter] refusing to overwrite published edition ` +
+          `${edition.editionDate} — its articles were approved by a human. ` +
+          `Unpublish it in web/ admin first if this edition really should be regenerated.`,
+      );
+    }
+
+    // 1. Upsert the edition row (unique on edition_date). No `id` in the
+    //    payload — sending this run's fresh UUID would rewrite an existing
+    //    edition's primary key and break articles.edition_id (no ON UPDATE
+    //    CASCADE). See the file header.
+    const editionRow: EditionUpsertRow = {
       edition_date: edition.editionDate,
       status: ALLOWED_EDITION_STATUS,
     };
@@ -224,24 +324,66 @@ export class SupabaseStorageAdapter implements StorageAdapter {
       );
     }
 
+    // Categories are seed data (supabase/migrations/0004) — read the whole
+    // table once per edition rather than per article; it is 10 rows.
+    const categoryIdBySlug = await this.loadCategoryIds();
+    if (categoryIdBySlug.size === 0) {
+      console.warn(
+        "[SupabaseStorageAdapter] categories table is empty — articles will be " +
+          "stored with category_id=null. Apply " +
+          "supabase/migrations/0004_words_pos_and_categories_seed.sql.",
+      );
+    }
+
     for (const article of edition.articles) {
-      await this.insertArticle(editionId, article);
+      await this.insertArticle(editionId, article, categoryIdBySlug);
     }
   }
 
-  private async insertArticle(editionId: string, article: PipelineArticle): Promise<void> {
+  /**
+   * categories.slug -> categories.id. Empty map (not a throw) when the table
+   * has no rows: an unseeded categories table costs us the category tag, and
+   * losing the tag is not worth discarding a full run's rewrite spend at the
+   * last stage. A real query error still throws — that is a broken database,
+   * not missing seed data.
+   */
+  private async loadCategoryIds(): Promise<Map<string, number>> {
+    const { data, error } = await this.client.from("categories").select("id, slug");
+    if (error) {
+      throw new Error(`[SupabaseStorageAdapter] categories select failed: ${error.message}`);
+    }
+    const rows = (data as Array<{ id: number; slug: string }> | null) ?? [];
+    return new Map(rows.map((r) => [r.slug, r.id]));
+  }
+
+  private async insertArticle(
+    editionId: string,
+    article: PipelineArticle,
+    categoryIdBySlug: Map<string, number>,
+  ): Promise<void> {
+    const categorySlug = CATEGORY_SLUG_MAP[article.category];
+    const categoryId = categoryIdBySlug.get(categorySlug) ?? null;
+    if (categoryId === null && categoryIdBySlug.size > 0) {
+      // Seeded table that doesn't know this slug means the two lists drifted
+      // apart — worth saying out loud, but not worth failing the store stage.
+      console.warn(
+        `[SupabaseStorageAdapter] no categories row for slug='${categorySlug}' ` +
+          `(pipeline category '${article.category}') — storing category_id=null.`,
+      );
+    }
+
     const articleRow: ArticleRow = {
       id: article.id,
       edition_id: editionId,
-      // category_id resolution (categories.slug -> categories.id) is a
-      // lookup this adapter doesn't own — categories are seed data. Left
-      // null here; wiring a slug->id lookup is a remaining task once a real
-      // project exists (see final response "남은 확인 항목").
-      category_id: null,
+      category_id: categoryId,
       slug: article.slug,
       event_summary: article.eventSummary,
       rank_in_edition: article.rankInEdition,
-      status: ALLOWED_ARTICLE_STATUS,
+      // 'review' or 'held' — already vetted by assertNeverAutoPublish() over
+      // the whole edition before any row was written. Passing it through
+      // rather than pinning to 'review' is what keeps the 2-source failure
+      // visible to the human reviewer instead of blending into the pile.
+      status: article.status,
     };
     const { error: articleError } = await this.client.from("articles").insert(articleRow);
     if (articleError) {
@@ -324,7 +466,15 @@ export class SupabaseStorageAdapter implements StorageAdapter {
       sourceIdsByOutlet.set(s.outlet, [...(sourceIdsByOutlet.get(s.outlet) ?? []), s.id]);
     }
 
+    // fact_sources' primary key is (fact_id, source_id), and a fact's
+    // confirmedByOutlets can legitimately name the same outlet twice — the
+    // extractor de-dupes it too when counting sources
+    // (extract.ts: `new Set(f.confirmedByOutlets).size`). Emitting the pair
+    // twice used to fail the insert here, at the very last stage, after the
+    // run had already paid for every rewrite. `seen` keeps the first row for
+    // a pair and drops repeats.
     const factSourceRows: FactSourceRow[] = [];
+    const seen = new Set<string>();
     const insertedFactRows = (insertedFacts as Array<{ id: string; statement: string }>) ?? [];
     for (let i = 0; i < facts.length; i++) {
       const fact = facts[i];
@@ -332,6 +482,9 @@ export class SupabaseStorageAdapter implements StorageAdapter {
       for (const outlet of fact.confirmedByOutlets) {
         const matchingSourceIds = sourceIdsByOutlet.get(outlet) ?? [];
         for (const sourceId of matchingSourceIds) {
+          const pair = `${factId} ${sourceId}`;
+          if (seen.has(pair)) continue;
+          seen.add(pair);
           factSourceRows.push({
             fact_id: factId,
             source_id: sourceId,
@@ -382,6 +535,12 @@ export class SupabaseStorageAdapter implements StorageAdapter {
         example: w.example ?? null,
         pronunciation: w.pronunciation ?? null,
         sort_order: w.sortOrder,
+        // The rewrite prompt requires both (llm/prompts.ts wordEntrySchema),
+        // so a fresh run always carries them; the ?? branches only cover
+        // fixtures and older drafts. Dropping them here was throwing away
+        // data we had already paid the model to produce.
+        is_key: w.isKey ?? false,
+        pos: w.pos ?? null,
       }));
       const { error: wordsError } = await this.client.from("words").insert(wordRows);
       if (wordsError) {
@@ -464,6 +623,20 @@ export class SupabaseStorageAdapter implements StorageAdapter {
         category_id: number | null;
       }>) ?? [];
 
+    // categories.id -> pipeline CategorySlug. Rows written by the seed
+    // importer can carry a web-only slug ('tech', 'finance', …) that has no
+    // pipeline bucket; those fall back to 'world' rather than guessing which
+    // of the 5 they belong to (design-decisions.md 규칙 1 — don't invent).
+    const categoryIds = await this.loadCategoryIds();
+    const dbSlugById = new Map<number, string>(
+      [...categoryIds].map(([slug, id]) => [id, slug]),
+    );
+    const categoryFor = (categoryId: number | null): CategorySlug => {
+      if (categoryId === null) return "world";
+      const dbSlug = dbSlugById.get(categoryId);
+      return (dbSlug && PIPELINE_CATEGORY_BY_DB_SLUG[dbSlug]) || "world";
+    };
+
     // NOTE: nested sources/facts/versions/words/quality_checks reassembly is
     // deliberately not implemented in this pass — getEdition() is used today
     // only by verification scripts checking edition/article existence and
@@ -477,7 +650,7 @@ export class SupabaseStorageAdapter implements StorageAdapter {
       articles: articleRows.map((a) => ({
         id: a.id,
         slug: a.slug,
-        category: "world", // placeholder — see category_id lookup note above
+        category: categoryFor(a.category_id),
         rankInEdition: a.rank_in_edition,
         status: a.status,
         eventSummary: a.event_summary,
@@ -487,6 +660,86 @@ export class SupabaseStorageAdapter implements StorageAdapter {
         createdAt: a.created_at,
       })),
     };
+  }
+
+  // -------------------------------------------------------------------------
+  // Resume checkpoints — pipeline_checkpoints (supabase/migrations/0005)
+  //
+  // These used to be local JSON files even in Supabase mode. That made
+  // a1 §2's promise ("어느 단계에서 죽어도 마지막 성공 지점부터 재개한다")
+  // true everywhere except where the pipeline actually runs: a GitHub Actions
+  // job gets a fresh runner, so a re-dispatched job found no file and paid
+  // for every Opus rewrite a second time. Runs on this adapter are the
+  // scheduled ones, so its checkpoint has to outlive the runner.
+  //
+  // Errors are thrown rather than swallowed. run.ts wraps all three calls and
+  // degrades to a full re-run, which is the right cost for a checkpoint that
+  // could not be reached — but silently returning "no checkpoint" from a
+  // broken connection would hide the reason from the log.
+  // -------------------------------------------------------------------------
+
+  async saveCheckpoint(checkpoint: PipelineCheckpoint): Promise<void> {
+    const row: PipelineCheckpointRow = {
+      edition_date: checkpoint.editionDate,
+      run_id: checkpoint.runId,
+      payload: checkpoint,
+      updated_at: checkpoint.updatedAt,
+    };
+    const { error } = await this.client
+      .from("pipeline_checkpoints")
+      .upsert(row, { onConflict: "edition_date" });
+    if (error) {
+      throw new Error(
+        `[SupabaseStorageAdapter] pipeline_checkpoints upsert failed: ${error.message}`,
+      );
+    }
+  }
+
+  async loadCheckpoint(editionDate: string): Promise<PipelineCheckpoint | null> {
+    // Sweep expired rows first. run.ts refuses to resume from anything older
+    // than CHECKPOINT_MAX_AGE_HOURS, so those rows can never be read again —
+    // and a payload carrying a day's collected article text is measured in
+    // megabytes, which on a free-tier project would add up to real storage
+    // for data nobody can use. Once per run, on the one call that already
+    // happens exactly once.
+    const expiredBefore = new Date(
+      Date.now() - CHECKPOINT_MAX_AGE_HOURS * 3600_000,
+    ).toISOString();
+    const { error: sweepError } = await this.client
+      .from("pipeline_checkpoints")
+      .delete()
+      .lt("updated_at", expiredBefore);
+    if (sweepError) {
+      // Housekeeping must never cost us the checkpoint we came here to read.
+      console.warn(
+        `[SupabaseStorageAdapter] expired checkpoint sweep failed (continuing): ${sweepError.message}`,
+      );
+    }
+
+    const { data, error } = await this.client
+      .from("pipeline_checkpoints")
+      .select("payload")
+      .eq("edition_date", editionDate)
+      .maybeSingle();
+    if (error) {
+      throw new Error(
+        `[SupabaseStorageAdapter] pipeline_checkpoints select failed: ${error.message}`,
+      );
+    }
+    const row = data as Pick<PipelineCheckpointRow, "payload"> | null;
+    return row?.payload ?? null;
+  }
+
+  async clearCheckpoint(editionDate: string): Promise<void> {
+    const { error } = await this.client
+      .from("pipeline_checkpoints")
+      .delete()
+      .eq("edition_date", editionDate);
+    if (error) {
+      throw new Error(
+        `[SupabaseStorageAdapter] pipeline_checkpoints delete failed: ${error.message}`,
+      );
+    }
   }
 }
 

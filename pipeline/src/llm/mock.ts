@@ -1,6 +1,6 @@
 /**
- * MockLLMProvider — deterministic stand-in for LLM calls, used for the
- * demo/e2e run (task constraint #1: "LLM API 키 없음... 데모 실행은 mock으로").
+ * MockLLMProvider — deterministic stand-in for LLM calls, used for dry/e2e
+ * runs that must not spend Anthropic credit (LLM_PROVIDER=mock).
  *
  * Shapes returned mirror the real, hand-verified output in
  * docs/research/r3-pipeline-experiment.md (word counts, fact-table style,
@@ -18,6 +18,8 @@ import type {
   ExtractFactsInput,
   GenerateAllLevelsInput,
   GenerateAllLevelsOutput,
+  LearnabilityAndDemeritInput,
+  LearnabilityAndDemeritResult,
   LLMProvider,
   RewriteInput,
   RewriteOutput,
@@ -126,6 +128,36 @@ export class MockLLMProvider implements LLMProvider {
       rationale: `[mock] outletCount=${c.outletCount}, category=${c.category} — selected for cross-source corroboration and category balance.`,
     }));
     return { selections };
+  }
+
+  /**
+   * Layer 2 학습 적합성 / 감점 — a deterministic keyword heuristic, NOT a
+   * judgment. It exists so the scoring path is exercised end-to-end without
+   * a key; its numbers say nothing about a story's real learnability, which
+   * is exactly why the real provider is a model call.
+   */
+  async scoreLearnabilityAndDemerit(
+    inputs: LearnabilityAndDemeritInput[],
+  ): Promise<LearnabilityAndDemeritResult> {
+    const scores = inputs.map((input) => {
+      const text = `${input.title} ${input.summaries.join(" ")}`.toLowerCase();
+      const words = text.split(/\s+/).filter(Boolean);
+      const longWordRatio =
+        words.length === 0 ? 0 : words.filter((w) => w.length > 9).length / words.length;
+      // Fewer rare-looking long words -> easier reading, in this mock's terms.
+      const learnabilityScore = Math.max(0, Math.min(1, 1 - longWordRatio * 3));
+      const gossipHits = ["gossip", "rumour", "rumor", "scandal", "celebrity"].filter((k) =>
+        text.includes(k),
+      ).length;
+      const demeritScore = Math.min(1, gossipHits * 0.4);
+      return {
+        id: input.id,
+        learnabilityScore,
+        demeritScore,
+        reasoning: "[mock] keyword heuristic, not a judgment",
+      };
+    });
+    return { scores };
   }
 
   async extractFacts(input: ExtractFactsInput): Promise<ExtractFactsResult> {

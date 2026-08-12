@@ -8,20 +8,31 @@
  *
  *   1. 2-source gate (source-deduped by outletKey — see cluster.ts).
  *   2. Layer 2 composite score (score.ts) ranks candidates within each
- *      category — media diversity + Korea relevance + freshness.
- *   3. Layer 1 greedy selection with a FIXED category quota
+ *      category — media diversity + Korea relevance + freshness + GDELT
+ *      global reach (globalImpact.ts) + LLM learnability/demerit.
+ *   3. Layer 3 편집회의: the top LAYER3_POOL_SIZE candidates by score go to
+ *      the LLM, which proposes its own ten with reasons. The proposal is a
+ *      PREFERENCE ORDER, not a decision — it reorders the candidate list
+ *      that Layer 1 then fills the quota from.
+ *   4. Layer 1 greedy selection with a FIXED category quota
  *      (world 3 / korea 2 / ai-tech 2 / business 2 / culture-sports 1),
  *      same-country-politics cap (max 2), duplicate-subject exclusion,
  *      world regional spread, and a tone/casualty cap with a guaranteed
  *      non-casualty last slot.
- *   4. Every candidate's fate (selected/backfilled/rejected/held-back) is
- *      recorded into a SelectionReport for operator review.
+ *   5. Every candidate's fate (selected/backfilled/rejected/held-back), its
+ *      score breakdown and the LLM's proposed rank are recorded into a
+ *      SelectionReport for operator review.
  *
- * The LLM is used only for `selectionRationale` (natural-language "why"
- * text) on the already-decided ranking — never for the ranking itself. This
- * matches the design's "AI는 제안, 룰은 강제" principle one step further:
- * for now Layer 1 rules decide outright, since Layer 3 (LLM editorial
- * meeting) is future work (top10-curation.md §1 Layer 3 / §4 roadmap step 2).
+ * "AI는 제안, 룰은 강제" is enforced structurally, not by good intentions:
+ * the LLM only supplies an ordering over candidates that have ALREADY passed
+ * the 2-source gate, and every quota, cap and tone rule runs afterwards on
+ * its proposal. An LLM that proposes ten US-politics stories still gets a
+ * balanced ten back out, and the report shows where its picks were overruled.
+ *
+ * Every external signal is optional and fails soft. GDELT down, no
+ * scoreLearnabilityAndDemerit on the provider, a rejected editorial call —
+ * each degrades this to the rules-only behaviour it had before, never to a
+ * failed run: selection is on the critical path for the whole edition.
  */
 
 import type {
@@ -36,6 +47,9 @@ import type { LLMProvider } from "../llm/provider.js";
 import type { CallUsage } from "../llm/cost.js";
 import { computeLeadScore } from "./leadScore.js";
 import { scoreCluster } from "./score.js";
+import type { ExternalSignals } from "./score.js";
+import { normalizeGlobalImpact } from "./globalImpact.js";
+import type { GlobalImpactProvider } from "./globalImpact.js";
 import {
   clusterSubjectKey,
   isCasualtyStory,
@@ -69,10 +83,33 @@ const MAX_SAME_COUNTRY_WORLD = 2;
 const MAX_CASUALTY_STORIES = 5;
 const TOTAL_SLOTS = 10;
 
+/**
+ * How many top-scored candidates go to the Layer 3 editorial call
+ * (top10-curation.md §1 Layer 3: "점수 상위 25~30 후보"). Everything below
+ * this rank was not going to survive the quota anyway, and sending it would
+ * only dilute the model's attention.
+ */
+const LAYER3_POOL_SIZE = 28;
+
+/** Cap on the Layer 2 learnability call's input, for the same reason. */
+const LEARNABILITY_POOL_SIZE = 40;
+
+export interface Top10Options {
+  /**
+   * Gathers the GDELT global-reach signal for the surviving candidates
+   * (globalImpact.ts). Omitted in tests and demo runs — the pipeline must
+   * not depend on a third-party endpoint to select an edition.
+   */
+  globalImpact?: GlobalImpactProvider;
+  log?: (message: string) => void;
+}
+
 export interface Top10Result {
   selected: SelectedEvent[];
-  /** Usage of the Sonnet rationale call, when one was made. */
+  /** Usage of the Sonnet Layer 3 editorial call, when one was made. */
   usage?: CallUsage;
+  /** Usage of the Haiku Layer 2 learnability/demerit call, when one was made. */
+  learnabilityUsage?: CallUsage;
   /** Events held back for the next batch due to insufficient corroboration. */
   heldBack: EventCluster[];
   /** Full rule-application record for operator review (top10-curation.md §1 Layer 1). */
@@ -87,11 +124,17 @@ interface ScoredCandidate {
   isCasualty: boolean;
   subjectKey: string | null;
   countryGuess: string | null;
+  /** Rank the Layer 3 editorial call gave this candidate, if it named it. */
+  llmProposedRank: number | null;
 }
 
-function buildScoredCandidates(clusters: EventCluster[], now: Date): ScoredCandidate[] {
+function buildScoredCandidates(
+  clusters: EventCluster[],
+  now: Date,
+  externalById: Map<string, ExternalSignals> = new Map(),
+): ScoredCandidate[] {
   return clusters.map((cluster) => {
-    const breakdown = scoreCluster(cluster, now);
+    const breakdown = scoreCluster(cluster, now, externalById.get(cluster.id) ?? {});
     return {
       cluster,
       score: breakdown.total,
@@ -100,14 +143,33 @@ function buildScoredCandidates(clusters: EventCluster[], now: Date): ScoredCandi
         countryDiversity: breakdown.countryDiversity,
         koreaRelevance: breakdown.koreaRelevance,
         freshness: breakdown.freshness,
+        globalImpact: breakdown.globalImpact,
+        learnability: breakdown.learnability,
+        demerit: breakdown.demerit,
         total: breakdown.total,
       },
       isPolitical: isPoliticalStory(cluster),
       isCasualty: isCasualtyStory(cluster),
       subjectKey: clusterSubjectKey(cluster),
       countryGuess: politicalCountryGuess(cluster),
+      llmProposedRank: null,
     };
   });
+}
+
+/**
+ * Candidate preference order: the Layer 3 editorial proposal first, the
+ * Layer 2 score for everything it did not name.
+ *
+ * This is the ONLY place the LLM's opinion enters selection. It decides who
+ * is considered first for a slot; it cannot create a slot, exceed a quota, or
+ * clear a cap — those run afterwards in tryAdmit(), unchanged.
+ */
+function byEditorialPreference(a: ScoredCandidate, b: ScoredCandidate): number {
+  const ra = a.llmProposedRank ?? Number.POSITIVE_INFINITY;
+  const rb = b.llmProposedRank ?? Number.POSITIVE_INFINITY;
+  if (ra !== rb) return ra - rb;
+  return b.score - a.score;
 }
 
 /**
@@ -126,7 +188,7 @@ function runLayer1Selection(
     byCategory.set(c.cluster.category, list);
   }
   for (const list of byCategory.values()) {
-    list.sort((a, b) => b.score - a.score);
+    list.sort(byEditorialPreference);
   }
 
   const chosen: ScoredCandidate[] = [];
@@ -251,7 +313,7 @@ function runLayer1Selection(
   if (chosen.length < TOTAL_SLOTS) {
     const remaining = scored
       .filter((c) => !chosenIds.has(c.cluster.id))
-      .sort((a, b) => b.score - a.score);
+      .sort(byEditorialPreference);
     for (const candidate of remaining) {
       if (chosen.length >= TOTAL_SLOTS) break;
       if (tryAdmit(candidate)) {
@@ -301,6 +363,10 @@ function runLayer1Selection(
       subjectKey: c.subjectKey,
       outcome,
       rank: rank >= 0 ? rank + 1 : null,
+      // Lets the operator see where the rules overruled the editorial call:
+      // llmProposedRank 2 with outcome 'rejected' is a quota or cap doing
+      // its job, and it should be visible rather than inferred.
+      llmProposedRank: c.llmProposedRank,
       rejectionReasons: rejectionReasons.get(c.cluster.id) ?? [],
     };
   });
@@ -400,7 +466,7 @@ function applyToneBalance(
     return allScored
       .filter((c) => !chosenIds.has(c.cluster.id))
       .filter((c) => (excludeCasualty ? !c.isCasualty : true))
-      .sort((a, b) => b.score - a.score)[0];
+      .sort(byEditorialPreference)[0];
   }
 
   // Rule: total casualty count capped.
@@ -456,14 +522,161 @@ const LAYER1_LIMITATIONS = [
   "Political story's \"country\" is the REPORTING OUTLET's country/edition, not a verified subject-country (a US outlet can report on non-US politics) — see rules.ts politicalCountryGuess doc comment.",
   "Duplicate-subject detection uses a capitalized-word-run regex over the title, not named-entity recognition — can miss lowercase subjects, conflate distinct people sharing a capitalized lead word, or miss pronoun co-reference.",
   "Casualty/tone detection is an English keyword heuristic (see rules.ts CASUALTY_KEYWORDS) — a story can discuss death/conflict without these exact words, or use them in a non-casualty sense.",
-  "Layer 2 score does not yet include LLM-only signals (learnability, demerit/sensationalism) — LLMProvider.scoreLearnabilityAndDemerit is a stub, not called (top10-curation.md §1 Layer 2 roadmap).",
-  "No Layer 3 LLM editorial pass runs yet — Layer 1 rules decide the final ranking outright rather than validating an LLM proposal.",
+  "The Layer 3 editorial proposal only reorders candidates — it can never add a story that failed the 2-source gate, exceed a quota, or clear a cap. Where scoreBreakdown and llmProposedRank disagree with the outcome, a Layer 1 rule overruled the AI.",
 ];
+
+/** Appended to the report when a signal that should have been gathered was not. */
+const SIGNAL_LIMITATION = {
+  globalImpact:
+    "Layer 2 글로벌 영향력 (GDELT) signal is missing from this run's scores — no provider was configured, or every query failed. Reach across national media lines went unmeasured.",
+  learnability:
+    "Layer 2 학습 적합성/감점 signal is missing from this run's scores — the LLM provider does not implement scoreLearnabilityAndDemerit, or the call failed.",
+  layer3:
+    "Layer 3 편집회의 did not run for this edition (call skipped or failed) — the Layer 2 score alone ordered the candidates.",
+} as const;
+
+/**
+ * Layer 2 external signals for the surviving candidates: GDELT global reach
+ * and the LLM's learnability/demerit judgment.
+ *
+ * Both are gathered once for the whole candidate list, and both fail soft —
+ * an unavailable signal means "no signal" (scored 0, i.e. neutral), never a
+ * failed selection. What is NOT silent is the fact that it was missing: the
+ * report gets a limitation line, because a score computed from four signals
+ * instead of six should not look identical to one computed from six.
+ */
+async function gatherExternalSignals(
+  eligible: EventCluster[],
+  llm: LLMProvider,
+  options: Top10Options,
+): Promise<{
+  byId: Map<string, ExternalSignals>;
+  usage?: CallUsage;
+  limitations: string[];
+}> {
+  const log = options.log ?? (() => {});
+  const byId = new Map<string, ExternalSignals>();
+  const limitations: string[] = [];
+  const set = (id: string, patch: ExternalSignals) =>
+    byId.set(id, { ...(byId.get(id) ?? {}), ...patch });
+
+  // 글로벌 영향력 — GDELT country reach.
+  if (options.globalImpact) {
+    try {
+      const signals = await options.globalImpact(eligible);
+      if (signals.size === 0) {
+        limitations.push(SIGNAL_LIMITATION.globalImpact);
+      } else {
+        for (const [clusterId, signal] of signals) {
+          set(clusterId, { globalImpact: normalizeGlobalImpact(signal) });
+        }
+      }
+    } catch (err) {
+      log(`[select] global-impact signal unavailable: ${String(err)}`);
+      limitations.push(SIGNAL_LIMITATION.globalImpact);
+    }
+  } else {
+    limitations.push(SIGNAL_LIMITATION.globalImpact);
+  }
+
+  // 학습 적합성 / 감점 — one Haiku call for the whole candidate list.
+  let usage: CallUsage | undefined;
+  if (typeof llm.scoreLearnabilityAndDemerit === "function") {
+    const pool = [...eligible]
+      .sort((a, b) => b.outletCount - a.outletCount)
+      .slice(0, LEARNABILITY_POOL_SIZE);
+    try {
+      const result = await llm.scoreLearnabilityAndDemerit(
+        pool.map((c) => ({
+          id: c.id,
+          title: c.title,
+          category: c.category,
+          summaries: c.items.slice(0, 3).map((i) => `[${i.outlet}] ${i.title}: ${i.summary}`),
+        })),
+      );
+      usage = result.usage;
+      // Matched by id, never by position: a model that returns nine scores for
+      // ten inputs would otherwise shift every judgment onto the wrong story.
+      for (const score of result.scores) {
+        set(score.id, {
+          learnability: score.learnabilityScore,
+          demerit: score.demeritScore,
+        });
+      }
+      if (result.scores.length === 0) limitations.push(SIGNAL_LIMITATION.learnability);
+    } catch (err) {
+      log(`[select] learnability signal unavailable: ${String(err)}`);
+      limitations.push(SIGNAL_LIMITATION.learnability);
+    }
+  } else {
+    limitations.push(SIGNAL_LIMITATION.learnability);
+  }
+
+  return { byId, usage, limitations };
+}
+
+/**
+ * Layer 3 편집회의 — top10-curation.md §1 Layer 3.
+ *
+ * Hands the top-scored candidates to the LLM and asks for its ten with
+ * reasons. What comes back is written onto the candidates as a preference
+ * order and a per-story rationale; Layer 1 then fills the quota from that
+ * order and overrules whatever breaks a rule.
+ *
+ * Before this existed, the same call was made AFTER selection and its answer
+ * was used only for the rationale text — the model was asked to pick ten from
+ * ten it had already been given, and its actual editorial judgment was
+ * discarded.
+ */
+async function runEditorialMeeting(
+  scored: ScoredCandidate[],
+  llm: LLMProvider,
+  log: (message: string) => void,
+): Promise<{ rationales: Map<string, string>; usage?: CallUsage; limitations: string[] }> {
+  const pool = [...scored].sort((a, b) => b.score - a.score).slice(0, LAYER3_POOL_SIZE);
+  try {
+    const result = await llm.selectTop10(
+      pool.map((c) => ({
+        id: c.cluster.id,
+        title: c.cluster.title,
+        category: c.cluster.category,
+        outletCount: c.cluster.outletCount,
+        summaries: c.cluster.items
+          .slice(0, 5)
+          .map((i) => `[${i.outlet}] ${i.title}: ${i.summary}`),
+      })),
+    );
+    const byId = new Map(scored.map((c) => [c.cluster.id, c]));
+    for (const selection of result.selections) {
+      const candidate = byId.get(selection.id);
+      // A hallucinated id names a story that was never a candidate; ignoring
+      // it is the whole point of re-validating in code.
+      if (!candidate) {
+        log(`[select] editorial call named an unknown candidate id (${selection.id}) — ignored`);
+        continue;
+      }
+      candidate.llmProposedRank = selection.rankInEdition;
+    }
+    return {
+      rationales: new Map(result.selections.map((s) => [s.id, s.rationale])),
+      usage: result.usage,
+      limitations: [],
+    };
+  } catch (err) {
+    // Selection must survive an LLM outage: without a proposal every
+    // candidate keeps llmProposedRank=null and the Layer 2 score orders them,
+    // which is exactly the pre-Layer-3 behaviour.
+    log(`[select] editorial meeting unavailable, falling back to score order: ${String(err)}`);
+    return { rationales: new Map(), limitations: [SIGNAL_LIMITATION.layer3] };
+  }
+}
 
 export async function selectTop10(
   clusters: EventCluster[],
   llm: LLMProvider,
+  options: Top10Options = {},
 ): Promise<Top10Result> {
+  const log = options.log ?? (() => {});
   const now = new Date();
   const eligible = clusters.filter((c) => c.outletCount >= MIN_OUTLETS_FOR_CANDIDACY);
   const heldBackTwoSource = clusters.filter((c) => c.outletCount < MIN_OUTLETS_FOR_CANDIDACY);
@@ -501,33 +714,18 @@ export async function selectTop10(
     };
   }
 
-  const scored = buildScoredCandidates(eligible, now);
-  const { chosen, report: partialReport } = runLayer1Selection(scored, now);
+  // Layer 2: gather the two signals that come from outside this module, then
+  // score every candidate with them.
+  const external = await gatherExternalSignals(eligible, llm, options);
+  const scored = buildScoredCandidates(eligible, now, external.byId);
 
-  // Rationale text: ask the LLM for a natural-language "why" per selected
-  // item, but the ranking itself is already final — this call cannot change
-  // which stories were picked or their order (see module doc comment).
-  let rationales = new Map<string, string>();
-  // Usage of the rationale call, surfaced so run.ts can price the select
-  // stage. Undefined when the call was skipped or failed (rationales then
-  // fall back to the rule-derived text below), and for the mock provider.
-  let llmUsage: CallUsage | undefined;
-  try {
-    const candidatesForLlm = chosen.map((c) => ({
-      id: c.cluster.id,
-      title: c.cluster.title,
-      category: c.cluster.category,
-      outletCount: c.cluster.outletCount,
-      summaries: c.cluster.items.slice(0, 5).map((i) => `[${i.outlet}] ${i.title}: ${i.summary}`),
-    }));
-    const llmResult = await llm.selectTop10(candidatesForLlm);
-    llmUsage = llmResult.usage;
-    rationales = new Map(llmResult.selections.map((s) => [s.id, s.rationale]));
-  } catch {
-    // Rationale text is a nice-to-have narration, not load-bearing — if the
-    // LLM call fails for any reason, fall back to a rule-derived rationale
-    // below rather than failing selection entirely.
-  }
+  // Layer 3: the editorial call, BEFORE selection — it writes a preference
+  // order onto `scored` that Layer 1 then fills the quota from.
+  const editorial = await runEditorialMeeting(scored, llm, log);
+  const rationales = editorial.rationales;
+
+  // Layer 1: the rules, applied to the AI's proposal.
+  const { chosen, report: partialReport } = runLayer1Selection(scored, now);
 
   const selected: SelectedEvent[] = chosen.map((c, idx) => ({
     ...c.cluster,
@@ -542,12 +740,17 @@ export async function selectTop10(
 
   return {
     selected,
-    usage: llmUsage,
+    usage: editorial.usage,
+    learnabilityUsage: external.usage,
     heldBack: [...heldBackTwoSource, ...notSelectedEligible],
     report: {
       editionDate,
       generatedAt: now.toISOString(),
       ...partialReport,
+      // Signals that were supposed to inform this edition's scores but
+      // didn't, named in the operator's own report rather than a log line
+      // nobody reads.
+      limitations: [...partialReport.limitations, ...external.limitations, ...editorial.limitations],
     },
   };
 }

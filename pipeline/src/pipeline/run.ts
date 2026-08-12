@@ -9,16 +9,27 @@
  * (a1 §2: "사람 승인 없이는 절대 발행되지 않는다").
  *
  * Every stage's outcome is recorded into a PipelineRun so a failure is
- * visible per-stage (a1 §5.3 pipeline_runs). Resume-from-last-stage is a
- * TODO for the Supabase-backed version — with local file storage a re-run
- * is cheap enough to just start over.
+ * visible per-stage (a1 §5.3 pipeline_runs).
+ *
+ * RESUME (a1 §2 "어느 단계에서 죽어도 마지막 성공 지점부터 재개한다"): each
+ * stage writes its output to a checkpoint keyed by edition date
+ * (StorageAdapter.saveCheckpoint), and a later run for the same date picks up
+ * where the failed one stopped. Rewrite checkpoints per event, not per stage —
+ * it is the expensive one, and losing nine finished articles because the
+ * tenth timed out is the failure this exists to prevent. The checkpoint is
+ * deleted once the edition is stored; a checkpoint older than
+ * CHECKPOINT_MAX_AGE_HOURS (storage/adapter.ts) is ignored rather than
+ * trusted. Where the checkpoint physically lives is the adapter's call —
+ * Supabase runs put it in a table so it outlives the runner.
  */
 
 import { randomUUID } from "node:crypto";
 import type {
   CollectResult,
+  EventCluster,
   GatedVersion,
   PipelineArticle,
+  PipelineCheckpoint,
   PipelineEdition,
   PipelineRun,
   PipelineStage,
@@ -27,14 +38,17 @@ import type {
   CheckKind,
 } from "../types.js";
 import type { LLMProvider } from "../llm/provider.js";
+import { CHECKPOINT_MAX_AGE_HOURS } from "../storage/adapter.js";
 import type { StorageAdapter } from "../storage/adapter.js";
 import type { SourceConfig } from "../types.js";
 import { collect } from "./collect.js";
 import { clusterEvents } from "./cluster.js";
 import { selectTop10 } from "./selectTop10.js";
+import type { Top10Result } from "./selectTop10.js";
+import type { GlobalImpactProvider } from "./globalImpact.js";
 import { resolveUsableEvents, MIN_USABLE_FACTS_TO_REWRITE } from "./replaceLowUsableFacts.js";
 import { generateAndGateAll } from "./generate.js";
-import type { EventToGenerate } from "./generate.js";
+import type { EventToGenerate, GeneratedArticleDraft } from "./generate.js";
 import { UsageLedger } from "../llm/cost.js";
 import type Anthropic from "@anthropic-ai/sdk";
 
@@ -55,20 +69,47 @@ export interface RunOptions {
    * interface — MockLLMProvider runs never set this).
    */
   batchClient?: Anthropic;
+  /**
+   * Layer 2 글로벌 영향력 signal for the select stage
+   * (pipeline/globalImpact.ts). Omitted means the signal is simply missing
+   * from this run's scores, and the selection report says so.
+   */
+  globalImpact?: GlobalImpactProvider;
+  /**
+   * Resume this edition from the last checkpointed stage instead of starting
+   * over (a1 §2). Defaults to true. Pass false to force a clean run — e.g.
+   * when the sources themselves are suspect and re-collecting is the point.
+   */
+  resume?: boolean;
   log?: (message: string) => void;
 }
 
 /**
  * Slugify a title and append a uniqueness suffix.
  *
- * `articles.slug` has a `unique` constraint (supabase/migrations/0001_schema.sql),
- * but two Top-10 events on the same day can produce identical title-derived
- * slugs (e.g. near-duplicate headlines, or a rewrite that reuses generic
- * phrasing) — a bare slugify() risked a same-day collision. Appending
- * `rankInEdition` (1..10, unique within one edition) makes same-day
- * collisions impossible without touching the human-readable prefix.
+ * `articles.slug` is UNIQUE across the whole table (supabase/migrations/
+ * 0001_schema.sql), and it has to stay that way: the reader route is
+ * web/src/app/article/[slug] — the slug alone addresses an article, with no
+ * date in the path to disambiguate.
+ *
+ * Rank alone is not enough for that. It separates two events inside one
+ * edition, but a story that runs for several days gets a near-identical
+ * rewritten title each day, and the second day's insert collides on a slug
+ * the first day already took.
+ *
+ * So the edition date goes into the slug. What we deliberately do NOT do is
+ * re-slug what is already out there: the deployed seed
+ * (web/src/lib/data/seed/articles.json) uses the old `${base}-${rank}` shape,
+ * e.g. "south-korea-sells-a-lot-more-to-the-world-4", and rewriting those
+ * would 404 every existing link for no gain — they are already unique among
+ * themselves. New articles simply get the longer, date-carrying shape, and
+ * the two forms coexist without ever colliding (an old-form slug never ends
+ * in an 8-digit date segment).
+ *
+ * `editionDate` is optional only so the pre-date form stays expressible for
+ * the historical seed; runPipeline always passes it.
  */
-export function slugify(title: string, rankInEdition: number): string {
+export function slugify(title: string, rankInEdition: number, editionDate?: string): string {
   const base =
     title
       .toLowerCase()
@@ -76,7 +117,9 @@ export function slugify(title: string, rankInEdition: number): string {
       .trim()
       .replace(/\s+/g, "-")
       .slice(0, 60) || `article-${randomUUID().slice(0, 8)}`;
-  return `${base}-${rankInEdition}`;
+  if (!editionDate) return `${base}-${rankInEdition}`;
+  const compactDate = editionDate.replace(/-/g, "");
+  return `${base}-${compactDate}-${rankInEdition}`;
 }
 
 /**
@@ -147,29 +190,135 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
     }
   }
 
+  /**
+   * Record a stage that did not run because a checkpoint already held its
+   * output. It still gets a StageOutcome — a resumed run's stage list has to
+   * account for all seven stages, or "collect: missing" reads as a failure.
+   */
+  function resumedStage(name: PipelineStage, result: unknown): void {
+    const at = new Date().toISOString();
+    run.stages.push({
+      stage: name,
+      startedAt: at,
+      finishedAt: at,
+      ok: true,
+      detail: { ...summarizeStage(name, result), resumedFromCheckpoint: true },
+    });
+    run.resumedStages = [...(run.resumedStages ?? []), name];
+    log(`[pipeline] stage=${name} skipped — resumed from checkpoint`);
+  }
+
   // Hoisted above the try so the finally-block cost summary can read it even
   // when a stage threw partway through (tokens spent before the failure are
   // still real cost).
   const usageLedger = new UsageLedger();
 
+  // --- Resume state -------------------------------------------------------
+  // Loading is best-effort: a checkpoint that can't be read costs a full
+  // re-run, which is exactly what happened before checkpoints existed, so it
+  // must never abort the run.
+  let checkpoint: PipelineCheckpoint = {
+    editionDate,
+    runId: run.id,
+    updatedAt: new Date().toISOString(),
+  };
+  if (options.resume !== false) {
+    try {
+      const loaded = await options.storage.loadCheckpoint(editionDate);
+      if (loaded) {
+        const ageHours = (Date.now() - new Date(loaded.updatedAt).getTime()) / 3600_000;
+        if (Number.isFinite(ageHours) && ageHours <= CHECKPOINT_MAX_AGE_HOURS) {
+          checkpoint = { ...loaded, runId: run.id };
+          log(
+            `[pipeline] checkpoint found for ${editionDate} (${ageHours.toFixed(1)}h old, run ${loaded.runId}) — resuming`,
+          );
+        } else {
+          log(
+            `[pipeline] checkpoint for ${editionDate} is ${ageHours.toFixed(1)}h old (> ${CHECKPOINT_MAX_AGE_HOURS}h) — starting over`,
+          );
+        }
+      }
+    } catch (err) {
+      log(`[pipeline] WARNING: could not read checkpoint — starting over (${String(err)})`);
+    }
+  }
+
+  async function saveCheckpoint(): Promise<void> {
+    checkpoint.updatedAt = new Date().toISOString();
+    try {
+      await options.storage.saveCheckpoint(checkpoint);
+    } catch (err) {
+      // A checkpoint we failed to write only costs a future re-run.
+      log(`[pipeline] WARNING: failed to write checkpoint: ${String(err)}`);
+    }
+  }
+
   try {
     // [1] 수집
-    const collected = await stage("collect", () => collect(options.sources));
+    let collected: CollectResult;
+    if (checkpoint.collect) {
+      collected = checkpoint.collect;
+      resumedStage("collect", collected);
+    } else {
+      collected = await stage("collect", () => collect(options.sources));
+      checkpoint.collect = collected;
+      await saveCheckpoint();
+    }
 
-    // [2] 클러스터링
-    const clusters = await stage("cluster", () =>
-      clusterEvents(collected.items, {
-        llm: options.llm,
-        onUsage: (usage) =>
-          usageLedger.record({ stage: "same_event", tier: "haiku", mode: "standard", usage }),
-      }),
-    );
+    // [2] 클러스터링 — the single biggest reason this stage is checkpointed:
+    // boundary judgments are one Haiku call per ambiguous item, thousands per
+    // run (cluster.ts), and re-running them buys the same answers twice.
+    let clusters: EventCluster[];
+    if (checkpoint.cluster) {
+      clusters = checkpoint.cluster;
+      resumedStage("cluster", clusters);
+    } else {
+      clusters = await stage("cluster", () =>
+        clusterEvents(collected.items, {
+          llm: options.llm,
+          onUsage: (usage) =>
+            usageLedger.record({ stage: "same_event", tier: "haiku", mode: "standard", usage }),
+        }),
+      );
+      checkpoint.cluster = clusters;
+      await saveCheckpoint();
+    }
 
     // [3] Top 10 선정 (2소스 게이트 포함)
-    const top10 = await stage("select", () => selectTop10(clusters, options.llm));
-    // The rationale call is a real Sonnet call; it went unpriced until now.
-    if (top10.usage) {
-      usageLedger.record({ stage: "select", tier: "sonnet", mode: "standard", usage: top10.usage });
+    let top10: Top10Result;
+    if (checkpoint.select) {
+      top10 = checkpoint.select;
+      resumedStage("select", top10);
+    } else {
+      top10 = await stage("select", () =>
+        selectTop10(clusters, options.llm, { globalImpact: options.globalImpact, log }),
+      );
+      // The Layer 3 editorial call is a real Sonnet call; it went unpriced until now.
+      if (top10.usage) {
+        usageLedger.record({
+          stage: "select",
+          tier: "sonnet",
+          mode: "standard",
+          usage: top10.usage,
+        });
+      }
+      // Layer 2 학습 적합성/감점 — one Haiku call for the whole candidate list.
+      if (top10.learnabilityUsage) {
+        usageLedger.record({
+          stage: "learnability",
+          tier: "haiku",
+          mode: "standard",
+          usage: top10.learnabilityUsage,
+        });
+      }
+      // `usage` is deliberately not checkpointed: it prices a call this run
+      // made, and a later resumed run must not re-report it as its own spend.
+      checkpoint.select = {
+        selected: top10.selected,
+        heldBack: top10.heldBack,
+        report: top10.report,
+      };
+      await saveCheckpoint();
     }
 
     const eventsToProcess = options.maxArticles
@@ -199,7 +348,20 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
     // NOT the original top10.selected list.
     let resolvedEventsById = new Map<string, SelectedEvent>();
 
-    try {
+    if (checkpoint.extract) {
+      const saved = checkpoint.extract;
+      eventsToGenerate.push(...saved.events);
+      resolvedEventsById = new Map(saved.resolvedEvents.map((e) => [e.id, e]));
+      totalFactsExtracted = saved.factsExtracted;
+      totalFactsUsedInText = saved.factsUsedInText;
+      resumedStage("extract", {
+        eventsResolved: saved.events.length,
+        factsExtracted: saved.factsExtracted,
+        factsUsedInText: saved.factsUsedInText,
+        extractReplacements: saved.replacements,
+      });
+    } else {
+      try {
       const { resolved, log: replacementLog, extractionUsages } = await resolveUsableEvents(
         eventsToProcess,
         top10.heldBack,
@@ -250,21 +412,31 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
           extractReplacements: replacementLog,
         },
       });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      run.stages.push({
-        stage: "extract",
-        startedAt: extractStart,
-        finishedAt: new Date().toISOString(),
-        ok: eventsToGenerate.length > 0,
-        detail: {
-          eventsProcessed: eventsToGenerate.length,
-          factsExtracted: totalFactsExtracted,
-          factsUsedInText: totalFactsUsedInText,
-        },
-        error: message,
-      });
-      throw err;
+
+      checkpoint.extract = {
+        events: eventsToGenerate,
+        resolvedEvents: [...resolvedEventsById.values()],
+        factsExtracted: totalFactsExtracted,
+        factsUsedInText: totalFactsUsedInText,
+        replacements: replacementLog,
+      };
+      await saveCheckpoint();
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        run.stages.push({
+          stage: "extract",
+          startedAt: extractStart,
+          finishedAt: new Date().toISOString(),
+          ok: eventsToGenerate.length > 0,
+          detail: {
+            eventsProcessed: eventsToGenerate.length,
+            factsExtracted: totalFactsExtracted,
+            factsUsedInText: totalFactsUsedInText,
+          },
+          error: message,
+        });
+        throw err;
+      }
     }
 
     // [5]-[6] 이벤트별: 재작성(레벨 통합 1콜) → 게이트(불합격 시 레벨별 재시도)
@@ -287,18 +459,86 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
     // to the replacement's generated facts/content.
     const eventById = resolvedEventsById;
 
+    /**
+     * Assemble the persisted article from one generated draft. Pulled out of
+     * the loop so the per-event checkpoint below stores exactly the object a
+     * resumed run will reuse — not a near-copy that drifts from it.
+     */
+    function buildArticle(draft: GeneratedArticleDraft): PipelineArticle | null {
+      const event = eventById.get(draft.eventId);
+      if (!event) return null;
+      const generatedFacts =
+        eventsToGenerate.find((e) => e.eventId === draft.eventId)?.facts ?? [];
+      const gatedVersions: GatedVersion[] = draft.gatedVersions.map((gated) => ({
+        version: gated.version,
+        checks: gated.checks,
+        passed: gated.passed,
+        rewriteAttempts: gated.rewriteAttempts,
+      }));
+      return {
+        id: event.id,
+        slug: slugify(
+          gatedVersions[0]?.version.title ?? event.title,
+          event.rankInEdition,
+          editionDate,
+        ),
+        category: event.category,
+        rankInEdition: event.rankInEdition,
+        // status='review' — human approval happens in web/ admin, never here.
+        // status='held' — same human-review destination, but distinctly
+        // flagged: this article failed 2-source corroboration post-rewrite
+        // and must never be auto-published even partially.
+        status: articleStatusForGatedVersions(gatedVersions),
+        eventSummary: event.title,
+        // Snippet + outletKey/country ride along so an operator-requested
+        // regeneration can rebuild the same gate inputs from the stored
+        // edition alone (regenerate.ts) instead of re-collecting.
+        sources: event.items.map((i) => ({
+          url: i.url,
+          outlet: i.outlet,
+          title: i.title,
+          fetchMethod: "rss_summary" as const,
+          summary: i.summary,
+          publishedAt: i.publishedAt,
+          outletKey: i.outletKey,
+          country: i.country,
+        })),
+        facts: generatedFacts,
+        versions: gatedVersions,
+        createdAt: new Date().toISOString(),
+      };
+    }
+
+    // Articles a previous run of this edition already wrote and gated. They
+    // are the most expensive thing the pipeline produces (one Opus call per
+    // event, plus gate retries), so they are never regenerated.
+    const alreadyWritten = checkpoint.articles ?? [];
+    if (alreadyWritten.length > 0) {
+      articles.push(...alreadyWritten);
+      log(`[pipeline] ${alreadyWritten.length} article(s) restored from checkpoint — not rewritten`);
+    }
+    const writtenIds = new Set(alreadyWritten.map((a) => a.id));
+    const eventsStillToWrite = eventsToGenerate.filter((e) => !writtenIds.has(e.eventId));
+
+    let drafts: GeneratedArticleDraft[] = [];
     try {
-      const drafts = await generateAndGateAll(eventsToGenerate, {
+      drafts = await generateAndGateAll(eventsStillToWrite, {
         llm: options.llm,
         batchClient: options.batchClient,
         log,
+        // Checkpoint each event the moment it is written AND gated: a crash
+        // on event 7 of 10 keeps the six drafts already paid for.
+        onEventDone: async (draft) => {
+          const article = buildArticle(draft);
+          if (!article) return;
+          checkpoint.articles = [...(checkpoint.articles ?? []), article];
+          await saveCheckpoint();
+        },
       });
 
       for (const draft of drafts) {
         const event = eventById.get(draft.eventId);
         if (!event) continue;
-        const generatedFacts =
-          eventsToGenerate.find((e) => e.eventId === draft.eventId)?.facts ?? [];
 
         // Initial (pre-gate) draft — one combined generateAllLevels() call
         // covering all 3 levels for this event (batch share, or a standard
@@ -311,7 +551,6 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
           usage: draft.initialDraftUsage,
         });
 
-        const gatedVersions: GatedVersion[] = [];
         for (const gated of draft.gatedVersions) {
           if (!gated.passed) gateFailures++;
           // Gate retries always use the standard (non-batch) rewrite() path
@@ -338,36 +577,15 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
               usage: gated.retryUsage,
             });
           }
-          gatedVersions.push({
-            version: gated.version,
-            checks: gated.checks,
-            passed: gated.passed,
-            rewriteAttempts: gated.rewriteAttempts,
-          });
         }
 
-        articles.push({
-          id: event.id,
-          slug: slugify(gatedVersions[0]?.version.title ?? event.title, event.rankInEdition),
-          category: event.category,
-          rankInEdition: event.rankInEdition,
-          // status='review' — human approval happens in web/ admin, never here.
-          // status='held' — same human-review destination, but distinctly
-          // flagged: this article failed 2-source corroboration post-rewrite
-          // and must never be auto-published even partially.
-          status: articleStatusForGatedVersions(gatedVersions),
-          eventSummary: event.title,
-          sources: event.items.map((i) => ({
-            url: i.url,
-            outlet: i.outlet,
-            title: i.title,
-            fetchMethod: "rss_summary" as const,
-          })),
-          facts: generatedFacts,
-          versions: gatedVersions,
-          createdAt: new Date().toISOString(),
-        });
+        const article = buildArticle(draft);
+        if (article) articles.push(article);
       }
+
+      // Restored and freshly written articles are interleaved, so put the
+      // edition back in rank order before it is stored.
+      articles.sort((a, b) => a.rankInEdition - b.rankInEdition);
 
       run.stages.push({
         stage: "rewrite",
@@ -412,6 +630,15 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
       await options.storage.saveEdition(edition);
       return { editionDate, articles: articles.length, storage: options.storage.name };
     });
+
+    // The edition is safely stored, so the checkpoint has nothing left to
+    // protect — and leaving it would make tomorrow's rerun of this date
+    // resume into work that is already done.
+    try {
+      await options.storage.clearCheckpoint(editionDate);
+    } catch (err) {
+      log(`[pipeline] WARNING: failed to clear checkpoint: ${String(err)}`);
+    }
 
     run.articlesProduced = articles.length;
     run.status = "success";

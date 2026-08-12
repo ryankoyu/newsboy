@@ -30,6 +30,9 @@ import type {
   ExtractFactsInput,
   GenerateAllLevelsInput,
   GenerateAllLevelsOutput,
+  LearnabilityAndDemeritInput,
+  LearnabilityAndDemeritOutput,
+  LearnabilityAndDemeritResult,
   LLMProvider,
   ModelTier,
   RewriteInput,
@@ -53,11 +56,41 @@ import {
   SINGLE_LEVEL_SYSTEM_PROMPT,
 } from "./prompts.js";
 
+/**
+ * Model ids per a1-architecture.md §3.1.
+ *
+ * These are NOT floating aliases that need pinning: for claude-sonnet-5 and
+ * claude-opus-4-8 the published id is the complete id — no dated snapshot
+ * exists to pin to, and inventing a date suffix would 404. claude-haiku-4-5
+ * does have a dated snapshot (claude-haiku-4-5-20251001), but pinning one of
+ * three tiers buys inconsistency rather than stability, so all three stay on
+ * the published ids. Re-check when a tier is upgraded; never guess a suffix.
+ */
 const MODEL_BY_TIER: Record<ModelTier, string> = {
   haiku: "claude-haiku-4-5",
   sonnet: "claude-sonnet-5",
   opus: "claude-opus-4-8",
 };
+
+/**
+ * A truncated response is worse than a failed one: extractJson() would throw
+ * something about malformed JSON and send the operator hunting a parser bug,
+ * or — with a lenient parser — a half-written article could reach the desk.
+ * stop_reason tells us which happened, so say so.
+ */
+function assertNotTruncated(
+  response: { stop_reason: string | null },
+  where: string,
+  maxTokens: number,
+): void {
+  if (response.stop_reason === "max_tokens") {
+    throw new Error(
+      `[AnthropicLLMProvider] ${where} 응답이 max_tokens(${maxTokens})에서 잘렸습니다. ` +
+        "잘린 JSON을 파싱하거나 반쪽짜리 본문을 쓰지 않고 중단합니다 — " +
+        "입력을 줄이거나 max_tokens 를 올리세요.",
+    );
+  }
+}
 
 const FABRICATION_GUARDRAIL =
   "You must not invent any fact, number, quote, or name that is not present in the " +
@@ -117,7 +150,20 @@ export class AnthropicLLMProvider implements LLMProvider {
           "MockLLMProvider explicitly for local/demo runs (see llm/mock.ts).",
       );
     }
-    this.client = new Anthropic({ apiKey: key });
+    // A run makes hundreds of sequential calls and any single throw fails the
+    // whole run (pipeline/run.ts marks the stage failed and rethrows), so one
+    // 429 at call 300 would throw away the $1 already spent. The SDK retries
+    // 408/409/429/5xx and connection errors with backoff; its defaults are
+    // maxRetries=2 and timeout=10min (node_modules/@anthropic-ai/sdk/
+    // client.d.ts:195-198 — "@param {number} [opts.maxRetries=2]",
+    // "[opts.timeout=10 minutes]"). Two retries is thin for a run this long,
+    // so we raise it; the timeout stays at the documented default, written
+    // out here so it's visible rather than implied.
+    this.client = new Anthropic({
+      apiKey: key,
+      maxRetries: 5,
+      timeout: 10 * 60 * 1000, // ms — the TS SDK takes milliseconds, not seconds
+    });
   }
 
   private async complete(
@@ -125,12 +171,14 @@ export class AnthropicLLMProvider implements LLMProvider {
     system: string,
     user: string,
   ): Promise<{ text: string; usage: CallUsage }> {
+    const maxTokens = 4096;
     const response = await this.client.messages.create({
       model: MODEL_BY_TIER[tier],
-      max_tokens: 4096,
+      max_tokens: maxTokens,
       system,
       messages: [{ role: "user", content: user }],
     });
+    assertNotTruncated(response, `${tier} 호출`, maxTokens);
     const textBlock = response.content.find((b) => b.type === "text");
     if (!textBlock || textBlock.type !== "text") {
       throw new Error("[AnthropicLLMProvider] no text content in response");
@@ -149,9 +197,10 @@ export class AnthropicLLMProvider implements LLMProvider {
     user: string,
     schema: Record<string, unknown>,
   ): Promise<{ text: string; usage: CallUsage }> {
+    const maxTokens = 8192;
     const response = await this.client.messages.create({
       model: MODEL_BY_TIER[tier],
-      max_tokens: 8192,
+      max_tokens: maxTokens,
       // Fixed prefix first (system, cached), then per-call user content —
       // shared/prompt-caching.md render order: tools -> system -> messages.
       system: [
@@ -169,6 +218,7 @@ export class AnthropicLLMProvider implements LLMProvider {
       },
       messages: [{ role: "user", content: user }],
     });
+    assertNotTruncated(response, `${tier} 구조화 출력 호출`, maxTokens);
     const textBlock = response.content.find((b) => b.type === "text");
     if (!textBlock || textBlock.type !== "text") {
       throw new Error("[AnthropicLLMProvider] no text content in response");
@@ -200,6 +250,32 @@ export class AnthropicLLMProvider implements LLMProvider {
     return { selections: parsed.selections, usage };
   }
 
+  /**
+   * Layer 2 학습 적합성 + 감점 — one Haiku call for every candidate at once
+   * (see LearnabilityAndDemeritInput doc comment for why it is not per
+   * candidate). Only headline + summaries are sent; nothing here influences
+   * article text, only ranking.
+   */
+  async scoreLearnabilityAndDemerit(
+    inputs: LearnabilityAndDemeritInput[],
+  ): Promise<LearnabilityAndDemeritResult> {
+    if (inputs.length === 0) return { scores: [] };
+    const system =
+      "You rate news events as source material for a daily English-learning digest read by " +
+      "Korean adults. For EACH event return two independent 0-1 scores. " +
+      "learnabilityScore: how well the story suits an English learner — clear narrative, " +
+      "everyday vocabulary, little assumed background knowledge (1 = ideal, 0 = unusable). " +
+      "demeritScore: how much the story is one country's internal political minutiae, " +
+      "celebrity gossip, or sensationalism (1 = entirely so, 0 = not at all). " +
+      "These are not opposites: a story can be both easy to read and pure gossip. " +
+      'Respond with strict JSON only: {"scores": [{"id": "...", "learnabilityScore": 0.0, ' +
+      '"demeritScore": 0.0, "reasoning": "one short sentence"}]} with one entry per input id.';
+    const user = JSON.stringify(inputs);
+    const { text, usage } = await this.complete("haiku", system, user);
+    const parsed = extractJson<{ scores: LearnabilityAndDemeritOutput[] }>(text);
+    return { scores: Array.isArray(parsed.scores) ? parsed.scores : [], usage };
+  }
+
   async extractFacts(input: ExtractFactsInput): Promise<ExtractFactsResult> {
     const system =
       `${FABRICATION_GUARDRAIL} ` +
@@ -222,7 +298,13 @@ export class AnthropicLLMProvider implements LLMProvider {
    * a cached system prompt (cost optimization #2).
    */
   async generateAllLevels(input: GenerateAllLevelsInput): Promise<GenerateAllLevelsOutput> {
-    const user = JSON.stringify({ facts: input.facts, category: input.category });
+    // deskFeedback is omitted when absent so the nightly run's user turn stays
+    // byte-identical to what it was before the regeneration path existed.
+    const user = JSON.stringify({
+      facts: input.facts,
+      category: input.category,
+      deskFeedback: input.deskFeedback?.trim() ? input.deskFeedback.trim() : undefined,
+    });
     const { text, usage } = await this.completeStructured(
       "opus",
       COMBINED_SYSTEM_PROMPT,

@@ -6,7 +6,7 @@
  * WORD_COUNT_BANDS: B2 400–560) was loose enough to let most of them pass.
  *
  * This gate checks against the tighter, level-specific TARGET word counts
- * from the pipeline brief (A2 ~150–180 / B1 ~280–320 / B2 ~450–520), with a
+ * from docs/project-brief.md §5 (A2 ~150–180 / B1 ~300–320 / B2 ~520), with a
  * symmetric ±10% tolerance band so a version isn't bounced for landing a
  * handful of words outside the target. It is independent of (and stricter
  * than) the CEFR heuristic's own looser word-count band — both run in
@@ -26,10 +26,17 @@ export interface WordCountTarget {
   max: number;
 }
 
-/** Level-specific target word count (pipeline brief, pre-tolerance). */
+/**
+ * Level-specific target word count (docs/project-brief.md §5, pre-tolerance).
+ *
+ * B1's floor is 300, not 280: this table carried 280 while citing the brief,
+ * and the model wrote to whatever number it was given — 5 of the 10 B1
+ * versions in the current web seed landed at 281–297, under the documented
+ * floor but inside the mis-set band, so nothing flagged them.
+ */
 export const WORD_COUNT_TARGETS: Record<CefrLevel, WordCountTarget> = {
   A2: { min: 150, max: 180 },
-  B1: { min: 280, max: 320 },
+  B1: { min: 300, max: 320 },
   B2: { min: 450, max: 520 },
 };
 

@@ -223,6 +223,11 @@ export const SOURCES: SourceConfig[] = [
   },
 
   // --- Asia / regional diversification (R6) ---------------------------------
+  // NOTE (measured 2026-08-11): Nikkei Asia's feed carries no pubDate on any
+  // item — all 50 items came back undated, and it was the only feed that did.
+  // collect.ts's recency window therefore has nothing to test them against and
+  // keeps them (see selectFreshItems): dropping undated items would delete
+  // this source outright while reporting a healthy fetch.
   {
     outlet: "Nikkei Asia",
     url: "https://asia.nikkei.com/rss/feed/nar",

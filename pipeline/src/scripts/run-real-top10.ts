@@ -11,10 +11,14 @@
  * "manualBalanceCorrection" pass that lived in this script before the
  * top10-curation.md Layer 1/2 rewrite).
  *
- * LLM bypass: MockLLMProvider is used for judgeSameEvent (cluster boundary
- * cases) and for the post-hoc `selectionRationale` narration only — it
- * cannot change which stories are selected or their order (see
- * pipeline/selectTop10.ts module doc comment). No real LLM call is made.
+ * LLM bypass: MockLLMProvider stands in for every model call — the cluster
+ * boundary judgments (judgeSameEvent), the Layer 2 learnability/demerit
+ * scores, and the Layer 3 편집회의 proposal. Since Layer 3 now feeds a real
+ * preference order into selection, the mock's answers DO move this script's
+ * ranking around inside the Layer 1 rules; they are template heuristics, not
+ * judgments, so read the output as a rules check rather than as the edition
+ * a real run would produce. The GDELT global-reach signal is not gathered
+ * here either — the report's `limitations` list says so for each run.
  */
 
 import { writeFileSync, mkdirSync } from "node:fs";
@@ -76,7 +80,7 @@ async function main(): Promise<void> {
     editionDate: EDITION_DATE,
     generatedAt: new Date().toISOString(),
     llmBypass:
-      "MockLLMProvider used for cluster boundary judgments (judgeSameEvent) and post-hoc selectionRationale narration only. Layer 1 rules in selectTop10.ts decide the ranking itself — no real LLM call made. No rewrite/extract stage run.",
+      "MockLLMProvider stands in for judgeSameEvent, the Layer 2 learnability/demerit scores, and the Layer 3 editorial proposal — template heuristics, not judgments. Layer 1 rules still enforce quota/caps/tone on top. No real LLM call made, no GDELT signal gathered, no rewrite/extract stage run.",
     sourceStats: collectResult.sourceReport,
     totalRawItems: collectResult.items.length,
     totalClusters: clusters.length,

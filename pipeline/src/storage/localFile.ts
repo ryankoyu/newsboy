@@ -1,11 +1,11 @@
 /**
  * LocalFileStorageAdapter — writes pipeline output to pipeline/output/*.json.
  *
- * Used for the demo/e2e run (task constraint #2 — no Supabase provisioned
- * yet). Output shape mirrors the DB schema (a2-data-model.md +
+ * Used for mock/dry runs, and read directly by the admin review console.
+ * Output shape mirrors the DB schema (a2-data-model.md +
  * supabase/migrations/0001_schema.sql) field-for-field where practical, so
- * a future migration to SupabaseStorageAdapter is a mapping exercise, not a
- * redesign.
+ * the two adapters stay swappable — SupabaseStorageAdapter writes the same
+ * fields to the live project.
  *
  * Files written per run:
  *   pipeline/output/editions/<edition_date>.json   — the edition + articles (status='review')
@@ -15,8 +15,13 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { PipelineEdition, PipelineRun } from "../types.js";
+import type { PipelineCheckpoint, PipelineEdition, PipelineRun } from "../types.js";
 import type { StorageAdapter } from "./adapter.js";
+import {
+  readCheckpointFile,
+  removeCheckpointFile,
+  writeCheckpointFile,
+} from "./checkpointFile.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_ROOT = path.resolve(__dirname, "../../output");
@@ -51,5 +56,21 @@ export class LocalFileStorageAdapter implements StorageAdapter {
       if ((err as NodeJS.ErrnoException).code === "ENOENT") return null;
       throw err;
     }
+  }
+
+  // Resume checkpoints live in pipeline/output/checkpoints/. A file is the
+  // right store for *this* adapter — its runs happen on the machine that owns
+  // that directory. The Supabase adapter deliberately does not share it; see
+  // checkpointFile.ts.
+  async saveCheckpoint(checkpoint: PipelineCheckpoint): Promise<void> {
+    await writeCheckpointFile(checkpoint);
+  }
+
+  async loadCheckpoint(editionDate: string): Promise<PipelineCheckpoint | null> {
+    return readCheckpointFile(editionDate);
+  }
+
+  async clearCheckpoint(editionDate: string): Promise<void> {
+    await removeCheckpointFile(editionDate);
   }
 }

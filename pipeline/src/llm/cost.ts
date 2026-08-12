@@ -79,7 +79,15 @@ export function estimateCostUsd(
 
 /** One row of the per-stage/per-article usage ledger this pipeline records. */
 export interface UsageRecord {
-  stage: "select" | "extract" | "rewrite" | "rewrite_retry" | "cefr_judge" | "same_event";
+  stage:
+    | "select"
+    | "extract"
+    | "rewrite"
+    | "rewrite_retry"
+    | "cefr_judge"
+    | "same_event"
+    /** Layer 2 학습 적합성/감점 — one Haiku call per run, not per candidate. */
+    | "learnability";
   eventId?: string;
   level?: string;
   tier: ModelTier;

@@ -170,6 +170,56 @@ describe("clusterEvents", () => {
     expect(new Set(result[0].outletKeys)).toEqual(new Set(["bbc", "guardian"]));
   });
 
+  /**
+   * Boundary judgments used to go to the first cluster that cleared the floor,
+   * so the Haiku call asked about whichever cluster was created earliest
+   * rather than the one the item actually resembled. Token sets below are
+   * hand-built so the scores are unambiguous: the later cluster scores 0.29
+   * against the newcomer, the earlier one 0.14, and the two clusters score 0
+   * against each other so only the newcomer triggers a call.
+   */
+  it("asks the LLM about the best-matching boundary cluster, not the first one it met", async () => {
+    const items: RawItem[] = [
+      item({ outlet: "BBC", title: "typhoon warning issued coastline" }),
+      item({ outlet: "Reuters", title: "flooding markets damage ports region" }),
+      item({ outlet: "AP", title: "typhoon flooding markets closed" }),
+    ];
+
+    const asked: string[] = [];
+    const llm = {
+      judgeSameEvent: async ({ a }: { a: { title: string } }) => {
+        asked.push(a.title);
+        return { sameEvent: false };
+      },
+    };
+
+    await clusterEvents(items, { llm: llm as never });
+
+    expect(asked).toEqual(["flooding markets damage ports region"]);
+  });
+
+  it("asks about the closest headline inside that cluster, not the cluster's first item", async () => {
+    const items: RawItem[] = [
+      item({ outlet: "BBC", title: "typhoon warning issued coastline" }),
+      // Merges into the first cluster outright (0.8), then carries the token
+      // ("ferries") that the third item actually matches on.
+      item({ outlet: "Reuters", title: "typhoon warning issued coastline ferries" }),
+      item({ outlet: "AP", title: "ferries typhoon halted travel" }),
+    ];
+
+    const asked: string[] = [];
+    const llm = {
+      judgeSameEvent: async ({ a }: { a: { title: string } }) => {
+        asked.push(a.title);
+        return { sameEvent: false };
+      },
+    };
+
+    await clusterEvents(items, { llm: llm as never });
+
+    expect(asked).toEqual(["typhoon warning issued coastline ferries"]);
+  });
+
   it("falls back to the raw outlet name for outletCount when outletKey is absent (fixture/back-compat path)", async () => {
     const items: RawItem[] = [
       item({

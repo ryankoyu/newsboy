@@ -1,11 +1,11 @@
 /**
  * LLMProvider — abstraction over the LLM calls the pipeline needs.
  *
- * Why an interface: no Anthropic API key is provisioned yet (task constraint
- * #1). Every pipeline stage that needs judgment/generation talks to this
- * interface, never to the SDK directly, so the whole pipeline is runnable
- * today with MockLLMProvider and becomes real by swapping the implementation
- * (see llm/anthropic.ts) once a key exists — no call-site changes needed.
+ * Why an interface: a real run costs about $1.04 of Anthropic credit, so the
+ * pipeline has to stay runnable without spending it. Every stage that needs
+ * judgment/generation talks to this interface, never to the SDK directly —
+ * LLM_PROVIDER swaps AnthropicLLMProvider (llm/anthropic.ts, the default) for
+ * MockLLMProvider with no call-site changes.
  *
  * Model-tier guidance per a1-architecture.md §3.1 is encoded in the `tier`
  * argument each method takes; concrete providers decide which model id that
@@ -37,12 +37,14 @@ export interface Top10Selection {
 }
 
 /**
- * Layer 2 LLM-assisted signal for a single candidate cluster
- * (top10-curation.md §1 Layer 2 "학습 적합성" / "감점" rows). STUB — no
- * implementation calls this yet; selectTop10Rules.ts scores only with
- * code-computable signals (source diversity, Korea relevance, freshness).
- * Wire this in once judgment quality can be checked against real output
- * (top10-curation.md §1 Layer 3 roadmap note: "API 키 연결 시").
+ * Layer 2 LLM-assisted signals (top10-curation.md §1 Layer 2 "학습 적합성" /
+ * "감점" rows), scored for the whole candidate list in ONE call.
+ *
+ * Per-candidate calls were the obvious shape and the wrong one: ~20-30
+ * candidates survive the 2-source gate on a real collect, and 30 Haiku calls
+ * to grade a paragraph each costs more and takes longer than one call
+ * grading all thirty — with no benefit, since the judgments are independent
+ * and short.
  */
 export interface LearnabilityAndDemeritInput {
   id: string;
@@ -52,11 +54,18 @@ export interface LearnabilityAndDemeritInput {
 }
 
 export interface LearnabilityAndDemeritOutput {
+  /** Echoes the input id — the array is matched by id, never by position. */
+  id: string;
   /** 0-1: narrative clarity, common vocabulary, low background-knowledge requirement. */
   learnabilityScore: number;
   /** 0-1: country-internal-politics minutiae, gossip, sensationalism — higher = more demerit. */
   demeritScore: number;
   reasoning: string;
+}
+
+export interface LearnabilityAndDemeritResult {
+  scores: LearnabilityAndDemeritOutput[];
+  usage?: CallUsage;
 }
 
 export interface ExtractFactsInput {
@@ -100,6 +109,14 @@ export interface GenerateAllLevelsInput {
   eventId: string;
   category: CategorySlug;
   facts: ExtractedFact[];
+  /**
+   * The operator's note from a 반려(재생성 요청) — production-readiness.md §2.
+   * Set only by pipeline/regenerate.ts, never by the nightly run. It steers
+   * the rewrite ("본문이 너무 딱딱하다", "제목이 원문과 비슷하다") but grants
+   * no licence to add facts: the fabrication guardrail still holds, so a note
+   * asking for information the fact list doesn't have gets nothing.
+   */
+  deskFeedback?: string;
 }
 
 export interface GenerateAllLevelsOutput {
@@ -174,13 +191,13 @@ export interface LLMProvider {
   judgeCefrBand(input: { text: string; targetLevel: "A2" | "B1" | "B2" }): Promise<CefrBandResult>;
 
   /**
-   * [3] Layer 2 learnability + demerit scoring (Haiku tier) — STUB, not yet
-   * wired into selectTop10Rules.ts. See LearnabilityAndDemeritInput/Output
-   * doc comments and top10-curation.md §1 Layer 2. Optional so existing
-   * LLMProvider implementations (Mock/Anthropic) that predate this method
-   * still satisfy the interface without a breaking change.
+   * [3] Layer 2 learnability + demerit scoring for the whole candidate list
+   * (Haiku tier) — top10-curation.md §1 Layer 2. Still optional on the
+   * interface: selectTop10 treats a provider without it as "no signal" and
+   * scores on the code-computable signals alone, so a third-party or
+   * cut-down provider stays usable.
    */
   scoreLearnabilityAndDemerit?(
-    input: LearnabilityAndDemeritInput,
-  ): Promise<LearnabilityAndDemeritOutput>;
+    inputs: LearnabilityAndDemeritInput[],
+  ): Promise<LearnabilityAndDemeritResult>;
 }

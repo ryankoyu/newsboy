@@ -1,15 +1,28 @@
 import { describe, expect, it, vi } from "vitest";
 import { SupabaseStorageAdapter } from "./supabase.js";
-import type { PipelineArticle, PipelineEdition, PipelineRun } from "../types.js";
+import { CHECKPOINT_MAX_AGE_HOURS } from "./adapter.js";
+import type {
+  PipelineArticle,
+  PipelineCheckpoint,
+  PipelineEdition,
+  PipelineRun,
+} from "../types.js";
 
 /**
  * Minimal mock of the supabase-js query-builder chain. Records every
  * from/method/args call so tests can assert exact table + payload mapping
- * without a network connection (task constraint: no real Supabase project
- * exists yet — see storage/supabase.ts header).
+ * without a network connection. The project is real, but a test that wrote to
+ * it would need service-role credentials in CI and would leave rows behind,
+ * so the mapping is pinned here instead — see storage/supabase.ts header.
  *
- * Each chain call (upsert/insert/select/delete/eq/single/maybeSingle) is
+ * Each chain call (upsert/insert/select/delete/eq/lt/single/maybeSingle) is
  * thenable so `await` on any point in the chain resolves to { data, error }.
+ *
+ * A table's response may be an array when one method issues more than one
+ * query against the same table and the test needs them to differ — the
+ * checkpoint sweep followed by the checkpoint read. Entries are consumed in
+ * order and the last one repeats once the list runs out, so the common case
+ * (a single object) keeps behaving as before.
  */
 interface Call {
   table: string;
@@ -17,8 +30,13 @@ interface Call {
   args: unknown[];
 }
 
-function createMockSupabaseClient(responses: Record<string, { data?: unknown; error?: unknown }> = {}) {
+type MockResponse = { data?: unknown; error?: unknown };
+
+function createMockSupabaseClient(
+  responses: Record<string, MockResponse | MockResponse[]> = {},
+) {
   const calls: Call[] = [];
+  const consumed: Record<string, number> = {};
 
   function makeChain(table: string) {
     const state: { lastData: unknown } = { lastData: undefined };
@@ -44,6 +62,10 @@ function createMockSupabaseClient(responses: Record<string, { data?: unknown; er
         calls.push({ table, method: "eq", args: [col, val] });
         return chain;
       },
+      lt: (col: string, val: unknown) => {
+        calls.push({ table, method: "lt", args: [col, val] });
+        return chain;
+      },
       single: () => {
         calls.push({ table, method: "single", args: [] });
         return resolveFor(table);
@@ -61,10 +83,13 @@ function createMockSupabaseClient(responses: Record<string, { data?: unknown; er
 
   function resolveFor(table: string): Promise<{ data: unknown; error: unknown }> {
     const configured = responses[table];
-    if (configured) {
-      return Promise.resolve({ data: configured.data ?? null, error: configured.error ?? null });
-    }
-    return Promise.resolve({ data: null, error: null });
+    if (!configured) return Promise.resolve({ data: null, error: null });
+
+    const step = Array.isArray(configured)
+      ? configured[Math.min(consumed[table] ?? 0, configured.length - 1)]
+      : configured;
+    consumed[table] = (consumed[table] ?? 0) + 1;
+    return Promise.resolve({ data: step?.data ?? null, error: step?.error ?? null });
   }
 
   const client = {
@@ -472,5 +497,147 @@ describe("SupabaseStorageAdapter — getEdition", () => {
       slug: "sample-article-1",
       status: "review",
     });
+  });
+});
+
+/**
+ * Checkpoints in Supabase mode go to a table, not a file (0005). The reason
+ * is the runner: GitHub Actions gives each job a fresh machine, so a
+ * file-backed checkpoint made "resume from the last successful stage" true
+ * only on a developer's laptop. These tests pin the table, the columns and
+ * the expiry sweep, because nothing else here can — a real resume needs a
+ * job that dies, which no unit test can stage.
+ */
+describe("SupabaseStorageAdapter — checkpoints outlive the runner", () => {
+  function checkpointFixture(): PipelineCheckpoint {
+    return {
+      editionDate: "2026-07-10",
+      runId: "run-1",
+      updatedAt: "2026-07-10T03:00:00.000Z",
+    };
+  }
+
+  it("upserts the whole checkpoint into pipeline_checkpoints, keyed by edition_date", async () => {
+    const { client, calls } = createMockSupabaseClient();
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+
+    const checkpoint = checkpointFixture();
+    await adapter.saveCheckpoint(checkpoint);
+
+    const upsert = calls.find(
+      (c) => c.table === "pipeline_checkpoints" && c.method === "upsert",
+    );
+    expect(upsert).toBeDefined();
+    const [row, opts] = upsert!.args as [any, any];
+    expect(row).toMatchObject({
+      edition_date: "2026-07-10",
+      run_id: "run-1",
+      updated_at: "2026-07-10T03:00:00.000Z",
+    });
+    // The payload is the checkpoint itself — run.ts reads updatedAt off it.
+    expect(row.payload).toEqual(checkpoint);
+    // Without this a same-day re-run would pile up rows and the read would
+    // have no way to pick the right one.
+    expect(opts).toMatchObject({ onConflict: "edition_date" });
+  });
+
+  it("reads the checkpoint back out of the payload column", async () => {
+    const checkpoint = checkpointFixture();
+    const { client } = createMockSupabaseClient({
+      pipeline_checkpoints: [{ data: null }, { data: { payload: checkpoint } }],
+    });
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+
+    await expect(adapter.loadCheckpoint("2026-07-10")).resolves.toEqual(checkpoint);
+  });
+
+  it("returns null when the date has no checkpoint row", async () => {
+    const { client } = createMockSupabaseClient({ pipeline_checkpoints: { data: null } });
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+
+    await expect(adapter.loadCheckpoint("2026-01-01")).resolves.toBeNull();
+  });
+
+  it("sweeps rows older than the resume window before reading", async () => {
+    const { client, calls } = createMockSupabaseClient();
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+
+    const before = Date.now();
+    await adapter.loadCheckpoint("2026-07-10");
+    const after = Date.now();
+
+    const sweep = calls.find(
+      (c) => c.table === "pipeline_checkpoints" && c.method === "lt",
+    );
+    expect(sweep).toBeDefined();
+    expect(sweep!.args[0]).toBe("updated_at");
+
+    // A payload carries a day of collected article text; rows run.ts would
+    // refuse to resume from must not sit in the project forever.
+    const cutoff = new Date(sweep!.args[1] as string).getTime();
+    const window = CHECKPOINT_MAX_AGE_HOURS * 3600_000;
+    expect(cutoff).toBeGreaterThanOrEqual(before - window);
+    expect(cutoff).toBeLessThanOrEqual(after - window);
+
+    const deleteCall = calls.find(
+      (c) => c.table === "pipeline_checkpoints" && c.method === "delete",
+    );
+    const selectCall = calls.find(
+      (c) => c.table === "pipeline_checkpoints" && c.method === "select",
+    );
+    expect(calls.indexOf(deleteCall!)).toBeLessThan(calls.indexOf(selectCall!));
+  });
+
+  it("still returns the checkpoint when the expiry sweep fails", async () => {
+    const checkpoint = checkpointFixture();
+    const { client } = createMockSupabaseClient({
+      pipeline_checkpoints: [
+        { error: { message: "sweep boom" } },
+        { data: { payload: checkpoint } },
+      ],
+    });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+
+    // Housekeeping failing is not a reason to re-pay for a run's rewrites.
+    await expect(adapter.loadCheckpoint("2026-07-10")).resolves.toEqual(checkpoint);
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it("throws (rather than reporting 'no checkpoint') when the read itself fails", async () => {
+    const { client } = createMockSupabaseClient({
+      pipeline_checkpoints: [{ data: null }, { error: { message: "read boom" } }],
+    });
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+
+    // run.ts catches this and starts over — but the log has to say why, or a
+    // broken connection looks identical to a first run of the day.
+    await expect(adapter.loadCheckpoint("2026-07-10")).rejects.toThrow(/read boom/);
+  });
+
+  it("deletes only this date's row when the edition is safely stored", async () => {
+    const { client, calls } = createMockSupabaseClient();
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+
+    await adapter.clearCheckpoint("2026-07-10");
+
+    const deleteCall = calls.find(
+      (c) => c.table === "pipeline_checkpoints" && c.method === "delete",
+    );
+    expect(deleteCall).toBeDefined();
+    const eqCall = calls.find(
+      (c) => c.table === "pipeline_checkpoints" && c.method === "eq",
+    );
+    expect(eqCall!.args).toEqual(["edition_date", "2026-07-10"]);
+  });
+
+  it("surfaces a failed checkpoint write instead of pretending it landed", async () => {
+    const { client } = createMockSupabaseClient({
+      pipeline_checkpoints: { error: { message: "write boom" } },
+    });
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+
+    await expect(adapter.saveCheckpoint(checkpointFixture())).rejects.toThrow(/write boom/);
   });
 });

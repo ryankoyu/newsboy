@@ -20,10 +20,22 @@ describe("countWords", () => {
   });
 });
 
+describe("WORD_COUNT_TARGETS", () => {
+  it("matches the word counts docs/project-brief.md §5 promises", () => {
+    // Pinned because the B1 floor once drifted to 280 while the comment still
+    // cited the brief, and the rewrite prompt drifted with it.
+    expect(WORD_COUNT_TARGETS).toEqual({
+      A2: { min: 150, max: 180 },
+      B1: { min: 300, max: 320 },
+      B2: { min: 450, max: 520 },
+    });
+  });
+});
+
 describe("wordCountPassRange", () => {
   it("widens each level's target by the ±10% tolerance", () => {
     expect(wordCountPassRange("A2")).toEqual({ min: 135, max: 198 });
-    expect(wordCountPassRange("B1")).toEqual({ min: 252, max: 352 });
+    expect(wordCountPassRange("B1")).toEqual({ min: 270, max: 352 });
     expect(wordCountPassRange("B2")).toEqual({ min: 405, max: 572 });
   });
 });
