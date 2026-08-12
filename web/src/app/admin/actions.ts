@@ -90,6 +90,14 @@ export async function resetArticleDecisionAction(
 export interface PublishActionResult extends ActionResult {
   approvedCount?: number;
   warnings?: string[];
+  /**
+   * Whether this publish actually changed what readers see. False when
+   * Supabase is not configured — the seed was rewritten and nothing else,
+   * which is a materially different outcome and must not read as success.
+   */
+  reachedReaders?: boolean;
+  /** Articles now live for readers. Undefined when reachedReaders is false. */
+  publishedCount?: number;
 }
 
 export async function publishEditionAction(editionDate: string): Promise<PublishActionResult> {
@@ -100,7 +108,16 @@ export async function publishEditionAction(editionDate: string): Promise<Publish
     revalidatePath("/admin");
     revalidatePath("/");
     revalidatePath("/archive");
-    return { ok: true, approvedCount: result.approvedCount, warnings: result.warnings };
+    return {
+      ok: true,
+      approvedCount: result.approvedCount,
+      warnings: result.warnings,
+      // Boolean(), not `!== null`: an undefined field would otherwise report
+      // that readers saw the edition. This claim only ever gets to be true
+      // when there is a Supabase result proving it.
+      reachedReaders: Boolean(result.supabase),
+      publishedCount: result.supabase?.publishedCount,
+    };
   } catch (err) {
     if (err instanceof PublishError) return { ok: false, error: err.message };
     return { ok: false, error: err instanceof Error ? err.message : String(err) };

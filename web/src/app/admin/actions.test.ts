@@ -145,9 +145,30 @@ describe("approve / exclude / reset", () => {
 describe("publishEditionAction", () => {
   it("reports the counts and warnings, and revalidates the public pages too", async () => {
     const result = await publishEditionAction(DATE);
-    expect(result).toEqual({ ok: true, approvedCount: 3, warnings: ["주의 한 건"] });
+    expect(result).toEqual({
+      ok: true,
+      approvedCount: 3,
+      warnings: ["주의 한 건"],
+      // No supabase result on this publish, so it did not reach readers.
+      reachedReaders: false,
+      publishedCount: undefined,
+    });
     expect(revalidatePath).toHaveBeenCalledWith("/");
     expect(revalidatePath).toHaveBeenCalledWith("/archive");
+  });
+
+  it("only claims readers saw it when Supabase says how many", async () => {
+    publishEdition.mockResolvedValueOnce({
+      editionDate: DATE,
+      publishedAt: "2026-08-12T00:00:00Z",
+      approvedCount: 3,
+      excludedCount: 0,
+      warnings: [],
+      supabase: { publishedCount: 3, withdrawnCount: 1 },
+    });
+    const result = await publishEditionAction(DATE);
+    expect(result.reachedReaders).toBe(true);
+    expect(result.publishedCount).toBe(3);
   });
 
   it("returns a PublishError's message to the operator", async () => {

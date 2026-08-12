@@ -99,6 +99,7 @@ export function ReviewClient({
   const [pending, startTransition] = useTransition();
   const [publishMsg, setPublishMsg] = useState<string | null>(null);
   const [publishErr, setPublishErr] = useState<string | null>(null);
+  const [publishWarnings, setPublishWarnings] = useState<string[]>([]);
 
   const articles = [...edition.articles].sort((a, b) => a.rankInEdition - b.rankInEdition);
   // The desk's front-page pick, if any. Without one the pipeline's rank 1
@@ -160,11 +161,15 @@ export function ReviewClient({
     startTransition(async () => {
       const res = await publishEditionAction(edition.editionDate);
       if (res.ok) {
-        setPublishMsg(`발행 완료 — 승인 ${res.approvedCount}건 반영됨.`);
-        if (res.warnings && res.warnings.length > 0) {
-          setPublishMsg((m) => `${m} (경고 ${res.warnings!.length}건 — 콘솔 로그 참고)`);
-          console.warn("[publish] warnings:", res.warnings);
-        }
+        // Say where it landed, not just that it worked. "발행 완료" over a
+        // publish that only rewrote local JSON is the one message that can
+        // make an operator think readers have seen something they haven't.
+        setPublishMsg(
+          res.reachedReaders
+            ? `발행 완료 — 독자 화면에 ${res.publishedCount}건 반영됐습니다.`
+            : `시드 파일만 갱신됐습니다 (승인 ${res.approvedCount}건). 독자 화면은 아직 그대로입니다.`
+        );
+        setPublishWarnings(res.warnings ?? []);
       } else {
         setPublishErr(res.error ?? "발행에 실패했습니다.");
       }
@@ -233,6 +238,20 @@ export function ReviewClient({
           </button>
           {publishMsg && <p style={{ color: "var(--color-success)", fontSize: "var(--fs-sm)", marginTop: 6 }}>{publishMsg}</p>}
           {publishErr && <p style={{ color: "var(--color-danger)", fontSize: "var(--fs-sm)", marginTop: 6 }}>{publishErr}</p>}
+          {publishWarnings.length > 0 && (
+            <ul
+              style={{
+                margin: "6px 0 0",
+                paddingLeft: "1.1em",
+                fontSize: "var(--fs-sm)",
+                color: "var(--color-accent)",
+              }}
+            >
+              {publishWarnings.map((w) => (
+                <li key={w}>{w}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
