@@ -191,7 +191,14 @@ describe("publishEdition", () => {
       const result = await publishEdition(DATE);
       expect(result.approvedCount).toBe(1);
       expect(result.excludedCount).toBe(0);
-      expect(result.warnings).toEqual([]);
+      // No Supabase credentials in the test env, so publishing wrote the
+      // seed and nothing else — and says so. A silent seed-only publish is
+      // what would let an operator think readers had seen the change.
+      expect(result.supabase).toBeNull();
+      expect(result.warnings).toEqual([
+        "Supabase 자격 정보가 없어 시드 파일만 갱신했습니다 — " +
+          "배포된 사이트는 이 변경을 커밋·푸시해야 반영됩니다.",
+      ]);
 
       const articles = await readSeed("articles.json");
       expect(articles.map((r) => r.id)).toEqual([

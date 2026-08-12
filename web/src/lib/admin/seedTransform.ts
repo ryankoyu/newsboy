@@ -41,21 +41,10 @@ const CATEGORY_SLUG_MAP: Record<PipelineCategorySlug, string> = {
   "culture-sports": "culture",
 };
 
-/**
- * Naive sentence splitter matching the display convention already baked
- * into the existing seed (ArticleBody.tsx renders one <SentenceParagraph>
- * per `sentences[]` entry). No abbreviation handling — acceptable because
- * gate 6a (CEFR) already pushes rewrites toward short, simple sentences.
- * Paragraph breaks are treated as sentence boundaries too (normalized to
- * whitespace before splitting), matching how the existing seed data has no
- * paragraph concept at all, only a flat sentence list.
- */
-export function splitSentences(text: string): string[] {
-  const normalized = text.replace(/\s*\n+\s*/g, " ").trim();
-  if (!normalized) return [];
-  const matches = normalized.match(/[^.!?]+(?:[.!?]+(?=\s|$)|$)/g) ?? [normalized];
-  return matches.map((s) => s.trim()).filter(Boolean);
-}
+// Moved to lib/sentences.ts — the Supabase provider needs the same split,
+// and two copies would break saved sentences, which are keyed on index.
+export { splitSentences } from "@/lib/sentences";
+import { splitSentences } from "@/lib/sentences";
 
 function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;

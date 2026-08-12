@@ -18,6 +18,11 @@ import { deriveGateStatus } from "./gateStatus";
 import { buildSeedBundle, type SeedRow } from "./seedTransform";
 import { localFsEditionRepository } from "./localFsEditionRepository";
 import type { EditionRepository } from "./editionRepository";
+import {
+  isSupabasePublishConfigured,
+  publishEditionToSupabase,
+  type SupabasePublishResult,
+} from "./publishToSupabase";
 
 async function readJson<T>(fileName: string): Promise<T> {
   const raw = await readFile(path.join(WEB_SEED_DIR, fileName), "utf-8");
@@ -37,6 +42,12 @@ export interface PublishResult {
   approvedCount: number;
   excludedCount: number;
   warnings: string[];
+  /**
+   * What reached readers. Null when Supabase is not configured — in that
+   * case publishing wrote the seed only, and the deployed site will not
+   * change until someone commits it.
+   */
+  supabase: SupabasePublishResult | null;
 }
 
 export class PublishError extends Error {}
@@ -70,6 +81,23 @@ export async function publishEdition(
   );
 
   const publishedAt = new Date().toISOString();
+
+  // Supabase first. It is the path readers are actually served from when the
+  // site is deployed, and it is the step that can fail for reasons outside
+  // this machine (network, credentials, an edition the pipeline stored
+  // locally instead). Doing it first means a failure leaves the seed
+  // untouched and the operator sees an error, rather than a "published"
+  // message and a site that did not change.
+  //
+  // Skipped entirely when Supabase is not configured, so a contributor with
+  // only a clone can still publish into the seed and see it work.
+  let supabase: SupabasePublishResult | null = null;
+  if (isSupabasePublishConfigured()) {
+    supabase = await publishEditionToSupabase(
+      editionDate,
+      approved.map((a) => a.id)
+    );
+  }
 
   const categories = await readJson<Array<{ id: number; slug: string }>>("categories.json");
   const categoryIdBySlug = Object.fromEntries(categories.map((c) => [c.slug, c.id]));
@@ -144,6 +172,18 @@ export async function publishEdition(
               "파이프라인에서 재생성한 뒤 다시 발행하면 반영됩니다.",
           ]
         : []),
+      // Without this, a publish that only touched local files reads exactly
+      // like one that reached readers.
+      ...(supabase === null
+        ? [
+            "Supabase 자격 정보가 없어 시드 파일만 갱신했습니다 — " +
+              "배포된 사이트는 이 변경을 커밋·푸시해야 반영됩니다.",
+          ]
+        : []),
+      ...(supabase && supabase.withdrawnCount > 0
+        ? [`이전에 발행됐던 기사 ${supabase.withdrawnCount}건을 독자 화면에서 내렸습니다.`]
+        : []),
     ],
+    supabase,
   };
 }
