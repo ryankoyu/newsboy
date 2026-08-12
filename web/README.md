@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# web — Newsboy reader and desk
 
-## Getting Started
+The reader app (Korean UI around English article text at A2/B1/B2) and the
+desk console the editor reviews an edition in before it goes out.
 
-First, run the development server:
+Content comes from `pipeline/`, which is a separate package in this
+repository. See the root `README.md` for how the two fit together.
+
+**Before writing code here, read [`AGENTS.md`](./AGENTS.md).** This is
+Next.js 16 with Turbopack, and it differs from older Next.js in ways that
+matter; the authoritative guides are in `node_modules/next/dist/docs/`.
+
+## Running it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The reader works with no environment at all — it reads the seed JSON in
+`src/lib/data/seed/`, which is committed. The desk console needs
+`web/.env.local`; `.env.example` lists every variable and what happens when
+one is missing.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm test             # vitest
+npm run build        # production build
+npm run lint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## What is where
 
-## Learn More
+| Path | |
+|---|---|
+| `src/app/` | routes — reader pages, plus `admin/` for the desk |
+| `src/components/newsprint/` | the 1902 broadsheet skin |
+| `src/components/` | the standard skin, shared controls |
+| `src/lib/data/` | the data provider and the committed seed |
+| `src/lib/admin/` | desk logic — gate badges, approval, publish |
+| `src/lib/session.ts` | reader state, in localStorage |
 
-To learn more about Next.js, take a look at the following resources:
+## Two skins, and which one you are looking at
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`useNewsprintSkin` returns `!isDark`: **light mode is the newsprint skin**,
+and the standard components are the dark-mode fallback. Most readers are on
+the default, so a feature that exists only in the standard components does
+not exist for them. When you change one skin, check the other.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Where the reader's data lives
 
-## Deploy on Vercel
+Everything a reader accumulates — level, bookmarks, read articles, saved
+words and sentences — is one localStorage key, with no server copy. Settings
+can export and re-import it. Clearing site data still loses it.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## The desk console is local-only
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+It reads the JSON the pipeline leaves in `pipeline/output/`, so it cannot
+work on a deployment that has no such directory (Vercel, for one). Every
+`/admin` page checks for it and explains itself rather than erroring. Moving
+the desk onto Supabase is the open piece of work.

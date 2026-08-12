@@ -591,7 +591,11 @@ MVP 구현에 필요한 컴포넌트 목록. 각각 위 스펙 참조.
 10. `ArticleBody` (클릭 단어 렌더 + reading-scale)
 11. `ClickableWord`
 12. `WordListSection` (접이식)
-13. `QuizSection` (객관식 + 채점)
+13. ~~`QuizSection` (객관식 + 채점)~~ — **MVP 범위 밖.** 퀴즈는 데이터
+    계층에서 이미 빠져 있고(`web/src/lib/data/provider.ts` — 퀴즈 메서드를
+    정의하지 않는다고 명시), `quizzes`·`quiz_options` 테이블도 스키마에만
+    남아 있을 뿐 아무도 읽지 않는다. 이 목록에 근거 없이 남아 있어서
+    "구현되지 않은 MVP 컴포넌트"로 읽혔다.
 14. `SourcesSection` (복수 링크 + 고지)
 15. `SmartDictionary` — `BottomSheet`(모바일) / `Popover`(데스크톱) 변형
 16. `FontSizePopover` (Aa, S/M/L/XL)
