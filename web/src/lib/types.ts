@@ -18,6 +18,14 @@ export type ArticleStatus =
   | "ingest"
   | "generated"
   | "review"
+  /**
+   * Ran out of rewrite retries without clearing the two-source gate. A
+   * human-reads-this terminal state like `review`, kept distinct so the desk
+   * can see WHY a story is waiting. Added to the DB enum in migration 0003;
+   * this union lagged it, while lib/admin/gateStatus.ts was already reading
+   * the value.
+   */
+  | "held"
   | "approved"
   | "published"
   | "rejected";

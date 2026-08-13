@@ -641,3 +641,185 @@ describe("SupabaseStorageAdapter — checkpoints outlive the runner", () => {
     await expect(adapter.saveCheckpoint(checkpointFixture())).rejects.toThrow(/write boom/);
   });
 });
+
+/**
+ * The behaviours added on 2026-08-12, none of which had a test.
+ *
+ * Standing caveat for this whole file: the mock client accepts any table and
+ * any column, so nothing here can catch a column the schema does not have —
+ * which is exactly how is_key and pos shipped being written to a table that
+ * lacked them. These assert intent and ordering. Only a real Postgres with
+ * the migrations applied can assert the schema agrees.
+ */
+describe("SupabaseStorageAdapter — the 2026-08-12 storage fixes", () => {
+  function baseResponses(extra: Record<string, any> = {}) {
+    return {
+      editions: { data: { id: "edition-1" } },
+      categories: { data: [{ id: 1, slug: "world" }] },
+      sources: {
+        data: [
+          { id: "src-1", url: "https://example.com/a", outlet: "Outlet A" },
+          { id: "src-2", url: "https://example.com/b", outlet: "Outlet B" },
+        ],
+      },
+      facts: { data: [{ id: "fact-1", statement: "Something happened." }] },
+      article_versions: { data: { id: "version-1" } },
+      ...extra,
+    };
+  }
+
+  it("does not send its own id when upserting an edition", async () => {
+    // Sending a fresh UUID with onConflict(edition_date) made DO UPDATE
+    // overwrite the stored primary key, orphaning every article's foreign
+    // key — so re-running any date died.
+    const { client, calls } = createMockSupabaseClient(baseResponses());
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+    await adapter.saveEdition(editionFixture());
+
+    const upsert = calls.find((c) => c.table === "editions" && c.method === "upsert");
+    const [rows] = upsert!.args as [any];
+    expect(rows.id).toBeUndefined();
+  });
+
+  it("writes the article's own status rather than forcing 'review'", async () => {
+    // A story that ran out of retries is 'held'. Forcing 'review' hid the
+    // reason from the desk, which already renders the distinction.
+    const { client, calls } = createMockSupabaseClient(baseResponses());
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+    await adapter.saveEdition(
+      editionFixture({ articles: [articleFixture({ status: "held" })] }),
+    );
+
+    const insert = calls.find((c) => c.table === "articles" && c.method === "insert");
+    const [rows] = insert!.args as [any];
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    expect(row.status).toBe("held");
+  });
+
+  it("still refuses to write an approved or published article", async () => {
+    // The reason the guard exists: nothing upstream of the desk may put a
+    // story in front of readers.
+    for (const status of ["approved", "published"] as const) {
+      const { client } = createMockSupabaseClient(baseResponses());
+      const adapter = SupabaseStorageAdapter.withClient(client as any);
+      await expect(
+        adapter.saveEdition({
+          ...editionFixture(),
+          articles: [articleFixture({ status: status as any })],
+        }),
+      ).rejects.toThrow();
+    }
+  });
+
+  it("resolves category_id through the categories table", async () => {
+    const { client, calls } = createMockSupabaseClient(baseResponses());
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+    await adapter.saveEdition(editionFixture());
+
+    const insert = calls.find((c) => c.table === "articles" && c.method === "insert");
+    const [rows] = insert!.args as [any];
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    expect(row.category_id).toBe(1);
+  });
+
+  it("stores a null category rather than failing when categories is empty", async () => {
+    // Throwing here would discard the whole run at the last step, after the
+    // Opus bill is already paid, over a missing label.
+    const { client, calls } = createMockSupabaseClient(
+      baseResponses({ categories: { data: [] } }),
+    );
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+    await adapter.saveEdition(editionFixture());
+
+    const insert = calls.find((c) => c.table === "articles" && c.method === "insert");
+    const [rows] = insert!.args as [any];
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    expect(row.category_id).toBeNull();
+  });
+
+  it("writes is_key and pos, which the adapter used to drop", async () => {
+    const { client, calls } = createMockSupabaseClient(baseResponses());
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+    await adapter.saveEdition(
+      editionFixture({
+        articles: [
+          articleFixture({
+            versions: [
+              {
+                version: {
+                  level: "A2" as const,
+                  title: "T",
+                  content: "One. Two.",
+                  wordCount: 4,
+                  words: [
+                    {
+                      term: "overcrowded",
+                      meaningKo: "너무 붐비는",
+                      example: "ex",
+                      pronunciation: "ipa",
+                      sortOrder: 0,
+                      isKey: true,
+                      pos: "adj.",
+                    },
+                  ],
+                },
+                checks: [],
+                passed: true,
+                rewriteAttempts: 0,
+              },
+            ],
+          }),
+        ],
+      }),
+    );
+
+    const insert = calls.find((c) => c.table === "words" && c.method === "insert");
+    const [rows] = insert!.args as [any];
+    expect(rows[0]).toMatchObject({ is_key: true, pos: "adj." });
+  });
+
+  it("defaults a word with no is_key/pos rather than inventing values", async () => {
+    const { client, calls } = createMockSupabaseClient(baseResponses());
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+    await adapter.saveEdition(editionFixture());
+
+    const insert = calls.find((c) => c.table === "words" && c.method === "insert");
+    const [rows] = insert!.args as [any];
+    expect(rows[0].is_key).toBe(false);
+    expect(rows[0].pos).toBeNull();
+  });
+
+  it("deduplicates fact_sources so a repeated outlet cannot break the insert", async () => {
+    // The extractor wraps confirmedByOutlets in a Set when counting, which is
+    // the codebase admitting duplicates occur. (fact_id, source_id) is a
+    // primary key, so one repeat killed the run at the last step.
+    const { client, calls } = createMockSupabaseClient(baseResponses());
+    const adapter = SupabaseStorageAdapter.withClient(client as any);
+    await adapter.saveEdition(
+      editionFixture({
+        articles: [
+          articleFixture({
+            facts: [
+              {
+                statement: "Something happened.",
+                confirmedByOutlets: ["Outlet A", "Outlet A", "Outlet B"],
+                sourceCount: 2,
+                usedInText: true,
+                searchSummaryOnly: false,
+              },
+            ],
+          }),
+        ],
+      }),
+    );
+
+    const insert = calls.find((c) => c.table === "fact_sources" && c.method === "insert");
+    const [rows] = insert!.args as [any];
+    const pairs = rows.map((r: any) => `${r.fact_id}:${r.source_id}`);
+    // Two distinct outlets went in as three entries. Asserting the count as
+    // well as the uniqueness — an empty array is unique too, and would let
+    // "we wrote nothing" pass as "we deduplicated".
+    expect(pairs).toHaveLength(2);
+    expect(new Set(pairs).size).toBe(2);
+  });
+});

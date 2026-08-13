@@ -15,10 +15,14 @@
 name: daily-pipeline
 
 on:
-  # PAUSED while the Supabase path is being tested (2026-08-11). A run costs
-  # about $1.04 of Anthropic credit, so an unattended nightly cron spends real
-  # money on output nobody is reading yet. Manual runs only until the desk is
-  # actually publishing from the database.
+  # OFF by operator decision (2026-08-12), until the features settle.
+  #
+  # The Supabase path it was originally paused for now works end to end —
+  # 2026-08-12 stored 4 articles and they reached a reader through the anon
+  # key. What keeps it off is different: a measured run is 8 minutes and
+  # $1.53, so an unattended nightly is about $45/month, and paying that to
+  # generate editions while the reader screens are still changing weekly
+  # buys nothing. Turn it on when a day's output is worth keeping.
   #
   # To resume, uncomment — KST 5am = UTC 20:00 the day before (cron is UTC),
   # early enough that the night's news is collected before the morning desk.

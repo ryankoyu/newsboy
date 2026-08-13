@@ -31,11 +31,16 @@ const MIN_SOURCES = 2;
 
 /**
  * An article needs SOME independently-confirmed factual basis to be worth
- * publishing at all — matches replaceLowUsableFacts.ts's
- * MIN_USABLE_FACTS_TO_REWRITE (kept as a separate literal, not an import,
- * so gates/ has no dependency on pipeline/ — see gates/ module boundary).
+ * publishing at all.
+ *
+ * Shared with replaceLowUsableFacts.ts through config/, which sits below
+ * both — so gates/ still does not import from pipeline/, and the two can no
+ * longer drift apart. They used to be separate literals that happened to
+ * both say 3.
  */
-const MIN_LOAD_BEARING_FACTS = 3;
+import { MIN_CONFIRMED_FACTS } from "../config/thresholds.js";
+
+const MIN_LOAD_BEARING_FACTS = MIN_CONFIRMED_FACTS;
 
 export interface TwoSourceCheckResult {
   passed: boolean;

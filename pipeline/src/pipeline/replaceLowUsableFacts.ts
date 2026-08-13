@@ -44,9 +44,14 @@ import type {
 import type { LLMProvider } from "../llm/provider.js";
 import type { CallUsage } from "../llm/cost.js";
 import { extractFacts, usableFactCount } from "./extract.js";
+import { MIN_CONFIRMED_FACTS } from "../config/thresholds.js";
 
-/** Below this many 2-source-confirmed facts, an event is not worth rewriting — see module doc comment. */
-export const MIN_USABLE_FACTS_TO_REWRITE = 3;
+/**
+ * Below this many 2-source-confirmed facts, an event is not worth rewriting
+ * — see module doc comment. Shared with gates/twoSource.ts via config/, so
+ * the early cheap check and the final gate cannot disagree.
+ */
+export const MIN_USABLE_FACTS_TO_REWRITE = MIN_CONFIRMED_FACTS;
 
 /** Caps how many times a single rank slot can be re-filled from heldBack before it's left empty. */
 export const MAX_REPLACEMENTS_PER_SLOT = 2;
