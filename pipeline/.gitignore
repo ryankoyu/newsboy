@@ -3,3 +3,6 @@ dist/
 .env
 .env.local
 output/
+
+# 통합 테스트가 띄우는 임시 Postgres 데이터 디렉터리
+.pg-test/
