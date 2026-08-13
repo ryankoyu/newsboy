@@ -154,51 +154,7 @@ describe("ArticleViewer", () => {
     });
   });
 
-  it("renders the trust notice with the article's DEDUPED outlet count, not the raw source-row count (docs/feature-status.md G2)", async () => {
-    render(
-      <ArticleViewer
-        article={article}
-        initialLevel="A2"
-        hasExplicitLevel
-        wordsByVersion={wordsByVersion}
-      />
-    );
-
-    // The rank-1 seed article has 6 source ROWS but only 5 distinct outlets
-    // (two Guardian World feeds) — the trust notice must count outlets, not
-    // rows, or it overstates cross-verification.
-    const uniqueOutlets = countUniqueOutlets(article.sources);
-    expect(uniqueOutlets).toBeLessThan(article.sources.length);
-
-    await waitFor(() => {
-      expect(
-        screen.getByText(
-          `이 기사는 ${uniqueOutlets}개 매체에서 교차 확인된 사실을 바탕으로 새로 작성되었습니다.`,
-          { exact: false }
-        )
-      ).toBeInTheDocument();
     });
-    expect(screen.getByRole("link", { name: /우리가 뉴스를 만드는 방법/ })).toHaveAttribute(
-      "href",
-      "/about"
-    );
-  });
-
-  it("shows a '소스 N' badge matching the article's DEDUPED outlet count (docs/feature-status.md G2)", async () => {
-    render(
-      <ArticleViewer
-        article={article}
-        initialLevel="A2"
-        hasExplicitLevel
-        wordsByVersion={wordsByVersion}
-      />
-    );
-    const uniqueOutlets = countUniqueOutlets(article.sources);
-    await waitFor(() => {
-      expect(screen.getByText(`소스 ${uniqueOutlets}`)).toBeInTheDocument();
-    });
-  });
-});
 
 describe("ArticleViewer — continuous reading flow (enhancement-plan.md Batch 1 #2/#3)", () => {
   const edition = buildSeedEdition();

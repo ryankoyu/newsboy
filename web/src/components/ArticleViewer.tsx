@@ -9,14 +9,12 @@ import { READING_SCALE_VALUE, sessionStore } from "@/lib/session";
 import { isEditionPast, formatPastEditionLabel } from "@/lib/editionDate";
 import { CategoryTag } from "@/components/CategoryTag";
 import { ReadTimeMeta } from "@/components/ReadTimeMeta";
-import { SourceCountBadge } from "@/components/SourceCountBadge";
-import { countUniqueOutlets } from "@/lib/sourceOutlets";
 import { LevelSwitcher } from "@/components/LevelSwitcher";
 import { TodayProgress } from "@/components/TodayProgress";
 import { ArticleViewerBar } from "@/components/ArticleViewerBar";
 import { ArticleBody } from "@/components/ArticleBody";
 import { WordListSection } from "@/components/WordListSection";
-import { SourcesSection } from "@/components/SourcesSection";
+import { ProvenanceNote } from "@/components/ProvenanceNote";
 import { NextArticleCard } from "@/components/NextArticleCard";
 import { BriefCompleteCard } from "@/components/BriefCompleteCard";
 
@@ -187,7 +185,6 @@ export function ArticleViewer({
         >
           <CategoryTag category={article.category} />
           <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)" }}>
-            <SourceCountBadge count={countUniqueOutlets(article.sources)} />
             <ReadTimeMeta minutes={minutes} />
           </div>
         </div>
@@ -253,7 +250,7 @@ export function ArticleViewer({
         </div>
 
         <WordListSection words={words} />
-        <SourcesSection sources={article.sources} />
+        <ProvenanceNote sources={article.sources} />
 
         {/* Continuous-reading flow (Batch 1 #2/#3): next article, or the
             completion screen once every one of today's articles is read

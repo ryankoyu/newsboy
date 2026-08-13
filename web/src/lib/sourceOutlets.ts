@@ -58,3 +58,25 @@ export function groupSourcesByOutlet(sources: Source[]): OutletGroup[] {
 export function countUniqueOutlets(sources: Source[]): number {
   return groupSourcesByOutlet(sources).length;
 }
+
+/**
+ * Domains that carry someone else's reporting rather than doing their own.
+ *
+ * A Google News link is a pointer, not a newsroom. Counting one as an
+ * independent outlet is how the 2026-08-12 edition published two articles
+ * that looked doubly sourced — Nikkei plus Google News, Yonhap plus Google
+ * News — when each rested on a single outlet's reporting.
+ */
+const AGGREGATOR_DOMAINS = new Set(["news.google.com", "google.com"]);
+
+/**
+ * Distinct outlets that actually reported the story, aggregators excluded.
+ *
+ * Use this — not countUniqueOutlets — for anything that makes a claim to the
+ * reader about cross-verification. countUniqueOutlets answers "how many
+ * places did we fetch from", which is a different and less interesting
+ * question.
+ */
+export function countIndependentOutlets(sources: Source[]): number {
+  return groupSourcesByOutlet(sources).filter((g) => !AGGREGATOR_DOMAINS.has(g.domain)).length;
+}
