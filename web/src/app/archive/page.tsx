@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { dataProvider } from "@/lib/data";
 import { EmptyState } from "@/components/EmptyState";
-import { SkinnedArchiveView } from "@/components/newsprint/SkinnedArchiveView";
 
 export const metadata: Metadata = {
   title: "지난 브리핑 · Newsboy",
@@ -19,7 +18,6 @@ export default async function ArchivePage() {
   const editions = await dataProvider.listEditions();
 
   return (
-    <SkinnedArchiveView editions={editions} fallback={
     <main
       style={{
         maxWidth: "var(--content-max)",
@@ -94,7 +92,6 @@ export default async function ArchivePage() {
         </ul>
       )}
     </main>
-    } />
   );
 }
 

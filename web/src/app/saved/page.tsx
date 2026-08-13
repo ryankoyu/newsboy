@@ -1,7 +1,7 @@
 import { dataProvider } from "@/lib/data";
-import { SkinnedMyView } from "@/components/newsprint/SkinnedMyView";
+import { MyView } from "@/components/MyView";
 
 export default async function SavedPage() {
   const edition = await dataProvider.getLatestEdition();
-  return <SkinnedMyView edition={edition} />;
+  return <MyView edition={edition} />;
 }

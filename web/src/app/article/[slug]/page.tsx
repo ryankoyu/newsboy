@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { dataProvider } from "@/lib/data";
 import type { ArticleWithDetails, CefrLevel, Word } from "@/lib/types";
-import { SkinnedArticleViewer } from "@/components/newsprint/SkinnedArticleViewer";
+import { ArticleViewer } from "@/components/ArticleViewer";
 
 const VALID_LEVELS: CefrLevel[] = ["A2", "B1", "B2"];
 
@@ -100,7 +100,7 @@ export default async function ArticlePage({ params, searchParams }: Props) {
   }
 
   return (
-    <SkinnedArticleViewer
+    <ArticleViewer
       article={article}
       initialLevel={requestedLevel}
       hasExplicitLevel={hasExplicitLevel}

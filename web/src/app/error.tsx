@@ -13,9 +13,9 @@ import { EmptyState } from "@/components/EmptyState";
  * a failed edition lookup, a client component tripping over corrupted
  * session data — degrades to this instead of to nothing.
  *
- * Carries its own link home: on the newsprint routes AppShell renders no
- * global header or tab bar (each page draws its own), and the page that
- * would have drawn them is exactly the one that just failed.
+ * Carries its own link home rather than relying on the shell's nav: the
+ * article route renders bare by design, so a failure there would otherwise
+ * leave a reader with an error and no way out but the browser's back button.
  */
 export default function Error({
   error,

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { dataProvider } from "@/lib/data";
-import { SkinnedHomeView } from "@/components/newsprint/SkinnedHomeView";
+import { HomeView } from "@/components/HomeView";
 import { isEditionPast } from "@/lib/editionDate";
 
 /**
@@ -9,14 +9,7 @@ import { isEditionPast } from "@/lib/editionDate";
  * plain date label (design intent: past editions should never look like
  * they're today's brief).
  *
- * Goes through SkinnedHomeView rather than HomeView directly: AppShell treats
- * /archive as a newsprint route and hides the global header and tab bar,
- * because the newsprint pages draw their own. Rendering the unskinned
- * HomeView here left the page with no chrome from either side — no tab bar,
- * no header, no way back out of a past edition short of the browser's back
- * button. The skinned view brings the newsprint nameplate and tab bar with
- * it, and still falls back to HomeView (inside the standard shell) in dark
- * mode, where the skin is off.
+ * Renders the same HomeView as today's brief, with isPastEdition set.
  */
 export default async function ArchiveDatePage({
   params,
@@ -28,6 +21,6 @@ export default async function ArchiveDatePage({
   if (!edition) notFound();
 
   return (
-    <SkinnedHomeView edition={edition} isPastEdition={isEditionPast(edition.edition_date)} />
+    <HomeView edition={edition} isPastEdition={isEditionPast(edition.edition_date)} />
   );
 }

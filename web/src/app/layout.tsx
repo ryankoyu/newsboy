@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Lora, Noto_Serif_Display, UnifrakturMaguntia } from "next/font/google";
+import { IBM_Plex_Mono, Lora } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
 import "./globals.css";
 
@@ -11,31 +11,16 @@ const lora = Lora({
 
 // 발음기호 (a3-ui-ux.md §0 — --font-mono). Referenced by the token since the
 // first design pass but never actually loaded, so IPA fell back to the system
-// monospace; the newsprint skin sets IPA in it at 11.5–12px, which made the
-// gap visible.
+// monospace.
 const plexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
 });
 
-// ── Newsprint skin (design_handoff_newsprint_skin) ────────────────────────
-// Headline face. The condensed WIDTHS are what make it read as newsprint, so
-// the `wdth` axis has to be requested explicitly — next/font ships weight only
-// by default.
-const notoSerifDisplay = Noto_Serif_Display({
-  variable: "--font-display",
-  subsets: ["latin"],
-  axes: ["wdth"],
-  style: ["normal", "italic"],
-});
-
-// Nameplate only — never used anywhere else (handoff, "Type").
-const unifraktur = UnifrakturMaguntia({
-  variable: "--font-nameplate",
-  subsets: ["latin"],
-  weight: "400",
-});
+// The newsprint skin also loaded Noto Serif Display (with its width axis) and
+// UnifrakturMaguntia for the nameplate. Both went with the skin — an unused
+// webfont is bandwidth every reader pays for and nobody sees.
 
 // 한글 UI용 산세리프 Pretendard — CDN 허용 (a3-ui-ux.md §0 — --font-ui)
 const PRETENDARD_CDN_URL =
@@ -55,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${lora.variable} ${plexMono.variable} ${notoSerifDisplay.variable} ${unifraktur.variable} h-full antialiased`}
+      className={`${lora.variable} ${plexMono.variable} h-full antialiased`}
     >
       <head>
         <link rel="stylesheet" href={PRETENDARD_CDN_URL} />
