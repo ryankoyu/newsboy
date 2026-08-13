@@ -7,6 +7,7 @@ import type { ReadingScale, ThemePref } from "@/lib/session";
 import { useSession } from "@/lib/useSession";
 import { Segmented } from "@/components/Segmented";
 import { LevelSwitcher } from "@/components/LevelSwitcher";
+import { AccountSection } from "@/components/AccountSection";
 
 /**
  * Settings tab — level change / reading font size (S/M/L/XL) / theme.
@@ -49,6 +50,11 @@ export function SettingsView() {
       </h1>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-6)" }}>
+        {/* First, because it is the answer to "what happens to my saved words
+            if I lose this phone" — and the reader should not have to scroll
+            past six preferences to find it. */}
+        <AccountSection />
+
         <SettingBlock
           title="내 레벨"
           description="홈과 기사 뷰어의 기본 레벨이에요. 기사에서 언제든 바꿔볼 수 있어요."

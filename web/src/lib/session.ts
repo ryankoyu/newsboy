@@ -750,3 +750,59 @@ export function importSessionJson(json: string): ImportResult {
   }
   return repairs.length > 0 ? { ok: true, repairs } : { ok: true };
 }
+
+/** The parts of a reader's record that sync across devices. */
+export interface SyncableState {
+  level: CefrLevel;
+  onboarded: boolean;
+  bookmarks: string[];
+  readArticles: string[];
+  readEvents: ReadEvent[];
+  savedWords: SavedWordEntry[];
+  savedSentences: SavedSentenceEntry[];
+}
+
+/** Read the syncable slice without exposing the whole persisted blob. */
+export function readSyncableState(): SyncableState {
+  const s = load();
+  return {
+    level: s.level,
+    onboarded: s.onboarded,
+    bookmarks: s.bookmarks,
+    readArticles: s.readArticles,
+    readEvents: s.readEvents,
+    savedWords: s.savedWords,
+    savedSentences: s.savedSentences,
+  };
+}
+
+/**
+ * Apply an already-merged state in one write.
+ *
+ * Sync needs this rather than the per-item setters: replaying a merge through
+ * toggleSavedWord() and friends would be one localStorage write per item, and
+ * a failure partway would leave the device holding half a merge with no way
+ * to tell. One read, one write, one notify.
+ *
+ * Deliberately narrow — it can only set the fields lib/sync/merge.ts produces,
+ * so a sync bug cannot reach fontSize, theme, or the storage-issue record.
+ * Returns false if the write was refused (quota, newer schema); the caller
+ * must not report success in that case.
+ *
+ * Does NOT notify subscribers: notifySessionChange lives in useSession, which
+ * imports this module, and reaching back would make the cycle. The caller —
+ * always client-side — notifies.
+ */
+export function applySyncedState(next: SyncableState): boolean {
+  const current = load();
+  return save({
+    ...current,
+    level: next.level,
+    onboarded: next.onboarded,
+    bookmarks: next.bookmarks,
+    readArticles: next.readArticles,
+    readEvents: next.readEvents,
+    savedWords: next.savedWords,
+    savedSentences: next.savedSentences,
+  });
+}
