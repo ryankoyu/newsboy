@@ -14,8 +14,19 @@ export const metadata: Metadata = {
  *   §1 수집: RSS/공개 API만, 특정 매체 의존 금지 -> "여러 매체에서 수집"
  *   §2 원칙 2: "2개 이상 독립 소스에서 일치하는 사실만 게재" -> "교차 확인"
  *   §2 원칙 1: "표현 완전 재작성" -> "레벨별로 새로 씀, 원문 복제 아님"
- *   §3 출처 표기: 하단 링크 + 사람 검수 흐름 (design-decisions/파이프라인
- *   문서상 승인 이후 published) -> "사람 검수 후 발행"
+ *   §3 사람 검수 흐름 (승인 이후에만 published) -> "사람 검수 후 발행"
+ *
+ * 2026-08-16: this page told readers twice that every article carries links
+ * to the original reporting at its foot. That stopped being true on
+ * 2026-08-13, when the outlet list was removed from the reader — the copy
+ * describing a screen simply outlived the screen. Both sentences are gone.
+ *
+ * The rule that failure argues for: a claim about what the reader can see
+ * belongs in a test, not only in prose. page.test.tsx now pins it, so the
+ * next person to change the article foot finds out here rather than from a
+ * reader.
+ *
+ * The page also never said who writes the articles. It does now — step 3.
  */
 export default function AboutPage() {
   return (
@@ -64,23 +75,30 @@ export default function AboutPage() {
           title="수집"
           body="여러 매체의 공개 뉴스(RSS·공개 API)에서 오늘의 사건을 모아요. 특정 한 매체에만 의존하지 않아요."
         />
+        {/*
+          The removed half of step 2 read "…또는 확실하지 않다고 표시해요".
+          Nothing has ever marked a fact as uncertain on screen: single-source
+          facts are excluded from an article's basis (pipeline extract.ts),
+          not flagged. Promising a UI that does not exist is the same defect
+          as the source-link promise was, one screen over.
+        */}
         <StepCard
           num={2}
           emoji="🔎"
           title="교차 확인"
-          body="2개 이상의 서로 다른 매체에서 같은 사실이 확인될 때만 기사에 담아요. 한 곳에서만 나온 내용은 신지 않거나, 확실하지 않다고 표시해요."
+          body="2개 이상의 서로 다른 매체에서 같은 내용이 확인된 사실만 기사의 바탕으로 삼아요. 한 곳에서만 나온 내용은 기사의 근거가 되지 못해요."
         />
         <StepCard
           num={3}
           emoji="✍️"
           title="레벨별 재작성"
-          body="확인된 사실만 가지고 A2·B1·B2 세 단계 영어로 새로 써요. 원문 문장을 그대로 옮기지 않아요."
+          body="확인된 사실만 가지고 AI가 A2·B1·B2 세 단계 영어로 새로 써요. 원문 문장을 그대로 옮기지 않아요."
         />
         <StepCard
           num={4}
           emoji="✅"
           title="사람 검수 후 발행"
-          body="사람이 검수한 뒤에만 발행돼요. 모든 기사 하단에는 참고한 원문 기사 링크를 그대로 남겨둬요."
+          body="AI가 쓴 글은 사람이 검수한 뒤에만 발행돼요. 승인하지 않은 기사는 나가지 않아요."
         />
       </ol>
 
@@ -93,7 +111,16 @@ export default function AboutPage() {
           lineHeight: "var(--lh-sm)",
         }}
       >
-        보도사진은 사용하지 않아요. 기사 하단에서 언제든 원문 기사 링크를 확인할 수 있어요.
+        {/*
+          Nothing replaces the removed sentence. The obvious substitute — "기사의
+          사실은 모두 교차 확인된 것" — is a claim about the finished prose, and
+          nothing checks the finished prose: the gate verifies the facts the
+          article was built from, not which of them the sentences actually lean
+          on (pipeline/src/gates/twoSource.ts says so itself). Answering an
+          unverifiable claim with another one is not a fix. Step 2 above already
+          states the rule the pipeline does enforce.
+        */}
+        보도사진은 사용하지 않아요.
       </p>
     </main>
   );

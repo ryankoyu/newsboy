@@ -5,26 +5,36 @@ import { countIndependentOutlets } from "@/lib/sourceOutlets";
 /**
  * How this article was made — without naming who reported it.
  *
- * The outlet list was removed from the reader (operator decision,
- * 2026-08-13). That makes this line the only account a reader gets of where
- * the facts came from, and it means they cannot check it. A claim nobody can
- * verify has to be one that is always true, or it is worth less than saying
- * nothing: the first reader who finds a single-source story described as
- * cross-checked has learned that the notice is decoration.
+ * Two different things are said here, and they are governed by different
+ * rules, which is why one is conditional and the other is not.
  *
- * So it renders only when the article actually clears the bar. Aggregators
- * do not count toward it — a Google News link is a pointer to someone else's
- * reporting, not a second newsroom confirming the first, and counting it as
- * one is how two of the four articles published on 2026-08-12 came to look
- * doubly sourced when each rested on a single outlet.
+ * **Who wrote it** is unconditional. Every article on this site was written
+ * by a model from extracted facts and approved by a person before it
+ * published; a reader has no way to tell that from the prose, and being told
+ * afterwards is worse than being told up front. It is a disclosure, not a
+ * reassurance, so the argument for withholding it below the sourcing bar
+ * does not apply — an article with thin sourcing needs it more, not less.
  *
- * Articles below the bar get no notice rather than a softer one. There is no
- * honest short sentence for "one outlet said this and we rewrote it" that
- * also reassures, and inventing one would be the same mistake in a quieter
- * voice.
+ * **How well it was sourced** stays conditional. The outlet list was removed
+ * from the reader (operator decision, 2026-08-13), so this claim is one the
+ * reader cannot check, and an unverifiable claim has to be true everywhere it
+ * appears or it is worth less than silence: the first reader who finds a
+ * single-source story described as cross-checked has learned the notice is
+ * decoration. Aggregators do not count toward the bar — a Google News link is
+ * a pointer to someone else's reporting, not a second newsroom confirming the
+ * first, and counting it as one is how two of the four articles published on
+ * 2026-08-12 came to look doubly sourced when each rested on one outlet.
+ *
+ * Below the bar there is still no softer version of the sourcing sentence.
+ * There is no honest short phrasing of "one outlet said this" that also
+ * reassures, and writing one would be the same mistake in a quieter voice.
+ *
+ * (The pipeline gate now counts the same way — pipeline/src/config/outlets.ts.
+ * Until 2026-08-16 it did not, which is how those two articles published at
+ * all.)
  */
 export function ProvenanceNote({ sources }: { sources: Source[] }) {
-  if (countIndependentOutlets(sources) < 2) return null;
+  const crossChecked = countIndependentOutlets(sources) >= 2;
 
   return (
     <p
@@ -38,8 +48,9 @@ export function ProvenanceNote({ sources }: { sources: Source[] }) {
         color: "var(--color-text-muted)",
       }}
     >
-      여러 매체의 보도를 교차 확인한 사실만으로 새로 작성한 기사입니다. 원문을 그대로
-      옮기지 않습니다.{" "}
+      {crossChecked ? "여러 매체의 보도를 교차 확인한 사실만으로 쓴 기사입니다. " : null}
+      기사 문장은 AI가 새로 썼고, 사람이 검수한 뒤 발행했습니다. 원문을 그대로 옮기지
+      않습니다.{" "}
       <Link href="/about" style={{ color: "var(--color-link)" }}>
         우리가 뉴스를 만드는 방법
       </Link>
