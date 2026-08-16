@@ -12,7 +12,8 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "glossary": "node --env-file-if-exists=.env --import tsx src/scripts/run-glossary.ts"
+    "glossary": "node --env-file-if-exists=.env --import tsx src/scripts/run-glossary.ts",
+    "glossary:seed": "node --env-file-if-exists=.env --import tsx src/scripts/run-seed-glossary.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",

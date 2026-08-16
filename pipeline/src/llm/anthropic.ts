@@ -53,6 +53,7 @@ import { emptyUsage } from "./cost.js";
 import { extractJson } from "./json.js";
 import {
   COMBINED_OUTPUT_SCHEMA,
+  GLOSS_OUTPUT_SCHEMA,
   COMBINED_SYSTEM_PROMPT,
   SINGLE_LEVEL_OUTPUT_SCHEMA,
   SINGLE_LEVEL_SYSTEM_PROMPT,
@@ -307,7 +308,14 @@ export class AnthropicLLMProvider implements LLMProvider {
       'Respond with strict JSON only: {"glosses": [{"term": "...", "meaningKo": "..." or null, ' +
       '"pos": "..."}]} with one entry per input word, in the same order.';
     const user = JSON.stringify({ words: input.terms });
-    const { text, usage } = await this.complete("haiku", system, user);
+    // Structured output, not a plain call: see GLOSS_OUTPUT_SCHEMA for what
+    // asking politely for JSON cost on the first real runs.
+    const { text, usage } = await this.completeStructured(
+      "haiku",
+      system,
+      user,
+      GLOSS_OUTPUT_SCHEMA,
+    );
     const parsed = extractJson<{
       glosses: Array<{ term: string; meaningKo: string | null; pos?: string | null }>;
     }>(text);

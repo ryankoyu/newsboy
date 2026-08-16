@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { dataProvider, estimateReadingMinutes } from "@/lib/data";
+import { seedDataProvider } from "@/lib/data/seed-provider";
+import { collectBodyTerms } from "@/lib/glossTerms";
 import editionsJson from "@/lib/data/seed/editions.json";
 import articlesJson from "@/lib/data/seed/articles.json";
 
@@ -113,5 +115,44 @@ describe("seedDataProvider (via dataProvider) — seed loading", () => {
       expect(resolved).not.toBeNull();
       expect(resolved?.id).toBe(e.id);
     }
+  });
+});
+
+/**
+ * The committed seed's dictionary.
+ *
+ * It shipped empty, because there was no way to make one; the pipeline's
+ * glossary stage then gave the seed the same treatment the live site gets
+ * (pipeline/src/scripts/run-seed-glossary.ts). These pin the two properties a
+ * reader depends on — that ordinary words in the seed's own articles resolve,
+ * and that proper nouns still resolve to nothing.
+ */
+describe("seed glossary", () => {
+  it("has a meaning for ordinary words in the seed's articles", async () => {
+    const glosses = await seedDataProvider.getGlosses(["exports", "announced", "semiconductors"]);
+    expect(glosses.exports?.meaning_ko).toBeTruthy();
+    expect(glosses.announced?.meaning_ko).toBeTruthy();
+    expect(glosses.semiconductors?.meaning_ko).toBeTruthy();
+  });
+
+  it("has none for proper nouns — describing a company or a person is a claim about the world", () => {
+    return seedDataProvider.getGlosses(["samsung", "seoul", "trump"]).then((glosses) => {
+      expect(glosses.samsung).toBeUndefined();
+      expect(glosses.seoul).toBeUndefined();
+      expect(glosses.trump).toBeUndefined();
+    });
+  });
+
+  it("covers the seed bodies it was generated from", async () => {
+    // Not 100%: the proper nouns above are deliberate holes. The floor is set
+    // well under the measured 96.7% so an edition with more names in it does
+    // not fail the suite, while a collapse in coverage still does.
+    const versions = (await import("@/lib/data/seed/article_versions.json")).default as Array<{
+      content: string;
+    }>;
+    const terms = collectBodyTerms(versions.map((v) => v.content));
+    const glosses = await seedDataProvider.getGlosses(terms);
+    const covered = terms.filter((t) => glosses[t]).length;
+    expect(covered / terms.length).toBeGreaterThan(0.9);
   });
 });

@@ -196,3 +196,38 @@ export const COMBINED_OUTPUT_SCHEMA = {
 };
 
 export const SINGLE_LEVEL_OUTPUT_SCHEMA = levelOutputSchema;
+
+/**
+ * [5c] 사전 뜻 — pipeline/glossary.ts.
+ *
+ * The gloss call used to ask for JSON in prose and parse whatever came back.
+ * Haiku obliged nearly always; "nearly" cost a chunk of 120 words on two of
+ * the first three real runs — once to a markdown fence, once to a malformed
+ * property — and the same input succeeded on a retry, so there was nothing to
+ * fix in the prompt. Constraining the response is the fix the article path has
+ * used since the cost review; the dictionary simply never got it.
+ *
+ * meaningKo is nullable on purpose: null is the answer for a proper noun, and
+ * a schema that forbade it would push the model to invent a description of a
+ * company or a person rather than decline.
+ */
+export const GLOSS_OUTPUT_SCHEMA = {
+  type: "object",
+  properties: {
+    glosses: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          term: { type: "string" },
+          meaningKo: { type: ["string", "null"] },
+          pos: { type: ["string", "null"] },
+        },
+        required: ["term", "meaningKo"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["glosses"],
+  additionalProperties: false,
+};

@@ -1,1 +1,8487 @@
-{}
+{
+  "ability": {
+    "term": "ability",
+    "meaning_ko": "능력",
+    "pos": "n."
+  },
+  "able": {
+    "term": "able",
+    "meaning_ko": "할 수 있는",
+    "pos": "adj."
+  },
+  "about": {
+    "term": "about",
+    "meaning_ko": "약",
+    "pos": "prep."
+  },
+  "above": {
+    "term": "above",
+    "meaning_ko": "위에",
+    "pos": "prep."
+  },
+  "abroad": {
+    "term": "abroad",
+    "meaning_ko": "해외로",
+    "pos": "adv."
+  },
+  "absence": {
+    "term": "absence",
+    "meaning_ko": "부재",
+    "pos": "n."
+  },
+  "absorbing": {
+    "term": "absorbing",
+    "meaning_ko": "몰두하는",
+    "pos": "adj."
+  },
+  "access": {
+    "term": "access",
+    "meaning_ko": "접근",
+    "pos": "n."
+  },
+  "accessories": {
+    "term": "accessories",
+    "meaning_ko": "액세서리들",
+    "pos": "n."
+  },
+  "according": {
+    "term": "according",
+    "meaning_ko": "따르면",
+    "pos": "prep."
+  },
+  "account": {
+    "term": "account",
+    "meaning_ko": "계정",
+    "pos": "n."
+  },
+  "accounted": {
+    "term": "accounted",
+    "meaning_ko": "차지했다",
+    "pos": "v."
+  },
+  "accounts": {
+    "term": "accounts",
+    "meaning_ko": "계정들",
+    "pos": "n."
+  },
+  "accurate": {
+    "term": "accurate",
+    "meaning_ko": "정확한",
+    "pos": "adj."
+  },
+  "accused": {
+    "term": "accused",
+    "meaning_ko": "비난받은",
+    "pos": "adj."
+  },
+  "acknowledge": {
+    "term": "acknowledge",
+    "meaning_ko": "인정하다",
+    "pos": "v."
+  },
+  "across": {
+    "term": "across",
+    "meaning_ko": "전역에",
+    "pos": "prep."
+  },
+  "act": {
+    "term": "act",
+    "meaning_ko": "행동하다",
+    "pos": "v."
+  },
+  "active": {
+    "term": "active",
+    "meaning_ko": "활발한",
+    "pos": "adj."
+  },
+  "actually": {
+    "term": "actually",
+    "meaning_ko": "실제로",
+    "pos": "adv."
+  },
+  "add": {
+    "term": "add",
+    "meaning_ko": "더하다",
+    "pos": "v."
+  },
+  "addictive": {
+    "term": "addictive",
+    "meaning_ko": "중독성 있는",
+    "pos": "adj."
+  },
+  "adding": {
+    "term": "adding",
+    "meaning_ko": "더하는",
+    "pos": "v."
+  },
+  "addition": {
+    "term": "addition",
+    "meaning_ko": "추가",
+    "pos": "n."
+  },
+  "adjusting": {
+    "term": "adjusting",
+    "meaning_ko": "조정하는",
+    "pos": "v."
+  },
+  "advanced": {
+    "term": "advanced",
+    "meaning_ko": "고급의",
+    "pos": "adj."
+  },
+  "aerospace": {
+    "term": "aerospace",
+    "meaning_ko": "항공우주",
+    "pos": "n."
+  },
+  "affect": {
+    "term": "affect",
+    "meaning_ko": "영향을 미치다",
+    "pos": "v."
+  },
+  "affordable": {
+    "term": "affordable",
+    "meaning_ko": "저렴한",
+    "pos": "adj."
+  },
+  "after": {
+    "term": "after",
+    "meaning_ko": "후에",
+    "pos": "prep."
+  },
+  "again": {
+    "term": "again",
+    "meaning_ko": "다시",
+    "pos": "adv."
+  },
+  "against": {
+    "term": "against",
+    "meaning_ko": "반대로",
+    "pos": "prep."
+  },
+  "age": {
+    "term": "age",
+    "meaning_ko": "나이",
+    "pos": "n."
+  },
+  "agree": {
+    "term": "agree",
+    "meaning_ko": "동의하다",
+    "pos": "v."
+  },
+  "agreed": {
+    "term": "agreed",
+    "meaning_ko": "동의했다",
+    "pos": "v."
+  },
+  "agreement": {
+    "term": "agreement",
+    "meaning_ko": "합의",
+    "pos": "n."
+  },
+  "agreements": {
+    "term": "agreements",
+    "meaning_ko": "합의들",
+    "pos": "n."
+  },
+  "ahead": {
+    "term": "ahead",
+    "meaning_ko": "앞서",
+    "pos": "adv."
+  },
+  "aide": {
+    "term": "aide",
+    "meaning_ko": "보좌관",
+    "pos": "n."
+  },
+  "air": {
+    "term": "air",
+    "meaning_ko": "공기",
+    "pos": "n."
+  },
+  "alarming": {
+    "term": "alarming",
+    "meaning_ko": "우려되는",
+    "pos": "adj."
+  },
+  "alarms": {
+    "term": "alarms",
+    "meaning_ko": "경보들",
+    "pos": "n."
+  },
+  "all": {
+    "term": "all",
+    "meaning_ko": "모든",
+    "pos": "adj."
+  },
+  "allies": {
+    "term": "allies",
+    "meaning_ko": "동맹국들",
+    "pos": "n."
+  },
+  "allow": {
+    "term": "allow",
+    "meaning_ko": "허용하다",
+    "pos": "v."
+  },
+  "allowed": {
+    "term": "allowed",
+    "meaning_ko": "허용했다",
+    "pos": "v."
+  },
+  "ally": {
+    "term": "ally",
+    "meaning_ko": "동맹국",
+    "pos": "n."
+  },
+  "almost": {
+    "term": "almost",
+    "meaning_ko": "거의",
+    "pos": "adv."
+  },
+  "alone": {
+    "term": "alone",
+    "meaning_ko": "혼자",
+    "pos": "adj."
+  },
+  "alongside": {
+    "term": "alongside",
+    "meaning_ko": "함께",
+    "pos": "prep."
+  },
+  "already": {
+    "term": "already",
+    "meaning_ko": "이미",
+    "pos": "adv."
+  },
+  "american": {
+    "term": "american",
+    "meaning_ko": "미국의",
+    "pos": "adj."
+  },
+  "among": {
+    "term": "among",
+    "meaning_ko": "중에서",
+    "pos": "prep."
+  },
+  "amount": {
+    "term": "amount",
+    "meaning_ko": "양",
+    "pos": "n."
+  },
+  "amplify": {
+    "term": "amplify",
+    "meaning_ko": "확대하다",
+    "pos": "v."
+  },
+  "analysts": {
+    "term": "analysts",
+    "meaning_ko": "분석가들",
+    "pos": "n."
+  },
+  "angry": {
+    "term": "angry",
+    "meaning_ko": "화난",
+    "pos": "adj."
+  },
+  "announced": {
+    "term": "announced",
+    "meaning_ko": "발표했다",
+    "pos": "v."
+  },
+  "announcement": {
+    "term": "announcement",
+    "meaning_ko": "발표",
+    "pos": "n."
+  },
+  "annual": {
+    "term": "annual",
+    "meaning_ko": "연간의",
+    "pos": "adj."
+  },
+  "anonymous": {
+    "term": "anonymous",
+    "meaning_ko": "익명의",
+    "pos": "adj."
+  },
+  "another": {
+    "term": "another",
+    "meaning_ko": "다른",
+    "pos": "adj."
+  },
+  "answers": {
+    "term": "answers",
+    "meaning_ko": "답들",
+    "pos": "n."
+  },
+  "anxious": {
+    "term": "anxious",
+    "meaning_ko": "불안한",
+    "pos": "adj."
+  },
+  "any": {
+    "term": "any",
+    "meaning_ko": "어떤",
+    "pos": "adj."
+  },
+  "aortic": {
+    "term": "aortic",
+    "meaning_ko": "대동맥의",
+    "pos": "adj."
+  },
+  "apart": {
+    "term": "apart",
+    "meaning_ko": "떨어져",
+    "pos": "adv."
+  },
+  "appeal": {
+    "term": "appeal",
+    "meaning_ko": "호소하다",
+    "pos": "v."
+  },
+  "appear": {
+    "term": "appear",
+    "meaning_ko": "나타나다",
+    "pos": "v."
+  },
+  "appeared": {
+    "term": "appeared",
+    "meaning_ko": "나타났다",
+    "pos": "v."
+  },
+  "appears": {
+    "term": "appears",
+    "meaning_ko": "보인다",
+    "pos": "v."
+  },
+  "appetite": {
+    "term": "appetite",
+    "meaning_ko": "식욕",
+    "pos": "n."
+  },
+  "applied": {
+    "term": "applied",
+    "meaning_ko": "적용했다",
+    "pos": "v."
+  },
+  "appoint": {
+    "term": "appoint",
+    "meaning_ko": "임명하다",
+    "pos": "v."
+  },
+  "approach": {
+    "term": "approach",
+    "meaning_ko": "접근",
+    "pos": "n."
+  },
+  "apps": {
+    "term": "apps",
+    "meaning_ko": "앱들",
+    "pos": "n."
+  },
+  "architecture": {
+    "term": "architecture",
+    "meaning_ko": "구조",
+    "pos": "n."
+  },
+  "area": {
+    "term": "area",
+    "meaning_ko": "지역",
+    "pos": "n."
+  },
+  "argued": {
+    "term": "argued",
+    "meaning_ko": "주장했다",
+    "pos": "v."
+  },
+  "argues": {
+    "term": "argues",
+    "meaning_ko": "주장한다",
+    "pos": "v."
+  },
+  "arguing": {
+    "term": "arguing",
+    "meaning_ko": "주장하는",
+    "pos": "v."
+  },
+  "argument": {
+    "term": "argument",
+    "meaning_ko": "주장",
+    "pos": "n."
+  },
+  "armed": {
+    "term": "armed",
+    "meaning_ko": "무장한",
+    "pos": "adj."
+  },
+  "army": {
+    "term": "army",
+    "meaning_ko": "군대",
+    "pos": "n."
+  },
+  "around": {
+    "term": "around",
+    "meaning_ko": "주변에",
+    "pos": "prep."
+  },
+  "arrived": {
+    "term": "arrived",
+    "meaning_ko": "도착했다",
+    "pos": "v."
+  },
+  "arrives": {
+    "term": "arrives",
+    "meaning_ko": "도착한다",
+    "pos": "v."
+  },
+  "artificial": {
+    "term": "artificial",
+    "meaning_ko": "인공의",
+    "pos": "adj."
+  },
+  "aside": {
+    "term": "aside",
+    "meaning_ko": "제쳐두고",
+    "pos": "adv."
+  },
+  "ask": {
+    "term": "ask",
+    "meaning_ko": "묻다",
+    "pos": "v."
+  },
+  "asked": {
+    "term": "asked",
+    "meaning_ko": "물었다",
+    "pos": "v."
+  },
+  "asking": {
+    "term": "asking",
+    "meaning_ko": "묻는",
+    "pos": "v."
+  },
+  "assess": {
+    "term": "assess",
+    "meaning_ko": "평가하다",
+    "pos": "v."
+  },
+  "atmosphere": {
+    "term": "atmosphere",
+    "meaning_ko": "분위기",
+    "pos": "n."
+  },
+  "attacks": {
+    "term": "attacks",
+    "meaning_ko": "공격들",
+    "pos": "n."
+  },
+  "attempt": {
+    "term": "attempt",
+    "meaning_ko": "시도",
+    "pos": "n."
+  },
+  "attention": {
+    "term": "attention",
+    "meaning_ko": "주목",
+    "pos": "n."
+  },
+  "attributed": {
+    "term": "attributed",
+    "meaning_ko": "기인한",
+    "pos": "v."
+  },
+  "audience": {
+    "term": "audience",
+    "meaning_ko": "청중",
+    "pos": "n."
+  },
+  "audiences": {
+    "term": "audiences",
+    "meaning_ko": "청중들",
+    "pos": "n."
+  },
+  "authorities": {
+    "term": "authorities",
+    "meaning_ko": "당국",
+    "pos": "n."
+  },
+  "autoplay": {
+    "term": "autoplay",
+    "meaning_ko": "자동재생",
+    "pos": "n."
+  },
+  "available": {
+    "term": "available",
+    "meaning_ko": "이용 가능한",
+    "pos": "adj."
+  },
+  "average": {
+    "term": "average",
+    "meaning_ko": "평균",
+    "pos": "n."
+  },
+  "away": {
+    "term": "away",
+    "meaning_ko": "떨어져",
+    "pos": "adv."
+  },
+  "back": {
+    "term": "back",
+    "meaning_ko": "뒤로",
+    "pos": "adv."
+  },
+  "backdrop": {
+    "term": "backdrop",
+    "meaning_ko": "배경",
+    "pos": "n."
+  },
+  "bad": {
+    "term": "bad",
+    "meaning_ko": "나쁜",
+    "pos": "adj."
+  },
+  "badly": {
+    "term": "badly",
+    "meaning_ko": "심하게",
+    "pos": "adv."
+  },
+  "bags": {
+    "term": "bags",
+    "meaning_ko": "가방들",
+    "pos": "n."
+  },
+  "balance": {
+    "term": "balance",
+    "meaning_ko": "균형",
+    "pos": "n."
+  },
+  "ball": {
+    "term": "ball",
+    "meaning_ko": "공",
+    "pos": "n."
+  },
+  "bank": {
+    "term": "bank",
+    "meaning_ko": "은행",
+    "pos": "n."
+  },
+  "baseball": {
+    "term": "baseball",
+    "meaning_ko": "야구",
+    "pos": "n."
+  },
+  "baseball-inspired": {
+    "term": "baseball-inspired",
+    "meaning_ko": "야구에서 영감을 받은",
+    "pos": "adj."
+  },
+  "bases": {
+    "term": "bases",
+    "meaning_ko": "기지들",
+    "pos": "n."
+  },
+  "basic": {
+    "term": "basic",
+    "meaning_ko": "기본적인",
+    "pos": "adj."
+  },
+  "battery": {
+    "term": "battery",
+    "meaning_ko": "배터리",
+    "pos": "n."
+  },
+  "battles": {
+    "term": "battles",
+    "meaning_ko": "전투",
+    "pos": "n."
+  },
+  "beanie": {
+    "term": "beanie",
+    "meaning_ko": "비니",
+    "pos": "n."
+  },
+  "bear": {
+    "term": "bear",
+    "meaning_ko": "견디다",
+    "pos": "v."
+  },
+  "beat": {
+    "term": "beat",
+    "meaning_ko": "이기다",
+    "pos": "v."
+  },
+  "beating": {
+    "term": "beating",
+    "meaning_ko": "패배",
+    "pos": "n."
+  },
+  "became": {
+    "term": "became",
+    "meaning_ko": "되었다",
+    "pos": "v."
+  },
+  "because": {
+    "term": "because",
+    "meaning_ko": "왜냐하면",
+    "pos": "conj."
+  },
+  "become": {
+    "term": "become",
+    "meaning_ko": "되다",
+    "pos": "v."
+  },
+  "becomes": {
+    "term": "becomes",
+    "meaning_ko": "된다",
+    "pos": "v."
+  },
+  "before": {
+    "term": "before",
+    "meaning_ko": "전에",
+    "pos": "prep."
+  },
+  "began": {
+    "term": "began",
+    "meaning_ko": "시작했다",
+    "pos": "v."
+  },
+  "begun": {
+    "term": "begun",
+    "meaning_ko": "시작한",
+    "pos": "v."
+  },
+  "behind": {
+    "term": "behind",
+    "meaning_ko": "뒤에",
+    "pos": "prep."
+  },
+  "belong": {
+    "term": "belong",
+    "meaning_ko": "속하다",
+    "pos": "v."
+  },
+  "bench": {
+    "term": "bench",
+    "meaning_ko": "벤치",
+    "pos": "n."
+  },
+  "benchmark": {
+    "term": "benchmark",
+    "meaning_ko": "기준점",
+    "pos": "n."
+  },
+  "best": {
+    "term": "best",
+    "meaning_ko": "최고의",
+    "pos": "adj."
+  },
+  "bet": {
+    "term": "bet",
+    "meaning_ko": "내기",
+    "pos": "n."
+  },
+  "better": {
+    "term": "better",
+    "meaning_ko": "더 나은",
+    "pos": "adj."
+  },
+  "between": {
+    "term": "between",
+    "meaning_ko": "사이에",
+    "pos": "prep."
+  },
+  "beyond": {
+    "term": "beyond",
+    "meaning_ko": "넘어",
+    "pos": "prep."
+  },
+  "big": {
+    "term": "big",
+    "meaning_ko": "큰",
+    "pos": "adj."
+  },
+  "bigger": {
+    "term": "bigger",
+    "meaning_ko": "더 큰",
+    "pos": "adj."
+  },
+  "biggest": {
+    "term": "biggest",
+    "meaning_ko": "가장 큰",
+    "pos": "adj."
+  },
+  "bill": {
+    "term": "bill",
+    "meaning_ko": "법안",
+    "pos": "n."
+  },
+  "billion": {
+    "term": "billion",
+    "meaning_ko": "십억",
+    "pos": "n."
+  },
+  "billions": {
+    "term": "billions",
+    "meaning_ko": "수십억",
+    "pos": "n."
+  },
+  "blamed": {
+    "term": "blamed",
+    "meaning_ko": "비난했다",
+    "pos": "v."
+  },
+  "blaze": {
+    "term": "blaze",
+    "meaning_ko": "화염",
+    "pos": "n."
+  },
+  "blending": {
+    "term": "blending",
+    "meaning_ko": "혼합",
+    "pos": "n."
+  },
+  "block": {
+    "term": "block",
+    "meaning_ko": "차단하다",
+    "pos": "v."
+  },
+  "blocked": {
+    "term": "blocked",
+    "meaning_ko": "차단했다",
+    "pos": "v."
+  },
+  "blocking": {
+    "term": "blocking",
+    "meaning_ko": "차단",
+    "pos": "n."
+  },
+  "boom": {
+    "term": "boom",
+    "meaning_ko": "붐",
+    "pos": "n."
+  },
+  "booster": {
+    "term": "booster",
+    "meaning_ko": "부스터",
+    "pos": "n."
+  },
+  "boosters": {
+    "term": "boosters",
+    "meaning_ko": "부스터들",
+    "pos": "n."
+  },
+  "both": {
+    "term": "both",
+    "meaning_ko": "둘 다",
+    "pos": "pron."
+  },
+  "bottom": {
+    "term": "bottom",
+    "meaning_ko": "바닥",
+    "pos": "n."
+  },
+  "bought": {
+    "term": "bought",
+    "meaning_ko": "샀다",
+    "pos": "v."
+  },
+  "brand": {
+    "term": "brand",
+    "meaning_ko": "브랜드",
+    "pos": "n."
+  },
+  "brand's": {
+    "term": "brand's",
+    "meaning_ko": "브랜드의",
+    "pos": "n."
+  },
+  "brands": {
+    "term": "brands",
+    "meaning_ko": "브랜드들",
+    "pos": "n."
+  },
+  "breach": {
+    "term": "breach",
+    "meaning_ko": "침해",
+    "pos": "n."
+  },
+  "break": {
+    "term": "break",
+    "meaning_ko": "부수다",
+    "pos": "v."
+  },
+  "breaking": {
+    "term": "breaking",
+    "meaning_ko": "부수기",
+    "pos": "n."
+  },
+  "breaks": {
+    "term": "breaks",
+    "meaning_ko": "부순다",
+    "pos": "v."
+  },
+  "breathe": {
+    "term": "breathe",
+    "meaning_ko": "숨쉬다",
+    "pos": "v."
+  },
+  "brief": {
+    "term": "brief",
+    "meaning_ko": "짧은",
+    "pos": "adj."
+  },
+  "bring": {
+    "term": "bring",
+    "meaning_ko": "가져오다",
+    "pos": "v."
+  },
+  "bringing": {
+    "term": "bringing",
+    "meaning_ko": "가져오기",
+    "pos": "n."
+  },
+  "broadcast": {
+    "term": "broadcast",
+    "meaning_ko": "방송",
+    "pos": "n."
+  },
+  "broader": {
+    "term": "broader",
+    "meaning_ko": "더 광범위한",
+    "pos": "adj."
+  },
+  "broke": {
+    "term": "broke",
+    "meaning_ko": "부쉈다",
+    "pos": "v."
+  },
+  "brought": {
+    "term": "brought",
+    "meaning_ko": "가져왔다",
+    "pos": "v."
+  },
+  "build": {
+    "term": "build",
+    "meaning_ko": "짓다",
+    "pos": "v."
+  },
+  "building": {
+    "term": "building",
+    "meaning_ko": "건물",
+    "pos": "n."
+  },
+  "built": {
+    "term": "built",
+    "meaning_ko": "지었다",
+    "pos": "v."
+  },
+  "burst": {
+    "term": "burst",
+    "meaning_ko": "폭발하다",
+    "pos": "v."
+  },
+  "business": {
+    "term": "business",
+    "meaning_ko": "사업",
+    "pos": "n."
+  },
+  "busy": {
+    "term": "busy",
+    "meaning_ko": "바쁜",
+    "pos": "adj."
+  },
+  "buy": {
+    "term": "buy",
+    "meaning_ko": "사다",
+    "pos": "v."
+  },
+  "buyers": {
+    "term": "buyers",
+    "meaning_ko": "구매자들",
+    "pos": "n."
+  },
+  "buying": {
+    "term": "buying",
+    "meaning_ko": "구매",
+    "pos": "n."
+  },
+  "buzz": {
+    "term": "buzz",
+    "meaning_ko": "화제",
+    "pos": "n."
+  },
+  "call": {
+    "term": "call",
+    "meaning_ko": "부르다",
+    "pos": "v."
+  },
+  "called": {
+    "term": "called",
+    "meaning_ko": "불렸다",
+    "pos": "v."
+  },
+  "calligraphy": {
+    "term": "calligraphy",
+    "meaning_ko": "서예",
+    "pos": "n."
+  },
+  "calls": {
+    "term": "calls",
+    "meaning_ko": "부른다",
+    "pos": "v."
+  },
+  "calm": {
+    "term": "calm",
+    "meaning_ko": "차분한",
+    "pos": "adj."
+  },
+  "came": {
+    "term": "came",
+    "meaning_ko": "왔다",
+    "pos": "v."
+  },
+  "can": {
+    "term": "can",
+    "meaning_ko": "할 수 있다",
+    "pos": "v."
+  },
+  "candidates": {
+    "term": "candidates",
+    "meaning_ko": "후보자들",
+    "pos": "n."
+  },
+  "cap": {
+    "term": "cap",
+    "meaning_ko": "모자",
+    "pos": "n."
+  },
+  "capacity": {
+    "term": "capacity",
+    "meaning_ko": "용량",
+    "pos": "n."
+  },
+  "capital": {
+    "term": "capital",
+    "meaning_ko": "자본",
+    "pos": "n."
+  },
+  "capture": {
+    "term": "capture",
+    "meaning_ko": "포착하다",
+    "pos": "v."
+  },
+  "captured": {
+    "term": "captured",
+    "meaning_ko": "포착했다",
+    "pos": "v."
+  },
+  "car": {
+    "term": "car",
+    "meaning_ko": "자동차",
+    "pos": "n."
+  },
+  "cared": {
+    "term": "cared",
+    "meaning_ko": "돌봤다",
+    "pos": "v."
+  },
+  "career": {
+    "term": "career",
+    "meaning_ko": "경력",
+    "pos": "n."
+  },
+  "careful": {
+    "term": "careful",
+    "meaning_ko": "조심스러운",
+    "pos": "adj."
+  },
+  "carried": {
+    "term": "carried",
+    "meaning_ko": "운반했다",
+    "pos": "v."
+  },
+  "case": {
+    "term": "case",
+    "meaning_ko": "경우",
+    "pos": "n."
+  },
+  "cases": {
+    "term": "cases",
+    "meaning_ko": "사건들",
+    "pos": "n."
+  },
+  "casual": {
+    "term": "casual",
+    "meaning_ko": "캐주얼한",
+    "pos": "adj."
+  },
+  "catch": {
+    "term": "catch",
+    "meaning_ko": "잡다",
+    "pos": "v."
+  },
+  "catching": {
+    "term": "catching",
+    "meaning_ko": "포착",
+    "pos": "n."
+  },
+  "caught": {
+    "term": "caught",
+    "meaning_ko": "잡았다",
+    "pos": "v."
+  },
+  "cause": {
+    "term": "cause",
+    "meaning_ko": "원인",
+    "pos": "n."
+  },
+  "caused": {
+    "term": "caused",
+    "meaning_ko": "야기했다",
+    "pos": "v."
+  },
+  "cautioned": {
+    "term": "cautioned",
+    "meaning_ko": "경고했다",
+    "pos": "v."
+  },
+  "ceasefire": {
+    "term": "ceasefire",
+    "meaning_ko": "휴전",
+    "pos": "n."
+  },
+  "centers": {
+    "term": "centers",
+    "meaning_ko": "중심지들",
+    "pos": "n."
+  },
+  "central": {
+    "term": "central",
+    "meaning_ko": "중앙의",
+    "pos": "adj."
+  },
+  "centre": {
+    "term": "centre",
+    "meaning_ko": "중심",
+    "pos": "n."
+  },
+  "certain": {
+    "term": "certain",
+    "meaning_ko": "확실한",
+    "pos": "adj."
+  },
+  "challenge": {
+    "term": "challenge",
+    "meaning_ko": "도전",
+    "pos": "n."
+  },
+  "chamber": {
+    "term": "chamber",
+    "meaning_ko": "회의소",
+    "pos": "n."
+  },
+  "chamber's": {
+    "term": "chamber's",
+    "meaning_ko": "회의소의",
+    "pos": "n."
+  },
+  "chance": {
+    "term": "chance",
+    "meaning_ko": "기회",
+    "pos": "n."
+  },
+  "change": {
+    "term": "change",
+    "meaning_ko": "변화",
+    "pos": "n."
+  },
+  "channel": {
+    "term": "channel",
+    "meaning_ko": "채널",
+    "pos": "n."
+  },
+  "channels": {
+    "term": "channels",
+    "meaning_ko": "채널들",
+    "pos": "n."
+  },
+  "cheaper": {
+    "term": "cheaper",
+    "meaning_ko": "더 저렴한",
+    "pos": "adj."
+  },
+  "cheaply": {
+    "term": "cheaply",
+    "meaning_ko": "저렴하게",
+    "pos": "adv."
+  },
+  "check": {
+    "term": "check",
+    "meaning_ko": "확인하다",
+    "pos": "v."
+  },
+  "checked": {
+    "term": "checked",
+    "meaning_ko": "확인했다",
+    "pos": "v."
+  },
+  "checking": {
+    "term": "checking",
+    "meaning_ko": "확인",
+    "pos": "n."
+  },
+  "chinese": {
+    "term": "chinese",
+    "meaning_ko": "중국의",
+    "pos": "adj."
+  },
+  "chip": {
+    "term": "chip",
+    "meaning_ko": "칩",
+    "pos": "n."
+  },
+  "chipmakers": {
+    "term": "chipmakers",
+    "meaning_ko": "칩 제조업체들",
+    "pos": "n."
+  },
+  "chips": {
+    "term": "chips",
+    "meaning_ko": "칩들",
+    "pos": "n."
+  },
+  "choices": {
+    "term": "choices",
+    "meaning_ko": "선택들",
+    "pos": "n."
+  },
+  "choose": {
+    "term": "choose",
+    "meaning_ko": "선택하다",
+    "pos": "v."
+  },
+  "chose": {
+    "term": "chose",
+    "meaning_ko": "선택했다",
+    "pos": "v."
+  },
+  "chosen": {
+    "term": "chosen",
+    "meaning_ko": "선택된",
+    "pos": "adj."
+  },
+  "cities": {
+    "term": "cities",
+    "meaning_ko": "도시들",
+    "pos": "n."
+  },
+  "city": {
+    "term": "city",
+    "meaning_ko": "도시",
+    "pos": "n."
+  },
+  "city's": {
+    "term": "city's",
+    "meaning_ko": "도시의",
+    "pos": "n."
+  },
+  "civilians": {
+    "term": "civilians",
+    "meaning_ko": "민간인들",
+    "pos": "n."
+  },
+  "claim": {
+    "term": "claim",
+    "meaning_ko": "주장하다",
+    "pos": "v."
+  },
+  "claims": {
+    "term": "claims",
+    "meaning_ko": "주장들",
+    "pos": "n."
+  },
+  "clarity": {
+    "term": "clarity",
+    "meaning_ko": "명확성",
+    "pos": "n."
+  },
+  "clear": {
+    "term": "clear",
+    "meaning_ko": "명확한",
+    "pos": "adj."
+  },
+  "clearer": {
+    "term": "clearer",
+    "meaning_ko": "더 명확한",
+    "pos": "adj."
+  },
+  "clearly": {
+    "term": "clearly",
+    "meaning_ko": "명확히",
+    "pos": "adv."
+  },
+  "clever": {
+    "term": "clever",
+    "meaning_ko": "영리한",
+    "pos": "adj."
+  },
+  "climbed": {
+    "term": "climbed",
+    "meaning_ko": "올랐다",
+    "pos": "v."
+  },
+  "climbing": {
+    "term": "climbing",
+    "meaning_ko": "올라가는",
+    "pos": "v."
+  },
+  "close": {
+    "term": "close",
+    "meaning_ko": "가까운",
+    "pos": "adj."
+  },
+  "closed": {
+    "term": "closed",
+    "meaning_ko": "닫힌",
+    "pos": "adj."
+  },
+  "closely": {
+    "term": "closely",
+    "meaning_ko": "밀접하게",
+    "pos": "adv."
+  },
+  "closes": {
+    "term": "closes",
+    "meaning_ko": "닫다",
+    "pos": "v."
+  },
+  "closing": {
+    "term": "closing",
+    "meaning_ko": "마감",
+    "pos": "n."
+  },
+  "closure": {
+    "term": "closure",
+    "meaning_ko": "폐쇄",
+    "pos": "n."
+  },
+  "clothes": {
+    "term": "clothes",
+    "meaning_ko": "옷",
+    "pos": "n."
+  },
+  "clothing": {
+    "term": "clothing",
+    "meaning_ko": "의류",
+    "pos": "n."
+  },
+  "club": {
+    "term": "club",
+    "meaning_ko": "클럽",
+    "pos": "n."
+  },
+  "coasts": {
+    "term": "coasts",
+    "meaning_ko": "해안들",
+    "pos": "n."
+  },
+  "collaboration": {
+    "term": "collaboration",
+    "meaning_ko": "협력",
+    "pos": "n."
+  },
+  "collaborations": {
+    "term": "collaborations",
+    "meaning_ko": "협력들",
+    "pos": "n."
+  },
+  "collapsing": {
+    "term": "collapsing",
+    "meaning_ko": "붕괴하는",
+    "pos": "v."
+  },
+  "colleagues": {
+    "term": "colleagues",
+    "meaning_ko": "동료들",
+    "pos": "n."
+  },
+  "collection": {
+    "term": "collection",
+    "meaning_ko": "수집",
+    "pos": "n."
+  },
+  "combines": {
+    "term": "combines",
+    "meaning_ko": "결합한다",
+    "pos": "v."
+  },
+  "come": {
+    "term": "come",
+    "meaning_ko": "오다",
+    "pos": "v."
+  },
+  "comeback": {
+    "term": "comeback",
+    "meaning_ko": "복귀",
+    "pos": "n."
+  },
+  "comes": {
+    "term": "comes",
+    "meaning_ko": "온다",
+    "pos": "v."
+  },
+  "comfortably": {
+    "term": "comfortably",
+    "meaning_ko": "편하게",
+    "pos": "adv."
+  },
+  "coming": {
+    "term": "coming",
+    "meaning_ko": "다가오는",
+    "pos": "adj."
+  },
+  "commercial": {
+    "term": "commercial",
+    "meaning_ko": "상업적인",
+    "pos": "adj."
+  },
+  "commission": {
+    "term": "commission",
+    "meaning_ko": "위원회",
+    "pos": "n."
+  },
+  "common": {
+    "term": "common",
+    "meaning_ko": "일반적인",
+    "pos": "adj."
+  },
+  "community": {
+    "term": "community",
+    "meaning_ko": "지역사회",
+    "pos": "n."
+  },
+  "companies": {
+    "term": "companies",
+    "meaning_ko": "회사들",
+    "pos": "n."
+  },
+  "company": {
+    "term": "company",
+    "meaning_ko": "회사",
+    "pos": "n."
+  },
+  "company's": {
+    "term": "company's",
+    "meaning_ko": "회사의",
+    "pos": "n."
+  },
+  "compared": {
+    "term": "compared",
+    "meaning_ko": "비교했다",
+    "pos": "v."
+  },
+  "competing": {
+    "term": "competing",
+    "meaning_ko": "경쟁하는",
+    "pos": "v."
+  },
+  "complete": {
+    "term": "complete",
+    "meaning_ko": "완전한",
+    "pos": "adj."
+  },
+  "completed": {
+    "term": "completed",
+    "meaning_ko": "완료했다",
+    "pos": "v."
+  },
+  "completely": {
+    "term": "completely",
+    "meaning_ko": "완전히",
+    "pos": "adv."
+  },
+  "compulsive": {
+    "term": "compulsive",
+    "meaning_ko": "강박적인",
+    "pos": "adj."
+  },
+  "computer": {
+    "term": "computer",
+    "meaning_ko": "컴퓨터",
+    "pos": "n."
+  },
+  "computers": {
+    "term": "computers",
+    "meaning_ko": "컴퓨터들",
+    "pos": "n."
+  },
+  "concentrated": {
+    "term": "concentrated",
+    "meaning_ko": "집중된",
+    "pos": "adj."
+  },
+  "concentration": {
+    "term": "concentration",
+    "meaning_ko": "집중",
+    "pos": "n."
+  },
+  "concern": {
+    "term": "concern",
+    "meaning_ko": "우려",
+    "pos": "n."
+  },
+  "concerned": {
+    "term": "concerned",
+    "meaning_ko": "우려하는",
+    "pos": "adj."
+  },
+  "condition": {
+    "term": "condition",
+    "meaning_ko": "상태",
+    "pos": "n."
+  },
+  "conditions": {
+    "term": "conditions",
+    "meaning_ko": "조건들",
+    "pos": "n."
+  },
+  "confidence": {
+    "term": "confidence",
+    "meaning_ko": "신뢰",
+    "pos": "n."
+  },
+  "confirm": {
+    "term": "confirm",
+    "meaning_ko": "확인하다",
+    "pos": "v."
+  },
+  "confirmation": {
+    "term": "confirmation",
+    "meaning_ko": "확인",
+    "pos": "n."
+  },
+  "confirmed": {
+    "term": "confirmed",
+    "meaning_ko": "확인했다",
+    "pos": "v."
+  },
+  "conflict": {
+    "term": "conflict",
+    "meaning_ko": "분쟁",
+    "pos": "n."
+  },
+  "confrontation": {
+    "term": "confrontation",
+    "meaning_ko": "대치",
+    "pos": "n."
+  },
+  "confusion": {
+    "term": "confusion",
+    "meaning_ko": "혼란",
+    "pos": "n."
+  },
+  "congress": {
+    "term": "congress",
+    "meaning_ko": "의회",
+    "pos": "n."
+  },
+  "congressman": {
+    "term": "congressman",
+    "meaning_ko": "하원의원",
+    "pos": "n."
+  },
+  "connected": {
+    "term": "connected",
+    "meaning_ko": "연결된",
+    "pos": "adj."
+  },
+  "connects": {
+    "term": "connects",
+    "meaning_ko": "연결한다",
+    "pos": "v."
+  },
+  "consequential": {
+    "term": "consequential",
+    "meaning_ko": "중요한",
+    "pos": "adj."
+  },
+  "consider": {
+    "term": "consider",
+    "meaning_ko": "고려하다",
+    "pos": "v."
+  },
+  "considerable": {
+    "term": "considerable",
+    "meaning_ko": "상당한",
+    "pos": "adj."
+  },
+  "consumers": {
+    "term": "consumers",
+    "meaning_ko": "소비자들",
+    "pos": "n."
+  },
+  "contain": {
+    "term": "contain",
+    "meaning_ko": "포함하다",
+    "pos": "v."
+  },
+  "content": {
+    "term": "content",
+    "meaning_ko": "내용",
+    "pos": "n."
+  },
+  "contest": {
+    "term": "contest",
+    "meaning_ko": "경쟁",
+    "pos": "n."
+  },
+  "contested": {
+    "term": "contested",
+    "meaning_ko": "논쟁이 된",
+    "pos": "adj."
+  },
+  "continue": {
+    "term": "continue",
+    "meaning_ko": "계속하다",
+    "pos": "v."
+  },
+  "continues": {
+    "term": "continues",
+    "meaning_ko": "계속한다",
+    "pos": "v."
+  },
+  "continuous": {
+    "term": "continuous",
+    "meaning_ko": "지속적인",
+    "pos": "adj."
+  },
+  "control": {
+    "term": "control",
+    "meaning_ko": "통제",
+    "pos": "n."
+  },
+  "controls": {
+    "term": "controls",
+    "meaning_ko": "통제한다",
+    "pos": "v."
+  },
+  "cool": {
+    "term": "cool",
+    "meaning_ko": "시원한",
+    "pos": "adj."
+  },
+  "corporation": {
+    "term": "corporation",
+    "meaning_ko": "법인",
+    "pos": "n."
+  },
+  "cosmetic": {
+    "term": "cosmetic",
+    "meaning_ko": "화장품의",
+    "pos": "adj."
+  },
+  "cost": {
+    "term": "cost",
+    "meaning_ko": "비용",
+    "pos": "n."
+  },
+  "costs": {
+    "term": "costs",
+    "meaning_ko": "비용들",
+    "pos": "n."
+  },
+  "could": {
+    "term": "could",
+    "meaning_ko": "할 수 있었다",
+    "pos": "v."
+  },
+  "counted": {
+    "term": "counted",
+    "meaning_ko": "셌다",
+    "pos": "v."
+  },
+  "counter-strikes": {
+    "term": "counter-strikes",
+    "meaning_ko": "반격들",
+    "pos": "n."
+  },
+  "countries": {
+    "term": "countries",
+    "meaning_ko": "국가들",
+    "pos": "n."
+  },
+  "country": {
+    "term": "country",
+    "meaning_ko": "국가",
+    "pos": "n."
+  },
+  "country's": {
+    "term": "country's",
+    "meaning_ko": "국가의",
+    "pos": "n."
+  },
+  "counts": {
+    "term": "counts",
+    "meaning_ko": "센다",
+    "pos": "v."
+  },
+  "couple": {
+    "term": "couple",
+    "meaning_ko": "부부",
+    "pos": "n."
+  },
+  "cover": {
+    "term": "cover",
+    "meaning_ko": "덮다",
+    "pos": "v."
+  },
+  "covered": {
+    "term": "covered",
+    "meaning_ko": "덮인",
+    "pos": "adj."
+  },
+  "created": {
+    "term": "created",
+    "meaning_ko": "만들었다",
+    "pos": "v."
+  },
+  "creates": {
+    "term": "creates",
+    "meaning_ko": "만든다",
+    "pos": "v."
+  },
+  "crisis": {
+    "term": "crisis",
+    "meaning_ko": "위기",
+    "pos": "n."
+  },
+  "critic": {
+    "term": "critic",
+    "meaning_ko": "비평가",
+    "pos": "n."
+  },
+  "critical": {
+    "term": "critical",
+    "meaning_ko": "비판적인",
+    "pos": "adj."
+  },
+  "criticised": {
+    "term": "criticised",
+    "meaning_ko": "비판했다",
+    "pos": "v."
+  },
+  "criticism": {
+    "term": "criticism",
+    "meaning_ko": "비판",
+    "pos": "n."
+  },
+  "critics": {
+    "term": "critics",
+    "meaning_ko": "비평가들",
+    "pos": "n."
+  },
+  "crowd": {
+    "term": "crowd",
+    "meaning_ko": "군중",
+    "pos": "n."
+  },
+  "crowded": {
+    "term": "crowded",
+    "meaning_ko": "붐비는",
+    "pos": "adj."
+  },
+  "cultural": {
+    "term": "cultural",
+    "meaning_ko": "문화적인",
+    "pos": "adj."
+  },
+  "curious": {
+    "term": "curious",
+    "meaning_ko": "호기심 많은",
+    "pos": "adj."
+  },
+  "current": {
+    "term": "current",
+    "meaning_ko": "현재의",
+    "pos": "adj."
+  },
+  "customers": {
+    "term": "customers",
+    "meaning_ko": "고객들",
+    "pos": "n."
+  },
+  "customs": {
+    "term": "customs",
+    "meaning_ko": "관세",
+    "pos": "n."
+  },
+  "cycle": {
+    "term": "cycle",
+    "meaning_ko": "순환",
+    "pos": "n."
+  },
+  "daily": {
+    "term": "daily",
+    "meaning_ko": "매일의",
+    "pos": "adj."
+  },
+  "damage": {
+    "term": "damage",
+    "meaning_ko": "피해",
+    "pos": "n."
+  },
+  "danger": {
+    "term": "danger",
+    "meaning_ko": "위험",
+    "pos": "n."
+  },
+  "dangerous": {
+    "term": "dangerous",
+    "meaning_ko": "위험한",
+    "pos": "adj."
+  },
+  "dark": {
+    "term": "dark",
+    "meaning_ko": "어두운",
+    "pos": "adj."
+  },
+  "data": {
+    "term": "data",
+    "meaning_ko": "데이터",
+    "pos": "n."
+  },
+  "date": {
+    "term": "date",
+    "meaning_ko": "날짜",
+    "pos": "n."
+  },
+  "day": {
+    "term": "day",
+    "meaning_ko": "날",
+    "pos": "n."
+  },
+  "days": {
+    "term": "days",
+    "meaning_ko": "날들",
+    "pos": "n."
+  },
+  "deadly": {
+    "term": "deadly",
+    "meaning_ko": "치명적인",
+    "pos": "adj."
+  },
+  "deal": {
+    "term": "deal",
+    "meaning_ko": "거래",
+    "pos": "n."
+  },
+  "deals": {
+    "term": "deals",
+    "meaning_ko": "거래들",
+    "pos": "n."
+  },
+  "death": {
+    "term": "death",
+    "meaning_ko": "죽음",
+    "pos": "n."
+  },
+  "debate": {
+    "term": "debate",
+    "meaning_ko": "논쟁",
+    "pos": "n."
+  },
+  "debut": {
+    "term": "debut",
+    "meaning_ko": "데뷔",
+    "pos": "n."
+  },
+  "decades": {
+    "term": "decades",
+    "meaning_ko": "수십 년",
+    "pos": "n."
+  },
+  "decide": {
+    "term": "decide",
+    "meaning_ko": "결정하다",
+    "pos": "v."
+  },
+  "decided": {
+    "term": "decided",
+    "meaning_ko": "결정했다",
+    "pos": "v."
+  },
+  "decision": {
+    "term": "decision",
+    "meaning_ko": "결정",
+    "pos": "n."
+  },
+  "decisions": {
+    "term": "decisions",
+    "meaning_ko": "결정들",
+    "pos": "n."
+  },
+  "deck": {
+    "term": "deck",
+    "meaning_ko": "갑판",
+    "pos": "n."
+  },
+  "declared": {
+    "term": "declared",
+    "meaning_ko": "선언했다",
+    "pos": "v."
+  },
+  "decline": {
+    "term": "decline",
+    "meaning_ko": "감소",
+    "pos": "n."
+  },
+  "decorations": {
+    "term": "decorations",
+    "meaning_ko": "장식들",
+    "pos": "n."
+  },
+  "deeper": {
+    "term": "deeper",
+    "meaning_ko": "더 깊은",
+    "pos": "adj."
+  },
+  "default": {
+    "term": "default",
+    "meaning_ko": "기본값",
+    "pos": "n."
+  },
+  "defense": {
+    "term": "defense",
+    "meaning_ko": "방어",
+    "pos": "n."
+  },
+  "degrade": {
+    "term": "degrade",
+    "meaning_ko": "저하시키다",
+    "pos": "v."
+  },
+  "delay": {
+    "term": "delay",
+    "meaning_ko": "지연",
+    "pos": "n."
+  },
+  "deliberately": {
+    "term": "deliberately",
+    "meaning_ko": "의도적으로",
+    "pos": "adv."
+  },
+  "delivered": {
+    "term": "delivered",
+    "meaning_ko": "배달했다",
+    "pos": "v."
+  },
+  "demand": {
+    "term": "demand",
+    "meaning_ko": "수요",
+    "pos": "n."
+  },
+  "democrat": {
+    "term": "democrat",
+    "meaning_ko": "민주당원",
+    "pos": "n."
+  },
+  "denial": {
+    "term": "denial",
+    "meaning_ko": "거부",
+    "pos": "n."
+  },
+  "departure": {
+    "term": "departure",
+    "meaning_ko": "출발",
+    "pos": "n."
+  },
+  "depend": {
+    "term": "depend",
+    "meaning_ko": "의존하다",
+    "pos": "v."
+  },
+  "depended": {
+    "term": "depended",
+    "meaning_ko": "의존했다",
+    "pos": "v."
+  },
+  "dependence": {
+    "term": "dependence",
+    "meaning_ko": "의존",
+    "pos": "n."
+  },
+  "depends": {
+    "term": "depends",
+    "meaning_ko": "의존한다",
+    "pos": "v."
+  },
+  "descended": {
+    "term": "descended",
+    "meaning_ko": "내려갔다",
+    "pos": "v."
+  },
+  "described": {
+    "term": "described",
+    "meaning_ko": "설명했다",
+    "pos": "v."
+  },
+  "design": {
+    "term": "design",
+    "meaning_ko": "설계",
+    "pos": "n."
+  },
+  "designed": {
+    "term": "designed",
+    "meaning_ko": "설계했다",
+    "pos": "v."
+  },
+  "designers": {
+    "term": "designers",
+    "meaning_ko": "디자이너들",
+    "pos": "n."
+  },
+  "designs": {
+    "term": "designs",
+    "meaning_ko": "설계들",
+    "pos": "n."
+  },
+  "desperate": {
+    "term": "desperate",
+    "meaning_ko": "절박한",
+    "pos": "adj."
+  },
+  "despite": {
+    "term": "despite",
+    "meaning_ko": "~에도 불구하고",
+    "pos": "prep."
+  },
+  "detail": {
+    "term": "detail",
+    "meaning_ko": "세부사항",
+    "pos": "n."
+  },
+  "detailed": {
+    "term": "detailed",
+    "meaning_ko": "상세한",
+    "pos": "adj."
+  },
+  "detained": {
+    "term": "detained",
+    "meaning_ko": "구금했다",
+    "pos": "v."
+  },
+  "determine": {
+    "term": "determine",
+    "meaning_ko": "결정하다",
+    "pos": "v."
+  },
+  "died": {
+    "term": "died",
+    "meaning_ko": "죽었다",
+    "pos": "v."
+  },
+  "differences": {
+    "term": "differences",
+    "meaning_ko": "차이들",
+    "pos": "n."
+  },
+  "different": {
+    "term": "different",
+    "meaning_ko": "다른",
+    "pos": "adj."
+  },
+  "difficult": {
+    "term": "difficult",
+    "meaning_ko": "어려운",
+    "pos": "adj."
+  },
+  "digital": {
+    "term": "digital",
+    "meaning_ko": "디지털의",
+    "pos": "adj."
+  },
+  "diplomacy": {
+    "term": "diplomacy",
+    "meaning_ko": "외교",
+    "pos": "n."
+  },
+  "direct": {
+    "term": "direct",
+    "meaning_ko": "직접",
+    "pos": "adj."
+  },
+  "direction": {
+    "term": "direction",
+    "meaning_ko": "방향",
+    "pos": "n."
+  },
+  "directions": {
+    "term": "directions",
+    "meaning_ko": "방향들",
+    "pos": "n."
+  },
+  "directly": {
+    "term": "directly",
+    "meaning_ko": "직접",
+    "pos": "adv."
+  },
+  "disable": {
+    "term": "disable",
+    "meaning_ko": "무능하게 하다",
+    "pos": "v."
+  },
+  "disagree": {
+    "term": "disagree",
+    "meaning_ko": "동의하지 않다",
+    "pos": "v."
+  },
+  "disagreed": {
+    "term": "disagreed",
+    "meaning_ko": "동의하지 않았다",
+    "pos": "v."
+  },
+  "disappearance": {
+    "term": "disappearance",
+    "meaning_ko": "실종",
+    "pos": "n."
+  },
+  "disappeared": {
+    "term": "disappeared",
+    "meaning_ko": "사라졌다",
+    "pos": "v."
+  },
+  "disaster": {
+    "term": "disaster",
+    "meaning_ko": "재해",
+    "pos": "n."
+  },
+  "discussions": {
+    "term": "discussions",
+    "meaning_ko": "논의들",
+    "pos": "n."
+  },
+  "disease": {
+    "term": "disease",
+    "meaning_ko": "질병",
+    "pos": "n."
+  },
+  "dismissed": {
+    "term": "dismissed",
+    "meaning_ko": "해고했다",
+    "pos": "v."
+  },
+  "dispersed": {
+    "term": "dispersed",
+    "meaning_ko": "흩어졌다",
+    "pos": "v."
+  },
+  "dispute": {
+    "term": "dispute",
+    "meaning_ko": "분쟁",
+    "pos": "n."
+  },
+  "disrupt": {
+    "term": "disrupt",
+    "meaning_ko": "방해하다",
+    "pos": "v."
+  },
+  "disruption": {
+    "term": "disruption",
+    "meaning_ko": "방해",
+    "pos": "n."
+  },
+  "dissection": {
+    "term": "dissection",
+    "meaning_ko": "해부",
+    "pos": "n."
+  },
+  "district": {
+    "term": "district",
+    "meaning_ko": "지역",
+    "pos": "n."
+  },
+  "divided": {
+    "term": "divided",
+    "meaning_ko": "나누었다",
+    "pos": "v."
+  },
+  "doctors": {
+    "term": "doctors",
+    "meaning_ko": "의사들",
+    "pos": "n."
+  },
+  "doing": {
+    "term": "doing",
+    "meaning_ko": "하고 있다",
+    "pos": "v."
+  },
+  "dollars": {
+    "term": "dollars",
+    "meaning_ko": "달러들",
+    "pos": "n."
+  },
+  "dominate": {
+    "term": "dominate",
+    "meaning_ko": "지배하다",
+    "pos": "v."
+  },
+  "done": {
+    "term": "done",
+    "meaning_ko": "완료했다",
+    "pos": "v."
+  },
+  "doodle-style": {
+    "term": "doodle-style",
+    "meaning_ko": "낙서 스타일의",
+    "pos": "adj."
+  },
+  "door": {
+    "term": "door",
+    "meaning_ko": "문",
+    "pos": "n."
+  },
+  "doors": {
+    "term": "doors",
+    "meaning_ko": "문들",
+    "pos": "n."
+  },
+  "doubling": {
+    "term": "doubling",
+    "meaning_ko": "두배로 늘리기",
+    "pos": "v."
+  },
+  "doubt": {
+    "term": "doubt",
+    "meaning_ko": "의심",
+    "pos": "n."
+  },
+  "down": {
+    "term": "down",
+    "meaning_ko": "아래로",
+    "pos": "adv."
+  },
+  "dozens": {
+    "term": "dozens",
+    "meaning_ko": "수십 개",
+    "pos": "n."
+  },
+  "dragged": {
+    "term": "dragged",
+    "meaning_ko": "끌었다",
+    "pos": "v."
+  },
+  "draw": {
+    "term": "draw",
+    "meaning_ko": "그리다",
+    "pos": "v."
+  },
+  "drawing": {
+    "term": "drawing",
+    "meaning_ko": "그림",
+    "pos": "n."
+  },
+  "drawings": {
+    "term": "drawings",
+    "meaning_ko": "그림들",
+    "pos": "n."
+  },
+  "drawn": {
+    "term": "drawn",
+    "meaning_ko": "그렸다",
+    "pos": "v."
+  },
+  "draws": {
+    "term": "draws",
+    "meaning_ko": "그린다",
+    "pos": "v."
+  },
+  "drew": {
+    "term": "drew",
+    "meaning_ko": "그렸다",
+    "pos": "v."
+  },
+  "drive": {
+    "term": "drive",
+    "meaning_ko": "운전하다",
+    "pos": "v."
+  },
+  "driven": {
+    "term": "driven",
+    "meaning_ko": "운전했다",
+    "pos": "v."
+  },
+  "driving": {
+    "term": "driving",
+    "meaning_ko": "운전",
+    "pos": "v."
+  },
+  "drop": {
+    "term": "drop",
+    "meaning_ko": "낙하",
+    "pos": "n."
+  },
+  "dropped": {
+    "term": "dropped",
+    "meaning_ko": "떨어뜨렸다",
+    "pos": "v."
+  },
+  "drops": {
+    "term": "drops",
+    "meaning_ko": "떨어진다",
+    "pos": "v."
+  },
+  "due": {
+    "term": "due",
+    "meaning_ko": "예정된",
+    "pos": "adj."
+  },
+  "dugout": {
+    "term": "dugout",
+    "meaning_ko": "더그아웃",
+    "pos": "n."
+  },
+  "during": {
+    "term": "during",
+    "meaning_ko": "~동안",
+    "pos": "prep."
+  },
+  "each": {
+    "term": "each",
+    "meaning_ko": "각각",
+    "pos": "pron."
+  },
+  "earlier": {
+    "term": "earlier",
+    "meaning_ko": "더 이른",
+    "pos": "adj."
+  },
+  "early": {
+    "term": "early",
+    "meaning_ko": "이른",
+    "pos": "adj."
+  },
+  "earnings": {
+    "term": "earnings",
+    "meaning_ko": "수익",
+    "pos": "n."
+  },
+  "earth": {
+    "term": "earth",
+    "meaning_ko": "지구",
+    "pos": "n."
+  },
+  "easily": {
+    "term": "easily",
+    "meaning_ko": "쉽게",
+    "pos": "adv."
+  },
+  "east": {
+    "term": "east",
+    "meaning_ko": "동쪽",
+    "pos": "n."
+  },
+  "eastern": {
+    "term": "eastern",
+    "meaning_ko": "동쪽의",
+    "pos": "adj."
+  },
+  "easy": {
+    "term": "easy",
+    "meaning_ko": "쉬운",
+    "pos": "adj."
+  },
+  "economies": {
+    "term": "economies",
+    "meaning_ko": "경제들",
+    "pos": "n."
+  },
+  "economy": {
+    "term": "economy",
+    "meaning_ko": "경제",
+    "pos": "n."
+  },
+  "edge": {
+    "term": "edge",
+    "meaning_ko": "가장자리",
+    "pos": "n."
+  },
+  "effect": {
+    "term": "effect",
+    "meaning_ko": "영향",
+    "pos": "n."
+  },
+  "effective": {
+    "term": "effective",
+    "meaning_ko": "효과적인",
+    "pos": "adj."
+  },
+  "effort": {
+    "term": "effort",
+    "meaning_ko": "노력",
+    "pos": "n."
+  },
+  "either": {
+    "term": "either",
+    "meaning_ko": "어느 쪽이든",
+    "pos": "pron."
+  },
+  "election": {
+    "term": "election",
+    "meaning_ko": "선거",
+    "pos": "n."
+  },
+  "electronics": {
+    "term": "electronics",
+    "meaning_ko": "전자제품",
+    "pos": "n."
+  },
+  "embassy": {
+    "term": "embassy",
+    "meaning_ko": "대사관",
+    "pos": "n."
+  },
+  "emergency": {
+    "term": "emergency",
+    "meaning_ko": "긴급상황",
+    "pos": "n."
+  },
+  "empty": {
+    "term": "empty",
+    "meaning_ko": "비어있는",
+    "pos": "adj."
+  },
+  "encounter": {
+    "term": "encounter",
+    "meaning_ko": "만나다",
+    "pos": "v."
+  },
+  "encourages": {
+    "term": "encourages",
+    "meaning_ko": "장려하다",
+    "pos": "v."
+  },
+  "encouraging": {
+    "term": "encouraging",
+    "meaning_ko": "고무적인",
+    "pos": "adj."
+  },
+  "end": {
+    "term": "end",
+    "meaning_ko": "끝",
+    "pos": "n."
+  },
+  "ends": {
+    "term": "ends",
+    "meaning_ko": "끝난다",
+    "pos": "v."
+  },
+  "energy": {
+    "term": "energy",
+    "meaning_ko": "에너지",
+    "pos": "n."
+  },
+  "enforce": {
+    "term": "enforce",
+    "meaning_ko": "시행하다",
+    "pos": "v."
+  },
+  "engagement": {
+    "term": "engagement",
+    "meaning_ko": "약혼",
+    "pos": "n."
+  },
+  "engine": {
+    "term": "engine",
+    "meaning_ko": "엔진",
+    "pos": "n."
+  },
+  "engineered": {
+    "term": "engineered",
+    "meaning_ko": "설계했다",
+    "pos": "v."
+  },
+  "engineers": {
+    "term": "engineers",
+    "meaning_ko": "엔지니어들",
+    "pos": "n."
+  },
+  "engines": {
+    "term": "engines",
+    "meaning_ko": "엔진들",
+    "pos": "n."
+  },
+  "enjoyed": {
+    "term": "enjoyed",
+    "meaning_ko": "즐겼다",
+    "pos": "v."
+  },
+  "enjoys": {
+    "term": "enjoys",
+    "meaning_ko": "즐긴다",
+    "pos": "v."
+  },
+  "enough": {
+    "term": "enough",
+    "meaning_ko": "충분한",
+    "pos": "adj."
+  },
+  "entertainment": {
+    "term": "entertainment",
+    "meaning_ko": "오락",
+    "pos": "n."
+  },
+  "entire": {
+    "term": "entire",
+    "meaning_ko": "전체의",
+    "pos": "adj."
+  },
+  "entirely": {
+    "term": "entirely",
+    "meaning_ko": "완전히",
+    "pos": "adv."
+  },
+  "entrance": {
+    "term": "entrance",
+    "meaning_ko": "입구",
+    "pos": "n."
+  },
+  "episode": {
+    "term": "episode",
+    "meaning_ko": "에피소드",
+    "pos": "n."
+  },
+  "equipment": {
+    "term": "equipment",
+    "meaning_ko": "장비",
+    "pos": "n."
+  },
+  "era's": {
+    "term": "era's",
+    "meaning_ko": "시대의",
+    "pos": "n."
+  },
+  "escalation": {
+    "term": "escalation",
+    "meaning_ko": "확대",
+    "pos": "n."
+  },
+  "escape": {
+    "term": "escape",
+    "meaning_ko": "탈출하다",
+    "pos": "v."
+  },
+  "especially": {
+    "term": "especially",
+    "meaning_ko": "특히",
+    "pos": "adv."
+  },
+  "european": {
+    "term": "european",
+    "meaning_ko": "유럽의",
+    "pos": "adj."
+  },
+  "even": {
+    "term": "even",
+    "meaning_ko": "심지어",
+    "pos": "adv."
+  },
+  "evening": {
+    "term": "evening",
+    "meaning_ko": "저녁",
+    "pos": "n."
+  },
+  "event": {
+    "term": "event",
+    "meaning_ko": "사건",
+    "pos": "n."
+  },
+  "events": {
+    "term": "events",
+    "meaning_ko": "사건들",
+    "pos": "n."
+  },
+  "eventually": {
+    "term": "eventually",
+    "meaning_ko": "결국",
+    "pos": "adv."
+  },
+  "ever": {
+    "term": "ever",
+    "meaning_ko": "지금까지",
+    "pos": "adv."
+  },
+  "every": {
+    "term": "every",
+    "meaning_ko": "매",
+    "pos": "adj."
+  },
+  "everyday": {
+    "term": "everyday",
+    "meaning_ko": "일상의",
+    "pos": "adj."
+  },
+  "everyone": {
+    "term": "everyone",
+    "meaning_ko": "모든 사람",
+    "pos": "pron."
+  },
+  "evidence": {
+    "term": "evidence",
+    "meaning_ko": "증거",
+    "pos": "n."
+  },
+  "exact": {
+    "term": "exact",
+    "meaning_ko": "정확한",
+    "pos": "adj."
+  },
+  "exactly": {
+    "term": "exactly",
+    "meaning_ko": "정확히",
+    "pos": "adv."
+  },
+  "examiner": {
+    "term": "examiner",
+    "meaning_ko": "심사관",
+    "pos": "n."
+  },
+  "examining": {
+    "term": "examining",
+    "meaning_ko": "검토하는",
+    "pos": "v."
+  },
+  "example": {
+    "term": "example",
+    "meaning_ko": "예",
+    "pos": "n."
+  },
+  "exchanged": {
+    "term": "exchanged",
+    "meaning_ko": "교환했다",
+    "pos": "v."
+  },
+  "exit": {
+    "term": "exit",
+    "meaning_ko": "출구",
+    "pos": "n."
+  },
+  "exits": {
+    "term": "exits",
+    "meaning_ko": "나간다",
+    "pos": "v."
+  },
+  "expect": {
+    "term": "expect",
+    "meaning_ko": "예상하다",
+    "pos": "v."
+  },
+  "expectations": {
+    "term": "expectations",
+    "meaning_ko": "기대",
+    "pos": "n."
+  },
+  "expected": {
+    "term": "expected",
+    "meaning_ko": "예상했다",
+    "pos": "v."
+  },
+  "expensive": {
+    "term": "expensive",
+    "meaning_ko": "비싼",
+    "pos": "adj."
+  },
+  "experience": {
+    "term": "experience",
+    "meaning_ko": "경험",
+    "pos": "n."
+  },
+  "experienced": {
+    "term": "experienced",
+    "meaning_ko": "경험한",
+    "pos": "adj."
+  },
+  "experts": {
+    "term": "experts",
+    "meaning_ko": "전문가들",
+    "pos": "n."
+  },
+  "explain": {
+    "term": "explain",
+    "meaning_ko": "설명하다",
+    "pos": "v."
+  },
+  "explained": {
+    "term": "explained",
+    "meaning_ko": "설명했다",
+    "pos": "v."
+  },
+  "explanation": {
+    "term": "explanation",
+    "meaning_ko": "설명",
+    "pos": "n."
+  },
+  "export": {
+    "term": "export",
+    "meaning_ko": "수출",
+    "pos": "n."
+  },
+  "exports": {
+    "term": "exports",
+    "meaning_ko": "수출하다",
+    "pos": "v."
+  },
+  "eye": {
+    "term": "eye",
+    "meaning_ko": "눈",
+    "pos": "n."
+  },
+  "face": {
+    "term": "face",
+    "meaning_ko": "얼굴",
+    "pos": "n."
+  },
+  "faced": {
+    "term": "faced",
+    "meaning_ko": "직면했다",
+    "pos": "v."
+  },
+  "faces": {
+    "term": "faces",
+    "meaning_ko": "직면한다",
+    "pos": "v."
+  },
+  "factories": {
+    "term": "factories",
+    "meaning_ko": "공장들",
+    "pos": "n."
+  },
+  "facts": {
+    "term": "facts",
+    "meaning_ko": "사실들",
+    "pos": "n."
+  },
+  "failed": {
+    "term": "failed",
+    "meaning_ko": "실패했다",
+    "pos": "v."
+  },
+  "fall": {
+    "term": "fall",
+    "meaning_ko": "가을",
+    "pos": "n."
+  },
+  "falling": {
+    "term": "falling",
+    "meaning_ko": "떨어지는",
+    "pos": "v."
+  },
+  "falls": {
+    "term": "falls",
+    "meaning_ko": "폭포",
+    "pos": "n."
+  },
+  "familiar": {
+    "term": "familiar",
+    "meaning_ko": "친숙한",
+    "pos": "adj."
+  },
+  "families": {
+    "term": "families",
+    "meaning_ko": "가족들",
+    "pos": "n."
+  },
+  "famous": {
+    "term": "famous",
+    "meaning_ko": "유명한",
+    "pos": "adj."
+  },
+  "fandom": {
+    "term": "fandom",
+    "meaning_ko": "팬덤",
+    "pos": "n."
+  },
+  "fans": {
+    "term": "fans",
+    "meaning_ko": "팬들",
+    "pos": "n."
+  },
+  "far": {
+    "term": "far",
+    "meaning_ko": "먼",
+    "pos": "adj."
+  },
+  "fashion": {
+    "term": "fashion",
+    "meaning_ko": "패션",
+    "pos": "n."
+  },
+  "fast": {
+    "term": "fast",
+    "meaning_ko": "빠른",
+    "pos": "adj."
+  },
+  "fatal": {
+    "term": "fatal",
+    "meaning_ko": "치명적인",
+    "pos": "adj."
+  },
+  "fear": {
+    "term": "fear",
+    "meaning_ko": "두려움",
+    "pos": "n."
+  },
+  "fears": {
+    "term": "fears",
+    "meaning_ko": "두려워한다",
+    "pos": "v."
+  },
+  "feature": {
+    "term": "feature",
+    "meaning_ko": "특징",
+    "pos": "n."
+  },
+  "features": {
+    "term": "features",
+    "meaning_ko": "특징들",
+    "pos": "n."
+  },
+  "feed": {
+    "term": "feed",
+    "meaning_ko": "먹이다",
+    "pos": "v."
+  },
+  "feel": {
+    "term": "feel",
+    "meaning_ko": "느끼다",
+    "pos": "v."
+  },
+  "feeling": {
+    "term": "feeling",
+    "meaning_ko": "감정",
+    "pos": "n."
+  },
+  "feels": {
+    "term": "feels",
+    "meaning_ko": "느낀다",
+    "pos": "v."
+  },
+  "fell": {
+    "term": "fell",
+    "meaning_ko": "떨어졌다",
+    "pos": "v."
+  },
+  "felt": {
+    "term": "felt",
+    "meaning_ko": "느꼈다",
+    "pos": "v."
+  },
+  "few": {
+    "term": "few",
+    "meaning_ko": "적은",
+    "pos": "adj."
+  },
+  "fight": {
+    "term": "fight",
+    "meaning_ko": "싸움",
+    "pos": "n."
+  },
+  "fighting": {
+    "term": "fighting",
+    "meaning_ko": "싸우는",
+    "pos": "v."
+  },
+  "fights": {
+    "term": "fights",
+    "meaning_ko": "싸운다",
+    "pos": "v."
+  },
+  "figure": {
+    "term": "figure",
+    "meaning_ko": "수치",
+    "pos": "n."
+  },
+  "figures": {
+    "term": "figures",
+    "meaning_ko": "수치들",
+    "pos": "n."
+  },
+  "fill": {
+    "term": "fill",
+    "meaning_ko": "채우다",
+    "pos": "v."
+  },
+  "filled": {
+    "term": "filled",
+    "meaning_ko": "채워진",
+    "pos": "adj."
+  },
+  "final": {
+    "term": "final",
+    "meaning_ko": "최종의",
+    "pos": "adj."
+  },
+  "finally": {
+    "term": "finally",
+    "meaning_ko": "마침내",
+    "pos": "adv."
+  },
+  "find": {
+    "term": "find",
+    "meaning_ko": "찾다",
+    "pos": "v."
+  },
+  "finding": {
+    "term": "finding",
+    "meaning_ko": "발견",
+    "pos": "n."
+  },
+  "findings": {
+    "term": "findings",
+    "meaning_ko": "발견들",
+    "pos": "n."
+  },
+  "fine": {
+    "term": "fine",
+    "meaning_ko": "벌금",
+    "pos": "n."
+  },
+  "fined": {
+    "term": "fined",
+    "meaning_ko": "벌금을 부과했다",
+    "pos": "v."
+  },
+  "finish": {
+    "term": "finish",
+    "meaning_ko": "끝내다",
+    "pos": "v."
+  },
+  "fire": {
+    "term": "fire",
+    "meaning_ko": "불",
+    "pos": "n."
+  },
+  "firefighters": {
+    "term": "firefighters",
+    "meaning_ko": "소방관들",
+    "pos": "n."
+  },
+  "firm": {
+    "term": "firm",
+    "meaning_ko": "회사",
+    "pos": "n."
+  },
+  "firmly": {
+    "term": "firmly",
+    "meaning_ko": "단호히",
+    "pos": "adv."
+  },
+  "firms": {
+    "term": "firms",
+    "meaning_ko": "회사들",
+    "pos": "n."
+  },
+  "first": {
+    "term": "first",
+    "meaning_ko": "첫번째",
+    "pos": "adj."
+  },
+  "five": {
+    "term": "five",
+    "meaning_ko": "다섯",
+    "pos": "n."
+  },
+  "fix": {
+    "term": "fix",
+    "meaning_ko": "고치다",
+    "pos": "v."
+  },
+  "flagship": {
+    "term": "flagship",
+    "meaning_ko": "대표적인",
+    "pos": "adj."
+  },
+  "flames": {
+    "term": "flames",
+    "meaning_ko": "불길들",
+    "pos": "n."
+  },
+  "flammable": {
+    "term": "flammable",
+    "meaning_ko": "인화성의",
+    "pos": "adj."
+  },
+  "flatly": {
+    "term": "flatly",
+    "meaning_ko": "명백히",
+    "pos": "adv."
+  },
+  "flies": {
+    "term": "flies",
+    "meaning_ko": "날아간다",
+    "pos": "v."
+  },
+  "flight": {
+    "term": "flight",
+    "meaning_ko": "비행",
+    "pos": "n."
+  },
+  "floating": {
+    "term": "floating",
+    "meaning_ko": "떠 있는",
+    "pos": "adj."
+  },
+  "flowing": {
+    "term": "flowing",
+    "meaning_ko": "흐르는",
+    "pos": "adj."
+  },
+  "fly": {
+    "term": "fly",
+    "meaning_ko": "날다",
+    "pos": "v."
+  },
+  "flying": {
+    "term": "flying",
+    "meaning_ko": "비행하는",
+    "pos": "adj."
+  },
+  "focus": {
+    "term": "focus",
+    "meaning_ko": "초점",
+    "pos": "n."
+  },
+  "focused": {
+    "term": "focused",
+    "meaning_ko": "집중한",
+    "pos": "adj."
+  },
+  "follow": {
+    "term": "follow",
+    "meaning_ko": "따르다",
+    "pos": "v."
+  },
+  "followed": {
+    "term": "followed",
+    "meaning_ko": "따랐다",
+    "pos": "v."
+  },
+  "following": {
+    "term": "following",
+    "meaning_ko": "다음의",
+    "pos": "adj."
+  },
+  "follows": {
+    "term": "follows",
+    "meaning_ko": "따른다",
+    "pos": "v."
+  },
+  "footage": {
+    "term": "footage",
+    "meaning_ko": "영상",
+    "pos": "n."
+  },
+  "forceful": {
+    "term": "forceful",
+    "meaning_ko": "강력한",
+    "pos": "adj."
+  },
+  "forces": {
+    "term": "forces",
+    "meaning_ko": "세력",
+    "pos": "n."
+  },
+  "foreign": {
+    "term": "foreign",
+    "meaning_ko": "외국의",
+    "pos": "adj."
+  },
+  "formats": {
+    "term": "formats",
+    "meaning_ko": "형식",
+    "pos": "n."
+  },
+  "fortunes": {
+    "term": "fortunes",
+    "meaning_ko": "운",
+    "pos": "n."
+  },
+  "fragile": {
+    "term": "fragile",
+    "meaning_ko": "부서지기 쉬운",
+    "pos": "adj."
+  },
+  "frame": {
+    "term": "frame",
+    "meaning_ko": "틀",
+    "pos": "n."
+  },
+  "framed": {
+    "term": "framed",
+    "meaning_ko": "틀지은",
+    "pos": "adj."
+  },
+  "fraying": {
+    "term": "fraying",
+    "meaning_ko": "해지는",
+    "pos": "adj."
+  },
+  "free": {
+    "term": "free",
+    "meaning_ko": "자유로운",
+    "pos": "adj."
+  },
+  "fresh": {
+    "term": "fresh",
+    "meaning_ko": "신선한",
+    "pos": "adj."
+  },
+  "friendly": {
+    "term": "friendly",
+    "meaning_ko": "우호적인",
+    "pos": "adj."
+  },
+  "friends": {
+    "term": "friends",
+    "meaning_ko": "친구들",
+    "pos": "n."
+  },
+  "frightening": {
+    "term": "frightening",
+    "meaning_ko": "무서운",
+    "pos": "adj."
+  },
+  "front": {
+    "term": "front",
+    "meaning_ko": "앞",
+    "pos": "n."
+  },
+  "fueled": {
+    "term": "fueled",
+    "meaning_ko": "촉발했다",
+    "pos": "v."
+  },
+  "full": {
+    "term": "full",
+    "meaning_ko": "가득한",
+    "pos": "adj."
+  },
+  "fully": {
+    "term": "fully",
+    "meaning_ko": "완전히",
+    "pos": "adv."
+  },
+  "fun": {
+    "term": "fun",
+    "meaning_ko": "재미",
+    "pos": "n."
+  },
+  "further": {
+    "term": "further",
+    "meaning_ko": "더욱",
+    "pos": "adv."
+  },
+  "future": {
+    "term": "future",
+    "meaning_ko": "미래",
+    "pos": "n."
+  },
+  "gains": {
+    "term": "gains",
+    "meaning_ko": "상승",
+    "pos": "n."
+  },
+  "game": {
+    "term": "game",
+    "meaning_ko": "경기",
+    "pos": "n."
+  },
+  "games": {
+    "term": "games",
+    "meaning_ko": "경기들",
+    "pos": "n."
+  },
+  "gap": {
+    "term": "gap",
+    "meaning_ko": "격차",
+    "pos": "n."
+  },
+  "gathered": {
+    "term": "gathered",
+    "meaning_ko": "모였다",
+    "pos": "v."
+  },
+  "gave": {
+    "term": "gave",
+    "meaning_ko": "주었다",
+    "pos": "v."
+  },
+  "generation": {
+    "term": "generation",
+    "meaning_ko": "세대",
+    "pos": "n."
+  },
+  "genuine": {
+    "term": "genuine",
+    "meaning_ko": "진정한",
+    "pos": "adj."
+  },
+  "get": {
+    "term": "get",
+    "meaning_ko": "얻다",
+    "pos": "v."
+  },
+  "getting": {
+    "term": "getting",
+    "meaning_ko": "얻는",
+    "pos": "v."
+  },
+  "giant": {
+    "term": "giant",
+    "meaning_ko": "거대한",
+    "pos": "adj."
+  },
+  "give": {
+    "term": "give",
+    "meaning_ko": "주다",
+    "pos": "v."
+  },
+  "given": {
+    "term": "given",
+    "meaning_ko": "주어진",
+    "pos": "adj."
+  },
+  "gives": {
+    "term": "gives",
+    "meaning_ko": "준다",
+    "pos": "v."
+  },
+  "giving": {
+    "term": "giving",
+    "meaning_ko": "주는",
+    "pos": "v."
+  },
+  "global": {
+    "term": "global",
+    "meaning_ko": "세계적인",
+    "pos": "adj."
+  },
+  "goal": {
+    "term": "goal",
+    "meaning_ko": "목표",
+    "pos": "n."
+  },
+  "goes": {
+    "term": "goes",
+    "meaning_ko": "간다",
+    "pos": "v."
+  },
+  "going": {
+    "term": "going",
+    "meaning_ko": "가는",
+    "pos": "v."
+  },
+  "gone": {
+    "term": "gone",
+    "meaning_ko": "떠난",
+    "pos": "adj."
+  },
+  "good": {
+    "term": "good",
+    "meaning_ko": "좋은",
+    "pos": "adj."
+  },
+  "goods": {
+    "term": "goods",
+    "meaning_ko": "물품",
+    "pos": "n."
+  },
+  "got": {
+    "term": "got",
+    "meaning_ko": "얻었다",
+    "pos": "v."
+  },
+  "government": {
+    "term": "government",
+    "meaning_ko": "정부",
+    "pos": "n."
+  },
+  "governments": {
+    "term": "governments",
+    "meaning_ko": "정부들",
+    "pos": "n."
+  },
+  "governor": {
+    "term": "governor",
+    "meaning_ko": "주지사",
+    "pos": "n."
+  },
+  "great": {
+    "term": "great",
+    "meaning_ko": "위대한",
+    "pos": "adj."
+  },
+  "grief": {
+    "term": "grief",
+    "meaning_ko": "슬픔",
+    "pos": "n."
+  },
+  "ground": {
+    "term": "ground",
+    "meaning_ko": "지면",
+    "pos": "n."
+  },
+  "group": {
+    "term": "group",
+    "meaning_ko": "집단",
+    "pos": "n."
+  },
+  "groups": {
+    "term": "groups",
+    "meaning_ko": "집단들",
+    "pos": "n."
+  },
+  "growing": {
+    "term": "growing",
+    "meaning_ko": "성장하는",
+    "pos": "adj."
+  },
+  "grown": {
+    "term": "grown",
+    "meaning_ko": "성장한",
+    "pos": "adj."
+  },
+  "growth": {
+    "term": "growth",
+    "meaning_ko": "성장",
+    "pos": "n."
+  },
+  "guard": {
+    "term": "guard",
+    "meaning_ko": "경비",
+    "pos": "n."
+  },
+  "guessing": {
+    "term": "guessing",
+    "meaning_ko": "추측하는",
+    "pos": "v."
+  },
+  "guidance": {
+    "term": "guidance",
+    "meaning_ko": "지도",
+    "pos": "n."
+  },
+  "guide": {
+    "term": "guide",
+    "meaning_ko": "안내하다",
+    "pos": "v."
+  },
+  "gulf": {
+    "term": "gulf",
+    "meaning_ko": "만",
+    "pos": "n."
+  },
+  "half": {
+    "term": "half",
+    "meaning_ko": "반",
+    "pos": "n."
+  },
+  "hand": {
+    "term": "hand",
+    "meaning_ko": "손",
+    "pos": "n."
+  },
+  "hand-drawn": {
+    "term": "hand-drawn",
+    "meaning_ko": "손으로 그린",
+    "pos": "adj."
+  },
+  "handful": {
+    "term": "handful",
+    "meaning_ko": "소수",
+    "pos": "n."
+  },
+  "happened": {
+    "term": "happened",
+    "meaning_ko": "일어났다",
+    "pos": "v."
+  },
+  "happens": {
+    "term": "happens",
+    "meaning_ko": "일어난다",
+    "pos": "v."
+  },
+  "happy": {
+    "term": "happy",
+    "meaning_ko": "행복한",
+    "pos": "adj."
+  },
+  "hard": {
+    "term": "hard",
+    "meaning_ko": "힘든",
+    "pos": "adj."
+  },
+  "harder": {
+    "term": "harder",
+    "meaning_ko": "더 힘든",
+    "pos": "adj."
+  },
+  "hardware": {
+    "term": "hardware",
+    "meaning_ko": "하드웨어",
+    "pos": "n."
+  },
+  "harm": {
+    "term": "harm",
+    "meaning_ko": "해치다",
+    "pos": "v."
+  },
+  "harmful": {
+    "term": "harmful",
+    "meaning_ko": "해로운",
+    "pos": "adj."
+  },
+  "harsh": {
+    "term": "harsh",
+    "meaning_ko": "가혹한",
+    "pos": "adj."
+  },
+  "hat": {
+    "term": "hat",
+    "meaning_ko": "모자",
+    "pos": "n."
+  },
+  "hawk": {
+    "term": "hawk",
+    "meaning_ko": "매",
+    "pos": "n."
+  },
+  "headed": {
+    "term": "headed",
+    "meaning_ko": "향한",
+    "pos": "adj."
+  },
+  "heading": {
+    "term": "heading",
+    "meaning_ko": "제목",
+    "pos": "n."
+  },
+  "headlines": {
+    "term": "headlines",
+    "meaning_ko": "헤드라인",
+    "pos": "n."
+  },
+  "health": {
+    "term": "health",
+    "meaning_ko": "건강",
+    "pos": "n."
+  },
+  "healthy": {
+    "term": "healthy",
+    "meaning_ko": "건강한",
+    "pos": "adj."
+  },
+  "heart": {
+    "term": "heart",
+    "meaning_ko": "심장",
+    "pos": "n."
+  },
+  "heart-related": {
+    "term": "heart-related",
+    "meaning_ko": "심장 관련의",
+    "pos": "adj."
+  },
+  "heavily": {
+    "term": "heavily",
+    "meaning_ko": "많이",
+    "pos": "adv."
+  },
+  "heavy": {
+    "term": "heavy",
+    "meaning_ko": "무거운",
+    "pos": "adj."
+  },
+  "held": {
+    "term": "held",
+    "meaning_ko": "개최했다",
+    "pos": "v."
+  },
+  "help": {
+    "term": "help",
+    "meaning_ko": "돕다",
+    "pos": "v."
+  },
+  "helped": {
+    "term": "helped",
+    "meaning_ko": "도왔다",
+    "pos": "v."
+  },
+  "helping": {
+    "term": "helping",
+    "meaning_ko": "도움",
+    "pos": "n."
+  },
+  "helps": {
+    "term": "helps",
+    "meaning_ko": "돕는다",
+    "pos": "v."
+  },
+  "herald": {
+    "term": "herald",
+    "meaning_ko": "알리다",
+    "pos": "v."
+  },
+  "hesitate": {
+    "term": "hesitate",
+    "meaning_ko": "망설이다",
+    "pos": "v."
+  },
+  "high": {
+    "term": "high",
+    "meaning_ko": "높은",
+    "pos": "adj."
+  },
+  "higher": {
+    "term": "higher",
+    "meaning_ko": "더 높은",
+    "pos": "adj."
+  },
+  "highest": {
+    "term": "highest",
+    "meaning_ko": "가장 높은",
+    "pos": "adj."
+  },
+  "highly": {
+    "term": "highly",
+    "meaning_ko": "매우",
+    "pos": "adv."
+  },
+  "hills": {
+    "term": "hills",
+    "meaning_ko": "언덕",
+    "pos": "n."
+  },
+  "himself": {
+    "term": "himself",
+    "meaning_ko": "자신",
+    "pos": "pron."
+  },
+  "history": {
+    "term": "history",
+    "meaning_ko": "역사",
+    "pos": "n."
+  },
+  "hit": {
+    "term": "hit",
+    "meaning_ko": "맞히다",
+    "pos": "v."
+  },
+  "hold": {
+    "term": "hold",
+    "meaning_ko": "개최하다",
+    "pos": "v."
+  },
+  "home": {
+    "term": "home",
+    "meaning_ko": "집",
+    "pos": "n."
+  },
+  "hooked": {
+    "term": "hooked",
+    "meaning_ko": "중독된",
+    "pos": "adj."
+  },
+  "hoping": {
+    "term": "hoping",
+    "meaning_ko": "바라는",
+    "pos": "v."
+  },
+  "hospital": {
+    "term": "hospital",
+    "meaning_ko": "병원",
+    "pos": "n."
+  },
+  "hospitalization": {
+    "term": "hospitalization",
+    "meaning_ko": "입원",
+    "pos": "n."
+  },
+  "hospitals": {
+    "term": "hospitals",
+    "meaning_ko": "병원들",
+    "pos": "n."
+  },
+  "hot": {
+    "term": "hot",
+    "meaning_ko": "뜨거운",
+    "pos": "adj."
+  },
+  "hour": {
+    "term": "hour",
+    "meaning_ko": "시간",
+    "pos": "n."
+  },
+  "hours": {
+    "term": "hours",
+    "meaning_ko": "시간들",
+    "pos": "n."
+  },
+  "how": {
+    "term": "how",
+    "meaning_ko": "어떻게",
+    "pos": "adv."
+  },
+  "however": {
+    "term": "however",
+    "meaning_ko": "그러나",
+    "pos": "conj."
+  },
+  "huge": {
+    "term": "huge",
+    "meaning_ko": "거대한",
+    "pos": "adj."
+  },
+  "hunger": {
+    "term": "hunger",
+    "meaning_ko": "기아",
+    "pos": "n."
+  },
+  "hurt": {
+    "term": "hurt",
+    "meaning_ko": "상처입히다",
+    "pos": "v."
+  },
+  "hype-driven": {
+    "term": "hype-driven",
+    "meaning_ko": "과장에 의한",
+    "pos": "adj."
+  },
+  "identity": {
+    "term": "identity",
+    "meaning_ko": "정체성",
+    "pos": "n."
+  },
+  "ignored": {
+    "term": "ignored",
+    "meaning_ko": "무시했다",
+    "pos": "v."
+  },
+  "illness": {
+    "term": "illness",
+    "meaning_ko": "병",
+    "pos": "n."
+  },
+  "images": {
+    "term": "images",
+    "meaning_ko": "이미지들",
+    "pos": "n."
+  },
+  "immediate": {
+    "term": "immediate",
+    "meaning_ko": "즉각적인",
+    "pos": "adj."
+  },
+  "important": {
+    "term": "important",
+    "meaning_ko": "중요한",
+    "pos": "adj."
+  },
+  "imports": {
+    "term": "imports",
+    "meaning_ko": "수입품들",
+    "pos": "n."
+  },
+  "in-person": {
+    "term": "in-person",
+    "meaning_ko": "대면의",
+    "pos": "adj."
+  },
+  "incident": {
+    "term": "incident",
+    "meaning_ko": "사건",
+    "pos": "n."
+  },
+  "include": {
+    "term": "include",
+    "meaning_ko": "포함하다",
+    "pos": "v."
+  },
+  "including": {
+    "term": "including",
+    "meaning_ko": "포함하여",
+    "pos": "prep."
+  },
+  "increase": {
+    "term": "increase",
+    "meaning_ko": "증가하다",
+    "pos": "v."
+  },
+  "increasingly": {
+    "term": "increasingly",
+    "meaning_ko": "점점 더",
+    "pos": "adv."
+  },
+  "independently": {
+    "term": "independently",
+    "meaning_ko": "독립적으로",
+    "pos": "adv."
+  },
+  "index": {
+    "term": "index",
+    "meaning_ko": "지수",
+    "pos": "n."
+  },
+  "infinite": {
+    "term": "infinite",
+    "meaning_ko": "무한한",
+    "pos": "adj."
+  },
+  "influence": {
+    "term": "influence",
+    "meaning_ko": "영향",
+    "pos": "n."
+  },
+  "injured": {
+    "term": "injured",
+    "meaning_ko": "부상당한",
+    "pos": "adj."
+  },
+  "injury": {
+    "term": "injury",
+    "meaning_ko": "부상",
+    "pos": "n."
+  },
+  "inside": {
+    "term": "inside",
+    "meaning_ko": "내부에",
+    "pos": "prep."
+  },
+  "insist": {
+    "term": "insist",
+    "meaning_ko": "주장하다",
+    "pos": "v."
+  },
+  "insisted": {
+    "term": "insisted",
+    "meaning_ko": "주장했다",
+    "pos": "v."
+  },
+  "insists": {
+    "term": "insists",
+    "meaning_ko": "주장한다",
+    "pos": "v."
+  },
+  "inspect": {
+    "term": "inspect",
+    "meaning_ko": "검사하다",
+    "pos": "v."
+  },
+  "install": {
+    "term": "install",
+    "meaning_ko": "설치하다",
+    "pos": "v."
+  },
+  "instant": {
+    "term": "instant",
+    "meaning_ko": "즉시",
+    "pos": "adv."
+  },
+  "instead": {
+    "term": "instead",
+    "meaning_ko": "대신",
+    "pos": "adv."
+  },
+  "insurance": {
+    "term": "insurance",
+    "meaning_ko": "보험",
+    "pos": "n."
+  },
+  "intelligence": {
+    "term": "intelligence",
+    "meaning_ko": "정보",
+    "pos": "n."
+  },
+  "intends": {
+    "term": "intends",
+    "meaning_ko": "의도한다",
+    "pos": "v."
+  },
+  "intent": {
+    "term": "intent",
+    "meaning_ko": "의도",
+    "pos": "n."
+  },
+  "interests": {
+    "term": "interests",
+    "meaning_ko": "이익들",
+    "pos": "n."
+  },
+  "interior": {
+    "term": "interior",
+    "meaning_ko": "내부의",
+    "pos": "adj."
+  },
+  "interrupted": {
+    "term": "interrupted",
+    "meaning_ko": "중단했다",
+    "pos": "v."
+  },
+  "into": {
+    "term": "into",
+    "meaning_ko": "...로",
+    "pos": "prep."
+  },
+  "introduce": {
+    "term": "introduce",
+    "meaning_ko": "소개하다",
+    "pos": "v."
+  },
+  "investigation": {
+    "term": "investigation",
+    "meaning_ko": "수사",
+    "pos": "n."
+  },
+  "investigators": {
+    "term": "investigators",
+    "meaning_ko": "수사관들",
+    "pos": "n."
+  },
+  "investors": {
+    "term": "investors",
+    "meaning_ko": "투자자들",
+    "pos": "n."
+  },
+  "involved": {
+    "term": "involved",
+    "meaning_ko": "관련된",
+    "pos": "adj."
+  },
+  "involves": {
+    "term": "involves",
+    "meaning_ko": "포함한다",
+    "pos": "v."
+  },
+  "israeli": {
+    "term": "israeli",
+    "meaning_ko": "이스라엘의",
+    "pos": "adj."
+  },
+  "issued": {
+    "term": "issued",
+    "meaning_ko": "발행했다",
+    "pos": "v."
+  },
+  "items": {
+    "term": "items",
+    "meaning_ko": "항목들",
+    "pos": "n."
+  },
+  "itself": {
+    "term": "itself",
+    "meaning_ko": "그 자체",
+    "pos": "pron."
+  },
+  "jacket": {
+    "term": "jacket",
+    "meaning_ko": "재킷",
+    "pos": "n."
+  },
+  "jersey": {
+    "term": "jersey",
+    "meaning_ko": "저지",
+    "pos": "n."
+  },
+  "job": {
+    "term": "job",
+    "meaning_ko": "일",
+    "pos": "n."
+  },
+  "jobs": {
+    "term": "jobs",
+    "meaning_ko": "일자리들",
+    "pos": "n."
+  },
+  "joined": {
+    "term": "joined",
+    "meaning_ko": "참가했다",
+    "pos": "v."
+  },
+  "journalists": {
+    "term": "journalists",
+    "meaning_ko": "기자들",
+    "pos": "n."
+  },
+  "journeys": {
+    "term": "journeys",
+    "meaning_ko": "여정들",
+    "pos": "n."
+  },
+  "judged": {
+    "term": "judged",
+    "meaning_ko": "판단했다",
+    "pos": "v."
+  },
+  "july": {
+    "term": "july",
+    "meaning_ko": "7월",
+    "pos": "n."
+  },
+  "jump": {
+    "term": "jump",
+    "meaning_ko": "뛰다",
+    "pos": "v."
+  },
+  "jumped": {
+    "term": "jumped",
+    "meaning_ko": "뛰었다",
+    "pos": "v."
+  },
+  "jumpers": {
+    "term": "jumpers",
+    "meaning_ko": "뛰는 사람들",
+    "pos": "n."
+  },
+  "june": {
+    "term": "june",
+    "meaning_ko": "6월",
+    "pos": "n."
+  },
+  "keenly": {
+    "term": "keenly",
+    "meaning_ko": "예리하게",
+    "pos": "adv."
+  },
+  "keep": {
+    "term": "keep",
+    "meaning_ko": "유지하다",
+    "pos": "v."
+  },
+  "kept": {
+    "term": "kept",
+    "meaning_ko": "유지했다",
+    "pos": "v."
+  },
+  "key": {
+    "term": "key",
+    "meaning_ko": "핵심적인",
+    "pos": "adj."
+  },
+  "keywords": {
+    "term": "keywords",
+    "meaning_ko": "키워드들",
+    "pos": "n."
+  },
+  "killed": {
+    "term": "killed",
+    "meaning_ko": "죽였다",
+    "pos": "v."
+  },
+  "kind": {
+    "term": "kind",
+    "meaning_ko": "종류",
+    "pos": "n."
+  },
+  "know": {
+    "term": "know",
+    "meaning_ko": "알다",
+    "pos": "v."
+  },
+  "known": {
+    "term": "known",
+    "meaning_ko": "알려진",
+    "pos": "adj."
+  },
+  "korean": {
+    "term": "korean",
+    "meaning_ko": "한국의",
+    "pos": "adj."
+  },
+  "korean-made": {
+    "term": "korean-made",
+    "meaning_ko": "한국산",
+    "pos": "adj."
+  },
+  "labels": {
+    "term": "labels",
+    "meaning_ko": "레이블들",
+    "pos": "n."
+  },
+  "lack": {
+    "term": "lack",
+    "meaning_ko": "부족",
+    "pos": "n."
+  },
+  "landing": {
+    "term": "landing",
+    "meaning_ko": "착륙",
+    "pos": "n."
+  },
+  "lands": {
+    "term": "lands",
+    "meaning_ko": "착륙한다",
+    "pos": "v."
+  },
+  "large": {
+    "term": "large",
+    "meaning_ko": "큰",
+    "pos": "adj."
+  },
+  "largely": {
+    "term": "largely",
+    "meaning_ko": "주로",
+    "pos": "adv."
+  },
+  "larger": {
+    "term": "larger",
+    "meaning_ko": "더 큰",
+    "pos": "adj."
+  },
+  "largest": {
+    "term": "largest",
+    "meaning_ko": "가장 큰",
+    "pos": "adj."
+  },
+  "last": {
+    "term": "last",
+    "meaning_ko": "마지막",
+    "pos": "adj."
+  },
+  "lasted": {
+    "term": "lasted",
+    "meaning_ko": "지속했다",
+    "pos": "v."
+  },
+  "late": {
+    "term": "late",
+    "meaning_ko": "늦은",
+    "pos": "adj."
+  },
+  "later": {
+    "term": "later",
+    "meaning_ko": "나중에",
+    "pos": "adv."
+  },
+  "launch": {
+    "term": "launch",
+    "meaning_ko": "출시하다",
+    "pos": "v."
+  },
+  "launched": {
+    "term": "launched",
+    "meaning_ko": "출시했다",
+    "pos": "v."
+  },
+  "launches": {
+    "term": "launches",
+    "meaning_ko": "출시한다",
+    "pos": "v."
+  },
+  "law": {
+    "term": "law",
+    "meaning_ko": "법",
+    "pos": "n."
+  },
+  "lawmaker": {
+    "term": "lawmaker",
+    "meaning_ko": "의원",
+    "pos": "n."
+  },
+  "lawmakers": {
+    "term": "lawmakers",
+    "meaning_ko": "의원들",
+    "pos": "n."
+  },
+  "lead": {
+    "term": "lead",
+    "meaning_ko": "주도하다",
+    "pos": "v."
+  },
+  "leaders": {
+    "term": "leaders",
+    "meaning_ko": "지도자들",
+    "pos": "n."
+  },
+  "league": {
+    "term": "league",
+    "meaning_ko": "리그",
+    "pos": "n."
+  },
+  "leans": {
+    "term": "leans",
+    "meaning_ko": "기울어진다",
+    "pos": "v."
+  },
+  "least": {
+    "term": "least",
+    "meaning_ko": "최소",
+    "pos": "adv."
+  },
+  "leave": {
+    "term": "leave",
+    "meaning_ko": "떠나다",
+    "pos": "v."
+  },
+  "leaves": {
+    "term": "leaves",
+    "meaning_ko": "떠난다",
+    "pos": "v."
+  },
+  "led": {
+    "term": "led",
+    "meaning_ko": "주도했다",
+    "pos": "v."
+  },
+  "left": {
+    "term": "left",
+    "meaning_ko": "떠났다",
+    "pos": "v."
+  },
+  "legs": {
+    "term": "legs",
+    "meaning_ko": "다리들",
+    "pos": "n."
+  },
+  "less": {
+    "term": "less",
+    "meaning_ko": "더 적은",
+    "pos": "adj."
+  },
+  "lessons": {
+    "term": "lessons",
+    "meaning_ko": "교훈들",
+    "pos": "n."
+  },
+  "let": {
+    "term": "let",
+    "meaning_ko": "허락하다",
+    "pos": "v."
+  },
+  "lets": {
+    "term": "lets",
+    "meaning_ko": "허락한다",
+    "pos": "v."
+  },
+  "life": {
+    "term": "life",
+    "meaning_ko": "생명",
+    "pos": "n."
+  },
+  "lift": {
+    "term": "lift",
+    "meaning_ko": "들어올리다",
+    "pos": "v."
+  },
+  "lifts": {
+    "term": "lifts",
+    "meaning_ko": "들어올린다",
+    "pos": "v."
+  },
+  "like": {
+    "term": "like",
+    "meaning_ko": "좋아하다",
+    "pos": "v."
+  },
+  "likely": {
+    "term": "likely",
+    "meaning_ko": "아마도",
+    "pos": "adv."
+  },
+  "limited": {
+    "term": "limited",
+    "meaning_ko": "제한된",
+    "pos": "adj."
+  },
+  "line": {
+    "term": "line",
+    "meaning_ko": "줄",
+    "pos": "n."
+  },
+  "lines": {
+    "term": "lines",
+    "meaning_ko": "줄들",
+    "pos": "n."
+  },
+  "lineup": {
+    "term": "lineup",
+    "meaning_ko": "라인업",
+    "pos": "n."
+  },
+  "linked": {
+    "term": "linked",
+    "meaning_ko": "연결된",
+    "pos": "adj."
+  },
+  "links": {
+    "term": "links",
+    "meaning_ko": "연결한다",
+    "pos": "v."
+  },
+  "listing": {
+    "term": "listing",
+    "meaning_ko": "목록",
+    "pos": "n."
+  },
+  "little": {
+    "term": "little",
+    "meaning_ko": "작은",
+    "pos": "adj."
+  },
+  "live": {
+    "term": "live",
+    "meaning_ko": "살다",
+    "pos": "v."
+  },
+  "live-shopping": {
+    "term": "live-shopping",
+    "meaning_ko": "라이브 쇼핑",
+    "pos": "n."
+  },
+  "lively": {
+    "term": "lively",
+    "meaning_ko": "활발한",
+    "pos": "adj."
+  },
+  "lives": {
+    "term": "lives",
+    "meaning_ko": "산다",
+    "pos": "v."
+  },
+  "local": {
+    "term": "local",
+    "meaning_ko": "지역의",
+    "pos": "adj."
+  },
+  "locally": {
+    "term": "locally",
+    "meaning_ko": "지역적으로",
+    "pos": "adv."
+  },
+  "locals": {
+    "term": "locals",
+    "meaning_ko": "지역주민들",
+    "pos": "n."
+  },
+  "located": {
+    "term": "located",
+    "meaning_ko": "위치한",
+    "pos": "adj."
+  },
+  "long": {
+    "term": "long",
+    "meaning_ko": "긴",
+    "pos": "adj."
+  },
+  "long-serving": {
+    "term": "long-serving",
+    "meaning_ko": "오래 근무한",
+    "pos": "adj."
+  },
+  "long-term": {
+    "term": "long-term",
+    "meaning_ko": "장기의",
+    "pos": "adj."
+  },
+  "longer": {
+    "term": "longer",
+    "meaning_ko": "더 긴",
+    "pos": "adj."
+  },
+  "look": {
+    "term": "look",
+    "meaning_ko": "보다",
+    "pos": "v."
+  },
+  "looked": {
+    "term": "looked",
+    "meaning_ko": "봤다",
+    "pos": "v."
+  },
+  "looks": {
+    "term": "looks",
+    "meaning_ko": "본다",
+    "pos": "v."
+  },
+  "lose": {
+    "term": "lose",
+    "meaning_ko": "잃다",
+    "pos": "v."
+  },
+  "loss": {
+    "term": "loss",
+    "meaning_ko": "손실",
+    "pos": "n."
+  },
+  "losses": {
+    "term": "losses",
+    "meaning_ko": "손실들",
+    "pos": "n."
+  },
+  "lost": {
+    "term": "lost",
+    "meaning_ko": "잃었다",
+    "pos": "v."
+  },
+  "lot": {
+    "term": "lot",
+    "meaning_ko": "많은 양",
+    "pos": "n."
+  },
+  "love": {
+    "term": "love",
+    "meaning_ko": "사랑",
+    "pos": "n."
+  },
+  "lower": {
+    "term": "lower",
+    "meaning_ko": "더 낮은",
+    "pos": "adj."
+  },
+  "lowering": {
+    "term": "lowering",
+    "meaning_ko": "낮추는",
+    "pos": "adj."
+  },
+  "loyal": {
+    "term": "loyal",
+    "meaning_ko": "충성스러운",
+    "pos": "adj."
+  },
+  "lung": {
+    "term": "lung",
+    "meaning_ko": "폐",
+    "pos": "n."
+  },
+  "lying": {
+    "term": "lying",
+    "meaning_ko": "거짓말하는",
+    "pos": "adj."
+  },
+  "machine": {
+    "term": "machine",
+    "meaning_ko": "기계",
+    "pos": "n."
+  },
+  "made": {
+    "term": "made",
+    "meaning_ko": "만들었다",
+    "pos": "v."
+  },
+  "magnifies": {
+    "term": "magnifies",
+    "meaning_ko": "확대한다",
+    "pos": "v."
+  },
+  "main": {
+    "term": "main",
+    "meaning_ko": "주요한",
+    "pos": "adj."
+  },
+  "mainly": {
+    "term": "mainly",
+    "meaning_ko": "주로",
+    "pos": "adv."
+  },
+  "major": {
+    "term": "major",
+    "meaning_ko": "주요한",
+    "pos": "adj."
+  },
+  "make": {
+    "term": "make",
+    "meaning_ko": "만들다",
+    "pos": "v."
+  },
+  "makes": {
+    "term": "makes",
+    "meaning_ko": "만든다",
+    "pos": "v."
+  },
+  "making": {
+    "term": "making",
+    "meaning_ko": "만드는",
+    "pos": "adj."
+  },
+  "manage": {
+    "term": "manage",
+    "meaning_ko": "관리하다",
+    "pos": "v."
+  },
+  "manoeuvring": {
+    "term": "manoeuvring",
+    "meaning_ko": "조종하는",
+    "pos": "adj."
+  },
+  "many": {
+    "term": "many",
+    "meaning_ko": "많은",
+    "pos": "adj."
+  },
+  "mark": {
+    "term": "mark",
+    "meaning_ko": "표시",
+    "pos": "n."
+  },
+  "markedly": {
+    "term": "markedly",
+    "meaning_ko": "현저하게",
+    "pos": "adv."
+  },
+  "market": {
+    "term": "market",
+    "meaning_ko": "시장",
+    "pos": "n."
+  },
+  "market's": {
+    "term": "market's",
+    "meaning_ko": "시장의",
+    "pos": "n."
+  },
+  "markets": {
+    "term": "markets",
+    "meaning_ko": "시장들",
+    "pos": "n."
+  },
+  "match": {
+    "term": "match",
+    "meaning_ko": "일치하다",
+    "pos": "v."
+  },
+  "materials": {
+    "term": "materials",
+    "meaning_ko": "재료들",
+    "pos": "n."
+  },
+  "matters": {
+    "term": "matters",
+    "meaning_ko": "중요하다",
+    "pos": "v."
+  },
+  "maximize": {
+    "term": "maximize",
+    "meaning_ko": "최대화하다",
+    "pos": "v."
+  },
+  "may": {
+    "term": "may",
+    "meaning_ko": "할 수 있다",
+    "pos": "v."
+  },
+  "mean": {
+    "term": "mean",
+    "meaning_ko": "의미하다",
+    "pos": "v."
+  },
+  "meaningful": {
+    "term": "meaningful",
+    "meaning_ko": "의미 있는",
+    "pos": "adj."
+  },
+  "means": {
+    "term": "means",
+    "meaning_ko": "의미한다",
+    "pos": "v."
+  },
+  "meant": {
+    "term": "meant",
+    "meaning_ko": "의도했다",
+    "pos": "v."
+  },
+  "measures": {
+    "term": "measures",
+    "meaning_ko": "조치들",
+    "pos": "n."
+  },
+  "mechanisms": {
+    "term": "mechanisms",
+    "meaning_ko": "메커니즘들",
+    "pos": "n."
+  },
+  "media": {
+    "term": "media",
+    "meaning_ko": "미디어",
+    "pos": "n."
+  },
+  "mediate": {
+    "term": "mediate",
+    "meaning_ko": "중재하다",
+    "pos": "v."
+  },
+  "medical": {
+    "term": "medical",
+    "meaning_ko": "의료의",
+    "pos": "adj."
+  },
+  "meet": {
+    "term": "meet",
+    "meaning_ko": "만나다",
+    "pos": "v."
+  },
+  "member": {
+    "term": "member",
+    "meaning_ko": "회원",
+    "pos": "n."
+  },
+  "members": {
+    "term": "members",
+    "meaning_ko": "회원들",
+    "pos": "n."
+  },
+  "memory": {
+    "term": "memory",
+    "meaning_ko": "기억",
+    "pos": "n."
+  },
+  "memory-chip": {
+    "term": "memory-chip",
+    "meaning_ko": "메모리칩",
+    "pos": "n."
+  },
+  "men": {
+    "term": "men",
+    "meaning_ko": "남자들",
+    "pos": "n."
+  },
+  "mental": {
+    "term": "mental",
+    "meaning_ko": "정신의",
+    "pos": "adj."
+  },
+  "merchandise": {
+    "term": "merchandise",
+    "meaning_ko": "상품",
+    "pos": "n."
+  },
+  "message": {
+    "term": "message",
+    "meaning_ko": "메시지",
+    "pos": "n."
+  },
+  "met": {
+    "term": "met",
+    "meaning_ko": "만났다",
+    "pos": "v."
+  },
+  "method": {
+    "term": "method",
+    "meaning_ko": "방법",
+    "pos": "n."
+  },
+  "middle": {
+    "term": "middle",
+    "meaning_ko": "중간",
+    "pos": "n."
+  },
+  "might": {
+    "term": "might",
+    "meaning_ko": "할 수도 있다",
+    "pos": "v."
+  },
+  "mild": {
+    "term": "mild",
+    "meaning_ko": "온화한",
+    "pos": "adj."
+  },
+  "milestone": {
+    "term": "milestone",
+    "meaning_ko": "중요한 사건",
+    "pos": "n."
+  },
+  "military": {
+    "term": "military",
+    "meaning_ko": "군사의",
+    "pos": "adj."
+  },
+  "minors": {
+    "term": "minors",
+    "meaning_ko": "미성년자들",
+    "pos": "n."
+  },
+  "minutes": {
+    "term": "minutes",
+    "meaning_ko": "분들",
+    "pos": "n."
+  },
+  "mission": {
+    "term": "mission",
+    "meaning_ko": "임무",
+    "pos": "n."
+  },
+  "mistake": {
+    "term": "mistake",
+    "meaning_ko": "실수",
+    "pos": "n."
+  },
+  "mix": {
+    "term": "mix",
+    "meaning_ko": "섞다",
+    "pos": "v."
+  },
+  "mixes": {
+    "term": "mixes",
+    "meaning_ko": "섞인다",
+    "pos": "v."
+  },
+  "model": {
+    "term": "model",
+    "meaning_ko": "모델",
+    "pos": "n."
+  },
+  "modern": {
+    "term": "modern",
+    "meaning_ko": "현대적인",
+    "pos": "adj."
+  },
+  "moment": {
+    "term": "moment",
+    "meaning_ko": "순간",
+    "pos": "n."
+  },
+  "momentum": {
+    "term": "momentum",
+    "meaning_ko": "추진력",
+    "pos": "n."
+  },
+  "money": {
+    "term": "money",
+    "meaning_ko": "돈",
+    "pos": "n."
+  },
+  "month": {
+    "term": "month",
+    "meaning_ko": "달",
+    "pos": "n."
+  },
+  "monthly": {
+    "term": "monthly",
+    "meaning_ko": "월간의",
+    "pos": "adj."
+  },
+  "mood": {
+    "term": "mood",
+    "meaning_ko": "기분",
+    "pos": "n."
+  },
+  "more": {
+    "term": "more",
+    "meaning_ko": "더",
+    "pos": "adv."
+  },
+  "most": {
+    "term": "most",
+    "meaning_ko": "가장",
+    "pos": "adv."
+  },
+  "motives": {
+    "term": "motives",
+    "meaning_ko": "동기들",
+    "pos": "n."
+  },
+  "mourning": {
+    "term": "mourning",
+    "meaning_ko": "애도하는",
+    "pos": "adj."
+  },
+  "moving": {
+    "term": "moving",
+    "meaning_ko": "감동적인",
+    "pos": "adj."
+  },
+  "much": {
+    "term": "much",
+    "meaning_ko": "많이",
+    "pos": "adv."
+  },
+  "must": {
+    "term": "must",
+    "meaning_ko": "반드시 하다",
+    "pos": "v."
+  },
+  "name": {
+    "term": "name",
+    "meaning_ko": "이름",
+    "pos": "n."
+  },
+  "named": {
+    "term": "named",
+    "meaning_ko": "이름이 지어진",
+    "pos": "adj."
+  },
+  "narrow": {
+    "term": "narrow",
+    "meaning_ko": "좁은",
+    "pos": "adj."
+  },
+  "nations": {
+    "term": "nations",
+    "meaning_ko": "국가들",
+    "pos": "n."
+  },
+  "near": {
+    "term": "near",
+    "meaning_ko": "가깝다",
+    "pos": "v."
+  },
+  "nearby": {
+    "term": "nearby",
+    "meaning_ko": "근처의",
+    "pos": "adj."
+  },
+  "nearly": {
+    "term": "nearly",
+    "meaning_ko": "거의",
+    "pos": "adv."
+  },
+  "need": {
+    "term": "need",
+    "meaning_ko": "필요하다",
+    "pos": "v."
+  },
+  "needed": {
+    "term": "needed",
+    "meaning_ko": "필요했다",
+    "pos": "v."
+  },
+  "negotiations": {
+    "term": "negotiations",
+    "meaning_ko": "협상들",
+    "pos": "n."
+  },
+  "neither": {
+    "term": "neither",
+    "meaning_ko": "둘 다 아닌",
+    "pos": "pron."
+  },
+  "nervous": {
+    "term": "nervous",
+    "meaning_ko": "불안한",
+    "pos": "adj."
+  },
+  "net": {
+    "term": "net",
+    "meaning_ko": "순",
+    "pos": "adj."
+  },
+  "net-based": {
+    "term": "net-based",
+    "meaning_ko": "인터넷 기반의",
+    "pos": "adj."
+  },
+  "neutral": {
+    "term": "neutral",
+    "meaning_ko": "중립적인",
+    "pos": "adj."
+  },
+  "never": {
+    "term": "never",
+    "meaning_ko": "절대 아니다",
+    "pos": "adv."
+  },
+  "new": {
+    "term": "new",
+    "meaning_ko": "새로운",
+    "pos": "adj."
+  },
+  "news": {
+    "term": "news",
+    "meaning_ko": "뉴스",
+    "pos": "n."
+  },
+  "next": {
+    "term": "next",
+    "meaning_ko": "다음의",
+    "pos": "adj."
+  },
+  "night": {
+    "term": "night",
+    "meaning_ko": "밤",
+    "pos": "n."
+  },
+  "nightlife": {
+    "term": "nightlife",
+    "meaning_ko": "야간 문화생활",
+    "pos": "n."
+  },
+  "nod": {
+    "term": "nod",
+    "meaning_ko": "끄덕이다",
+    "pos": "v."
+  },
+  "nomination": {
+    "term": "nomination",
+    "meaning_ko": "후보 지명",
+    "pos": "n."
+  },
+  "noon": {
+    "term": "noon",
+    "meaning_ko": "정오",
+    "pos": "n."
+  },
+  "northern": {
+    "term": "northern",
+    "meaning_ko": "북부의",
+    "pos": "adj."
+  },
+  "notable": {
+    "term": "notable",
+    "meaning_ko": "주목할 만한",
+    "pos": "adj."
+  },
+  "nothing": {
+    "term": "nothing",
+    "meaning_ko": "아무것도 아닌",
+    "pos": "pron."
+  },
+  "notifications": {
+    "term": "notifications",
+    "meaning_ko": "알림들",
+    "pos": "n."
+  },
+  "noting": {
+    "term": "noting",
+    "meaning_ko": "주목하다",
+    "pos": "v."
+  },
+  "november": {
+    "term": "november",
+    "meaning_ko": "11월",
+    "pos": "n."
+  },
+  "now": {
+    "term": "now",
+    "meaning_ko": "지금",
+    "pos": "adv."
+  },
+  "number": {
+    "term": "number",
+    "meaning_ko": "수",
+    "pos": "n."
+  },
+  "numbers": {
+    "term": "numbers",
+    "meaning_ko": "수들",
+    "pos": "n."
+  },
+  "observe": {
+    "term": "observe",
+    "meaning_ko": "관찰하다",
+    "pos": "v."
+  },
+  "observers": {
+    "term": "observers",
+    "meaning_ko": "관찰자들",
+    "pos": "n."
+  },
+  "occupation": {
+    "term": "occupation",
+    "meaning_ko": "직업",
+    "pos": "n."
+  },
+  "occupied": {
+    "term": "occupied",
+    "meaning_ko": "점령된",
+    "pos": "adj."
+  },
+  "ocean": {
+    "term": "ocean",
+    "meaning_ko": "대양",
+    "pos": "n."
+  },
+  "off": {
+    "term": "off",
+    "meaning_ko": "떨어진",
+    "pos": "adv."
+  },
+  "offer": {
+    "term": "offer",
+    "meaning_ko": "제안하다",
+    "pos": "v."
+  },
+  "offered": {
+    "term": "offered",
+    "meaning_ko": "제안했다",
+    "pos": "v."
+  },
+  "offering": {
+    "term": "offering",
+    "meaning_ko": "제공",
+    "pos": "n."
+  },
+  "offers": {
+    "term": "offers",
+    "meaning_ko": "제안한다",
+    "pos": "v."
+  },
+  "office": {
+    "term": "office",
+    "meaning_ko": "사무실",
+    "pos": "n."
+  },
+  "officials": {
+    "term": "officials",
+    "meaning_ko": "관계자들",
+    "pos": "n."
+  },
+  "often": {
+    "term": "often",
+    "meaning_ko": "자주",
+    "pos": "adv."
+  },
+  "oil": {
+    "term": "oil",
+    "meaning_ko": "석유",
+    "pos": "n."
+  },
+  "oil-importing": {
+    "term": "oil-importing",
+    "meaning_ko": "석유 수입의",
+    "pos": "adj."
+  },
+  "old": {
+    "term": "old",
+    "meaning_ko": "오래된",
+    "pos": "adj."
+  },
+  "older": {
+    "term": "older",
+    "meaning_ko": "더 오래된",
+    "pos": "adj."
+  },
+  "once": {
+    "term": "once",
+    "meaning_ko": "한 번",
+    "pos": "adv."
+  },
+  "one": {
+    "term": "one",
+    "meaning_ko": "하나",
+    "pos": "n."
+  },
+  "ones": {
+    "term": "ones",
+    "meaning_ko": "것들",
+    "pos": "pron."
+  },
+  "online": {
+    "term": "online",
+    "meaning_ko": "온라인의",
+    "pos": "adj."
+  },
+  "onto": {
+    "term": "onto",
+    "meaning_ko": "~위로",
+    "pos": "prep."
+  },
+  "open": {
+    "term": "open",
+    "meaning_ko": "열다",
+    "pos": "v."
+  },
+  "opened": {
+    "term": "opened",
+    "meaning_ko": "열었다",
+    "pos": "v."
+  },
+  "opening": {
+    "term": "opening",
+    "meaning_ko": "개시",
+    "pos": "n."
+  },
+  "openly": {
+    "term": "openly",
+    "meaning_ko": "공개적으로",
+    "pos": "adv."
+  },
+  "openness": {
+    "term": "openness",
+    "meaning_ko": "개방성",
+    "pos": "n."
+  },
+  "operator": {
+    "term": "operator",
+    "meaning_ko": "운영자",
+    "pos": "n."
+  },
+  "opposed": {
+    "term": "opposed",
+    "meaning_ko": "반대했다",
+    "pos": "v."
+  },
+  "opposite": {
+    "term": "opposite",
+    "meaning_ko": "반대의",
+    "pos": "adj."
+  },
+  "option": {
+    "term": "option",
+    "meaning_ko": "선택지",
+    "pos": "n."
+  },
+  "orbit": {
+    "term": "orbit",
+    "meaning_ko": "궤도에 진입하다",
+    "pos": "v."
+  },
+  "orbital": {
+    "term": "orbital",
+    "meaning_ko": "궤도의",
+    "pos": "adj."
+  },
+  "orbital-class": {
+    "term": "orbital-class",
+    "meaning_ko": "궤도급의",
+    "pos": "adj."
+  },
+  "order": {
+    "term": "order",
+    "meaning_ko": "순서",
+    "pos": "n."
+  },
+  "ordinary": {
+    "term": "ordinary",
+    "meaning_ko": "평범한",
+    "pos": "adj."
+  },
+  "organization": {
+    "term": "organization",
+    "meaning_ko": "조직",
+    "pos": "n."
+  },
+  "other": {
+    "term": "other",
+    "meaning_ko": "다른",
+    "pos": "adj."
+  },
+  "others": {
+    "term": "others",
+    "meaning_ko": "다른 것들",
+    "pos": "pron."
+  },
+  "out": {
+    "term": "out",
+    "meaning_ko": "밖으로",
+    "pos": "adv."
+  },
+  "outbound": {
+    "term": "outbound",
+    "meaning_ko": "출발하는",
+    "pos": "adj."
+  },
+  "over": {
+    "term": "over",
+    "meaning_ko": "~을 넘어",
+    "pos": "prep."
+  },
+  "overall": {
+    "term": "overall",
+    "meaning_ko": "전반적으로",
+    "pos": "adv."
+  },
+  "overcrowding": {
+    "term": "overcrowding",
+    "meaning_ko": "과밀",
+    "pos": "n."
+  },
+  "overnight": {
+    "term": "overnight",
+    "meaning_ko": "하룻밤 사이에",
+    "pos": "adv."
+  },
+  "oversubscribed": {
+    "term": "oversubscribed",
+    "meaning_ko": "초과 신청된",
+    "pos": "adj."
+  },
+  "owned": {
+    "term": "owned",
+    "meaning_ko": "소유했다",
+    "pos": "v."
+  },
+  "owners": {
+    "term": "owners",
+    "meaning_ko": "소유자들",
+    "pos": "n."
+  },
+  "page": {
+    "term": "page",
+    "meaning_ko": "페이지",
+    "pos": "n."
+  },
+  "pair": {
+    "term": "pair",
+    "meaning_ko": "쌍",
+    "pos": "n."
+  },
+  "palestinian": {
+    "term": "palestinian",
+    "meaning_ko": "팔레스타인의",
+    "pos": "adj."
+  },
+  "palestinians": {
+    "term": "palestinians",
+    "meaning_ko": "팔레스타인 사람들",
+    "pos": "n."
+  },
+  "part": {
+    "term": "part",
+    "meaning_ko": "부분",
+    "pos": "n."
+  },
+  "particular": {
+    "term": "particular",
+    "meaning_ko": "특정한",
+    "pos": "adj."
+  },
+  "parties": {
+    "term": "parties",
+    "meaning_ko": "정당들",
+    "pos": "n."
+  },
+  "partnership": {
+    "term": "partnership",
+    "meaning_ko": "파트너십",
+    "pos": "n."
+  },
+  "parts": {
+    "term": "parts",
+    "meaning_ko": "부분들",
+    "pos": "n."
+  },
+  "party": {
+    "term": "party",
+    "meaning_ko": "정당",
+    "pos": "n."
+  },
+  "party's": {
+    "term": "party's",
+    "meaning_ko": "정당의",
+    "pos": "n."
+  },
+  "pass": {
+    "term": "pass",
+    "meaning_ko": "통과하다",
+    "pos": "v."
+  },
+  "passed": {
+    "term": "passed",
+    "meaning_ko": "통과했다",
+    "pos": "v."
+  },
+  "passes": {
+    "term": "passes",
+    "meaning_ko": "통과한다",
+    "pos": "v."
+  },
+  "passing": {
+    "term": "passing",
+    "meaning_ko": "통과",
+    "pos": "n."
+  },
+  "past": {
+    "term": "past",
+    "meaning_ko": "과거",
+    "pos": "n."
+  },
+  "patch": {
+    "term": "patch",
+    "meaning_ko": "패치",
+    "pos": "n."
+  },
+  "path": {
+    "term": "path",
+    "meaning_ko": "경로",
+    "pos": "n."
+  },
+  "patient": {
+    "term": "patient",
+    "meaning_ko": "환자",
+    "pos": "n."
+  },
+  "pause": {
+    "term": "pause",
+    "meaning_ko": "일시 중단",
+    "pos": "n."
+  },
+  "pay": {
+    "term": "pay",
+    "meaning_ko": "급여",
+    "pos": "n."
+  },
+  "payload": {
+    "term": "payload",
+    "meaning_ko": "탑재물",
+    "pos": "n."
+  },
+  "peace": {
+    "term": "peace",
+    "meaning_ko": "평화",
+    "pos": "n."
+  },
+  "peaceful": {
+    "term": "peaceful",
+    "meaning_ko": "평화로운",
+    "pos": "adj."
+  },
+  "peaking": {
+    "term": "peaking",
+    "meaning_ko": "정점에 달하다",
+    "pos": "v."
+  },
+  "penalty": {
+    "term": "penalty",
+    "meaning_ko": "벌금",
+    "pos": "n."
+  },
+  "people": {
+    "term": "people",
+    "meaning_ko": "사람들",
+    "pos": "n."
+  },
+  "people's": {
+    "term": "people's",
+    "meaning_ko": "사람들의",
+    "pos": "n."
+  },
+  "percent": {
+    "term": "percent",
+    "meaning_ko": "퍼센트",
+    "pos": "n."
+  },
+  "performers": {
+    "term": "performers",
+    "meaning_ko": "공연자들",
+    "pos": "n."
+  },
+  "performing": {
+    "term": "performing",
+    "meaning_ko": "공연하다",
+    "pos": "v."
+  },
+  "period": {
+    "term": "period",
+    "meaning_ko": "기간",
+    "pos": "n."
+  },
+  "person": {
+    "term": "person",
+    "meaning_ko": "사람",
+    "pos": "n."
+  },
+  "personal": {
+    "term": "personal",
+    "meaning_ko": "개인적인",
+    "pos": "adj."
+  },
+  "personalized": {
+    "term": "personalized",
+    "meaning_ko": "개인화된",
+    "pos": "adj."
+  },
+  "philosophy": {
+    "term": "philosophy",
+    "meaning_ko": "철학",
+    "pos": "n."
+  },
+  "phones": {
+    "term": "phones",
+    "meaning_ko": "휴대전화들",
+    "pos": "n."
+  },
+  "physical": {
+    "term": "physical",
+    "meaning_ko": "신체적인",
+    "pos": "adj."
+  },
+  "pick": {
+    "term": "pick",
+    "meaning_ko": "고르다",
+    "pos": "v."
+  },
+  "picture": {
+    "term": "picture",
+    "meaning_ko": "사진",
+    "pos": "n."
+  },
+  "piece": {
+    "term": "piece",
+    "meaning_ko": "조각",
+    "pos": "n."
+  },
+  "pieces": {
+    "term": "pieces",
+    "meaning_ko": "조각들",
+    "pos": "n."
+  },
+  "place": {
+    "term": "place",
+    "meaning_ko": "장소",
+    "pos": "n."
+  },
+  "placed": {
+    "term": "placed",
+    "meaning_ko": "놓았다",
+    "pos": "v."
+  },
+  "plainly": {
+    "term": "plainly",
+    "meaning_ko": "명백히",
+    "pos": "adv."
+  },
+  "plan": {
+    "term": "plan",
+    "meaning_ko": "계획",
+    "pos": "n."
+  },
+  "planned": {
+    "term": "planned",
+    "meaning_ko": "계획했다",
+    "pos": "v."
+  },
+  "plans": {
+    "term": "plans",
+    "meaning_ko": "계획들",
+    "pos": "n."
+  },
+  "platform": {
+    "term": "platform",
+    "meaning_ko": "플랫폼",
+    "pos": "n."
+  },
+  "platforms": {
+    "term": "platforms",
+    "meaning_ko": "플랫폼들",
+    "pos": "n."
+  },
+  "play": {
+    "term": "play",
+    "meaning_ko": "재생하다",
+    "pos": "v."
+  },
+  "players": {
+    "term": "players",
+    "meaning_ko": "선수들",
+    "pos": "n."
+  },
+  "playful": {
+    "term": "playful",
+    "meaning_ko": "장난스러운",
+    "pos": "adj."
+  },
+  "plays": {
+    "term": "plays",
+    "meaning_ko": "연극",
+    "pos": "n."
+  },
+  "plus": {
+    "term": "plus",
+    "meaning_ko": "더하기",
+    "pos": "prep."
+  },
+  "pneumonia": {
+    "term": "pneumonia",
+    "meaning_ko": "폐렴",
+    "pos": "n."
+  },
+  "point": {
+    "term": "point",
+    "meaning_ko": "지점",
+    "pos": "n."
+  },
+  "pointed": {
+    "term": "pointed",
+    "meaning_ko": "지적했다",
+    "pos": "v."
+  },
+  "points": {
+    "term": "points",
+    "meaning_ko": "지점들",
+    "pos": "n."
+  },
+  "police": {
+    "term": "police",
+    "meaning_ko": "경찰",
+    "pos": "n."
+  },
+  "policy": {
+    "term": "policy",
+    "meaning_ko": "정책",
+    "pos": "n."
+  },
+  "policymakers": {
+    "term": "policymakers",
+    "meaning_ko": "정책 결정자들",
+    "pos": "n."
+  },
+  "political": {
+    "term": "political",
+    "meaning_ko": "정치적인",
+    "pos": "adj."
+  },
+  "politician": {
+    "term": "politician",
+    "meaning_ko": "정치인",
+    "pos": "n."
+  },
+  "politicians": {
+    "term": "politicians",
+    "meaning_ko": "정치인들",
+    "pos": "n."
+  },
+  "poor": {
+    "term": "poor",
+    "meaning_ko": "가난한",
+    "pos": "adj."
+  },
+  "popular": {
+    "term": "popular",
+    "meaning_ko": "인기 있는",
+    "pos": "adj."
+  },
+  "pose": {
+    "term": "pose",
+    "meaning_ko": "제시하다",
+    "pos": "v."
+  },
+  "positioned": {
+    "term": "positioned",
+    "meaning_ko": "배치했다",
+    "pos": "v."
+  },
+  "positive": {
+    "term": "positive",
+    "meaning_ko": "긍정적인",
+    "pos": "adj."
+  },
+  "possible": {
+    "term": "possible",
+    "meaning_ko": "가능한",
+    "pos": "adj."
+  },
+  "posting": {
+    "term": "posting",
+    "meaning_ko": "게시하는",
+    "pos": "v."
+  },
+  "posts": {
+    "term": "posts",
+    "meaning_ko": "게시물",
+    "pos": "n."
+  },
+  "potential": {
+    "term": "potential",
+    "meaning_ko": "잠재력",
+    "pos": "n."
+  },
+  "pouring": {
+    "term": "pouring",
+    "meaning_ko": "쏟아지는",
+    "pos": "v."
+  },
+  "power": {
+    "term": "power",
+    "meaning_ko": "권력",
+    "pos": "n."
+  },
+  "powerful": {
+    "term": "powerful",
+    "meaning_ko": "강력한",
+    "pos": "adj."
+  },
+  "practical": {
+    "term": "practical",
+    "meaning_ko": "실질적인",
+    "pos": "adj."
+  },
+  "praised": {
+    "term": "praised",
+    "meaning_ko": "칭찬했다",
+    "pos": "v."
+  },
+  "precision": {
+    "term": "precision",
+    "meaning_ko": "정밀도",
+    "pos": "n."
+  },
+  "preliminary": {
+    "term": "preliminary",
+    "meaning_ko": "예비적인",
+    "pos": "adj."
+  },
+  "premiums": {
+    "term": "premiums",
+    "meaning_ko": "보험료",
+    "pos": "n."
+  },
+  "preparing": {
+    "term": "preparing",
+    "meaning_ko": "준비하는",
+    "pos": "v."
+  },
+  "president": {
+    "term": "president",
+    "meaning_ko": "대통령",
+    "pos": "n."
+  },
+  "pressed": {
+    "term": "pressed",
+    "meaning_ko": "압박했다",
+    "pos": "v."
+  },
+  "prevent": {
+    "term": "prevent",
+    "meaning_ko": "방지하다",
+    "pos": "v."
+  },
+  "previous": {
+    "term": "previous",
+    "meaning_ko": "이전의",
+    "pos": "adj."
+  },
+  "price": {
+    "term": "price",
+    "meaning_ko": "가격",
+    "pos": "n."
+  },
+  "prices": {
+    "term": "prices",
+    "meaning_ko": "가격들",
+    "pos": "n."
+  },
+  "pride": {
+    "term": "pride",
+    "meaning_ko": "자부심",
+    "pos": "n."
+  },
+  "primary": {
+    "term": "primary",
+    "meaning_ko": "주요한",
+    "pos": "adj."
+  },
+  "printed": {
+    "term": "printed",
+    "meaning_ko": "인쇄했다",
+    "pos": "v."
+  },
+  "printing": {
+    "term": "printing",
+    "meaning_ko": "인쇄",
+    "pos": "n."
+  },
+  "priority": {
+    "term": "priority",
+    "meaning_ko": "우선순위",
+    "pos": "n."
+  },
+  "pro-israel": {
+    "term": "pro-israel",
+    "meaning_ko": "친이스라엘",
+    "pos": "adj."
+  },
+  "problem": {
+    "term": "problem",
+    "meaning_ko": "문제",
+    "pos": "n."
+  },
+  "problems": {
+    "term": "problems",
+    "meaning_ko": "문제들",
+    "pos": "n."
+  },
+  "process": {
+    "term": "process",
+    "meaning_ko": "과정",
+    "pos": "n."
+  },
+  "products": {
+    "term": "products",
+    "meaning_ko": "제품들",
+    "pos": "n."
+  },
+  "professional": {
+    "term": "professional",
+    "meaning_ko": "전문가",
+    "pos": "n."
+  },
+  "profitable": {
+    "term": "profitable",
+    "meaning_ko": "수익성 있는",
+    "pos": "adj."
+  },
+  "profits": {
+    "term": "profits",
+    "meaning_ko": "이윤",
+    "pos": "n."
+  },
+  "progress": {
+    "term": "progress",
+    "meaning_ko": "진전",
+    "pos": "n."
+  },
+  "promised": {
+    "term": "promised",
+    "meaning_ko": "약속했다",
+    "pos": "v."
+  },
+  "promote": {
+    "term": "promote",
+    "meaning_ko": "촉진하다",
+    "pos": "v."
+  },
+  "proper": {
+    "term": "proper",
+    "meaning_ko": "적절한",
+    "pos": "adj."
+  },
+  "properly": {
+    "term": "properly",
+    "meaning_ko": "적절히",
+    "pos": "adv."
+  },
+  "protect": {
+    "term": "protect",
+    "meaning_ko": "보호하다",
+    "pos": "v."
+  },
+  "protection": {
+    "term": "protection",
+    "meaning_ko": "보호",
+    "pos": "n."
+  },
+  "prove": {
+    "term": "prove",
+    "meaning_ko": "증명하다",
+    "pos": "v."
+  },
+  "provide": {
+    "term": "provide",
+    "meaning_ko": "제공하다",
+    "pos": "v."
+  },
+  "provides": {
+    "term": "provides",
+    "meaning_ko": "제공한다",
+    "pos": "v."
+  },
+  "providing": {
+    "term": "providing",
+    "meaning_ko": "제공하는",
+    "pos": "v."
+  },
+  "pub": {
+    "term": "pub",
+    "meaning_ko": "펍",
+    "pos": "n."
+  },
+  "public": {
+    "term": "public",
+    "meaning_ko": "공중",
+    "pos": "n."
+  },
+  "publicly": {
+    "term": "publicly",
+    "meaning_ko": "공개적으로",
+    "pos": "adv."
+  },
+  "published": {
+    "term": "published",
+    "meaning_ko": "출판했다",
+    "pos": "v."
+  },
+  "pull": {
+    "term": "pull",
+    "meaning_ko": "끌어당기다",
+    "pos": "v."
+  },
+  "pulled": {
+    "term": "pulled",
+    "meaning_ko": "끌었다",
+    "pos": "v."
+  },
+  "push": {
+    "term": "push",
+    "meaning_ko": "밀다",
+    "pos": "v."
+  },
+  "pushed": {
+    "term": "pushed",
+    "meaning_ko": "밀었다",
+    "pos": "v."
+  },
+  "pushes": {
+    "term": "pushes",
+    "meaning_ko": "밀다",
+    "pos": "v."
+  },
+  "put": {
+    "term": "put",
+    "meaning_ko": "놓다",
+    "pos": "v."
+  },
+  "putting": {
+    "term": "putting",
+    "meaning_ko": "놓는",
+    "pos": "v."
+  },
+  "quarter": {
+    "term": "quarter",
+    "meaning_ko": "분기",
+    "pos": "n."
+  },
+  "question": {
+    "term": "question",
+    "meaning_ko": "질문",
+    "pos": "n."
+  },
+  "questioned": {
+    "term": "questioned",
+    "meaning_ko": "의문을 제기했다",
+    "pos": "v."
+  },
+  "questions": {
+    "term": "questions",
+    "meaning_ko": "질문들",
+    "pos": "n."
+  },
+  "quickly": {
+    "term": "quickly",
+    "meaning_ko": "빠르게",
+    "pos": "adv."
+  },
+  "quiet": {
+    "term": "quiet",
+    "meaning_ko": "조용한",
+    "pos": "adj."
+  },
+  "quite": {
+    "term": "quite",
+    "meaning_ko": "상당히",
+    "pos": "adv."
+  },
+  "race": {
+    "term": "race",
+    "meaning_ko": "경쟁",
+    "pos": "n."
+  },
+  "raging": {
+    "term": "raging",
+    "meaning_ko": "맹렬한",
+    "pos": "adj."
+  },
+  "raised": {
+    "term": "raised",
+    "meaning_ko": "제기했다",
+    "pos": "v."
+  },
+  "raising": {
+    "term": "raising",
+    "meaning_ko": "올리는",
+    "pos": "v."
+  },
+  "rally": {
+    "term": "rally",
+    "meaning_ko": "집회",
+    "pos": "n."
+  },
+  "ran": {
+    "term": "ran",
+    "meaning_ko": "실행했다",
+    "pos": "v."
+  },
+  "range": {
+    "term": "range",
+    "meaning_ko": "범위",
+    "pos": "n."
+  },
+  "ranging": {
+    "term": "ranging",
+    "meaning_ko": "범위가 다양한",
+    "pos": "v."
+  },
+  "rare": {
+    "term": "rare",
+    "meaning_ko": "드문",
+    "pos": "adj."
+  },
+  "rate": {
+    "term": "rate",
+    "meaning_ko": "비율",
+    "pos": "n."
+  },
+  "rather": {
+    "term": "rather",
+    "meaning_ko": "오히려",
+    "pos": "adv."
+  },
+  "re-election": {
+    "term": "re-election",
+    "meaning_ko": "재선",
+    "pos": "n."
+  },
+  "reach": {
+    "term": "reach",
+    "meaning_ko": "도달하다",
+    "pos": "v."
+  },
+  "reached": {
+    "term": "reached",
+    "meaning_ko": "도달했다",
+    "pos": "v."
+  },
+  "reaching": {
+    "term": "reaching",
+    "meaning_ko": "도달하는",
+    "pos": "v."
+  },
+  "reading": {
+    "term": "reading",
+    "meaning_ko": "읽기",
+    "pos": "n."
+  },
+  "ready": {
+    "term": "ready",
+    "meaning_ko": "준비된",
+    "pos": "adj."
+  },
+  "ready-made": {
+    "term": "ready-made",
+    "meaning_ko": "기성의",
+    "pos": "adj."
+  },
+  "real": {
+    "term": "real",
+    "meaning_ko": "실제의",
+    "pos": "adj."
+  },
+  "reality": {
+    "term": "reality",
+    "meaning_ko": "현실",
+    "pos": "n."
+  },
+  "really": {
+    "term": "really",
+    "meaning_ko": "정말",
+    "pos": "adv."
+  },
+  "reappear": {
+    "term": "reappear",
+    "meaning_ko": "재출현하다",
+    "pos": "v."
+  },
+  "reason": {
+    "term": "reason",
+    "meaning_ko": "이유",
+    "pos": "n."
+  },
+  "reasons": {
+    "term": "reasons",
+    "meaning_ko": "이유들",
+    "pos": "n."
+  },
+  "recent": {
+    "term": "recent",
+    "meaning_ko": "최근의",
+    "pos": "adj."
+  },
+  "recognisable": {
+    "term": "recognisable",
+    "meaning_ko": "인식할 수 있는",
+    "pos": "adj."
+  },
+  "recognizable": {
+    "term": "recognizable",
+    "meaning_ko": "알아볼 수 있는",
+    "pos": "adj."
+  },
+  "recommendation": {
+    "term": "recommendation",
+    "meaning_ko": "권장",
+    "pos": "n."
+  },
+  "reconsider": {
+    "term": "reconsider",
+    "meaning_ko": "재검토하다",
+    "pos": "v."
+  },
+  "record": {
+    "term": "record",
+    "meaning_ko": "기록",
+    "pos": "n."
+  },
+  "recorded": {
+    "term": "recorded",
+    "meaning_ko": "기록된",
+    "pos": "adj."
+  },
+  "recover": {
+    "term": "recover",
+    "meaning_ko": "회복하다",
+    "pos": "v."
+  },
+  "recovered": {
+    "term": "recovered",
+    "meaning_ko": "회복된",
+    "pos": "adj."
+  },
+  "recovery": {
+    "term": "recovery",
+    "meaning_ko": "회복",
+    "pos": "n."
+  },
+  "redesign": {
+    "term": "redesign",
+    "meaning_ko": "재설계",
+    "pos": "n."
+  },
+  "reduce": {
+    "term": "reduce",
+    "meaning_ko": "줄이다",
+    "pos": "v."
+  },
+  "reduction": {
+    "term": "reduction",
+    "meaning_ko": "감소",
+    "pos": "n."
+  },
+  "reference": {
+    "term": "reference",
+    "meaning_ko": "참고",
+    "pos": "n."
+  },
+  "reflect": {
+    "term": "reflect",
+    "meaning_ko": "반영하다",
+    "pos": "v."
+  },
+  "reflects": {
+    "term": "reflects",
+    "meaning_ko": "반영한다",
+    "pos": "v."
+  },
+  "refurbish": {
+    "term": "refurbish",
+    "meaning_ko": "재정비하다",
+    "pos": "v."
+  },
+  "refused": {
+    "term": "refused",
+    "meaning_ko": "거부했다",
+    "pos": "v."
+  },
+  "regaining": {
+    "term": "regaining",
+    "meaning_ko": "회수하는",
+    "pos": "v."
+  },
+  "region": {
+    "term": "region",
+    "meaning_ko": "지역",
+    "pos": "n."
+  },
+  "regular": {
+    "term": "regular",
+    "meaning_ko": "정규의",
+    "pos": "adj."
+  },
+  "regulators": {
+    "term": "regulators",
+    "meaning_ko": "규제기관",
+    "pos": "n."
+  },
+  "reject": {
+    "term": "reject",
+    "meaning_ko": "거부하다",
+    "pos": "v."
+  },
+  "rejected": {
+    "term": "rejected",
+    "meaning_ko": "거부된",
+    "pos": "adj."
+  },
+  "relationship": {
+    "term": "relationship",
+    "meaning_ko": "관계",
+    "pos": "n."
+  },
+  "relax": {
+    "term": "relax",
+    "meaning_ko": "완화하다",
+    "pos": "v."
+  },
+  "release": {
+    "term": "release",
+    "meaning_ko": "출시",
+    "pos": "n."
+  },
+  "released": {
+    "term": "released",
+    "meaning_ko": "출시된",
+    "pos": "adj."
+  },
+  "relevance": {
+    "term": "relevance",
+    "meaning_ko": "관련성",
+    "pos": "n."
+  },
+  "reliable": {
+    "term": "reliable",
+    "meaning_ko": "신뢰할 수 있는",
+    "pos": "adj."
+  },
+  "reluctance": {
+    "term": "reluctance",
+    "meaning_ko": "꺼려함",
+    "pos": "n."
+  },
+  "remain": {
+    "term": "remain",
+    "meaning_ko": "남다",
+    "pos": "v."
+  },
+  "remainder": {
+    "term": "remainder",
+    "meaning_ko": "나머지",
+    "pos": "n."
+  },
+  "remains": {
+    "term": "remains",
+    "meaning_ko": "남다",
+    "pos": "v."
+  },
+  "remarkable": {
+    "term": "remarkable",
+    "meaning_ko": "주목할 만한",
+    "pos": "adj."
+  },
+  "remembering": {
+    "term": "remembering",
+    "meaning_ko": "기억하는",
+    "pos": "v."
+  },
+  "removed": {
+    "term": "removed",
+    "meaning_ko": "제거된",
+    "pos": "adj."
+  },
+  "removes": {
+    "term": "removes",
+    "meaning_ko": "제거한다",
+    "pos": "v."
+  },
+  "renewed": {
+    "term": "renewed",
+    "meaning_ko": "갱신된",
+    "pos": "adj."
+  },
+  "reopened": {
+    "term": "reopened",
+    "meaning_ko": "재개장된",
+    "pos": "adj."
+  },
+  "reopens": {
+    "term": "reopens",
+    "meaning_ko": "재개장한다",
+    "pos": "v."
+  },
+  "repeated": {
+    "term": "repeated",
+    "meaning_ko": "반복된",
+    "pos": "adj."
+  },
+  "repeatedly": {
+    "term": "repeatedly",
+    "meaning_ko": "반복적으로",
+    "pos": "adv."
+  },
+  "replace": {
+    "term": "replace",
+    "meaning_ko": "교체하다",
+    "pos": "v."
+  },
+  "replacement": {
+    "term": "replacement",
+    "meaning_ko": "교체",
+    "pos": "n."
+  },
+  "reply": {
+    "term": "reply",
+    "meaning_ko": "답변",
+    "pos": "n."
+  },
+  "reported": {
+    "term": "reported",
+    "meaning_ko": "보도했다",
+    "pos": "v."
+  },
+  "reportedly": {
+    "term": "reportedly",
+    "meaning_ko": "전해지는 바에 따르면",
+    "pos": "adv."
+  },
+  "reporters": {
+    "term": "reporters",
+    "meaning_ko": "기자들",
+    "pos": "n."
+  },
+  "reporting": {
+    "term": "reporting",
+    "meaning_ko": "보도",
+    "pos": "n."
+  },
+  "reports": {
+    "term": "reports",
+    "meaning_ko": "보도",
+    "pos": "n."
+  },
+  "represented": {
+    "term": "represented",
+    "meaning_ko": "대표했다",
+    "pos": "v."
+  },
+  "represents": {
+    "term": "represents",
+    "meaning_ko": "나타낸다",
+    "pos": "v."
+  },
+  "republican": {
+    "term": "republican",
+    "meaning_ko": "공화당의",
+    "pos": "adj."
+  },
+  "republicans": {
+    "term": "republicans",
+    "meaning_ko": "공화당원들",
+    "pos": "n."
+  },
+  "required": {
+    "term": "required",
+    "meaning_ko": "필요한",
+    "pos": "adj."
+  },
+  "reroute": {
+    "term": "reroute",
+    "meaning_ko": "다시 경로를 정하다",
+    "pos": "v."
+  },
+  "rescue": {
+    "term": "rescue",
+    "meaning_ko": "구조",
+    "pos": "n."
+  },
+  "reserves": {
+    "term": "reserves",
+    "meaning_ko": "비축량",
+    "pos": "n."
+  },
+  "residents": {
+    "term": "residents",
+    "meaning_ko": "주민",
+    "pos": "n."
+  },
+  "respond": {
+    "term": "respond",
+    "meaning_ko": "대응하다",
+    "pos": "v."
+  },
+  "rest": {
+    "term": "rest",
+    "meaning_ko": "나머지",
+    "pos": "n."
+  },
+  "result": {
+    "term": "result",
+    "meaning_ko": "결과",
+    "pos": "n."
+  },
+  "results": {
+    "term": "results",
+    "meaning_ko": "결과",
+    "pos": "n."
+  },
+  "return": {
+    "term": "return",
+    "meaning_ko": "복귀",
+    "pos": "n."
+  },
+  "returning": {
+    "term": "returning",
+    "meaning_ko": "복귀하는",
+    "pos": "v."
+  },
+  "reusability": {
+    "term": "reusability",
+    "meaning_ko": "재사용성",
+    "pos": "n."
+  },
+  "reusable": {
+    "term": "reusable",
+    "meaning_ko": "재사용 가능한",
+    "pos": "adj."
+  },
+  "reuse": {
+    "term": "reuse",
+    "meaning_ko": "재사용",
+    "pos": "n."
+  },
+  "reusing": {
+    "term": "reusing",
+    "meaning_ko": "재사용하는",
+    "pos": "v."
+  },
+  "revealed": {
+    "term": "revealed",
+    "meaning_ko": "공개했다",
+    "pos": "v."
+  },
+  "reversal": {
+    "term": "reversal",
+    "meaning_ko": "역전",
+    "pos": "n."
+  },
+  "review": {
+    "term": "review",
+    "meaning_ko": "검토",
+    "pos": "n."
+  },
+  "reviews": {
+    "term": "reviews",
+    "meaning_ko": "검토",
+    "pos": "n."
+  },
+  "revive": {
+    "term": "revive",
+    "meaning_ko": "부활시키다",
+    "pos": "v."
+  },
+  "right": {
+    "term": "right",
+    "meaning_ko": "권리",
+    "pos": "n."
+  },
+  "ring": {
+    "term": "ring",
+    "meaning_ko": "반지",
+    "pos": "n."
+  },
+  "rise": {
+    "term": "rise",
+    "meaning_ko": "상승",
+    "pos": "n."
+  },
+  "rises": {
+    "term": "rises",
+    "meaning_ko": "상승한다",
+    "pos": "v."
+  },
+  "rising": {
+    "term": "rising",
+    "meaning_ko": "상승하는",
+    "pos": "adj."
+  },
+  "risk": {
+    "term": "risk",
+    "meaning_ko": "위험",
+    "pos": "n."
+  },
+  "risks": {
+    "term": "risks",
+    "meaning_ko": "위험",
+    "pos": "n."
+  },
+  "road": {
+    "term": "road",
+    "meaning_ko": "길",
+    "pos": "n."
+  },
+  "robust": {
+    "term": "robust",
+    "meaning_ko": "견고한",
+    "pos": "adj."
+  },
+  "rocket": {
+    "term": "rocket",
+    "meaning_ko": "로켓",
+    "pos": "n."
+  },
+  "rockets": {
+    "term": "rockets",
+    "meaning_ko": "로켓",
+    "pos": "n."
+  },
+  "role": {
+    "term": "role",
+    "meaning_ko": "역할",
+    "pos": "n."
+  },
+  "room": {
+    "term": "room",
+    "meaning_ko": "여지",
+    "pos": "n."
+  },
+  "root": {
+    "term": "root",
+    "meaning_ko": "원인",
+    "pos": "n."
+  },
+  "rose": {
+    "term": "rose",
+    "meaning_ko": "올랐다",
+    "pos": "v."
+  },
+  "roughly": {
+    "term": "roughly",
+    "meaning_ko": "대략",
+    "pos": "adv."
+  },
+  "route": {
+    "term": "route",
+    "meaning_ko": "경로",
+    "pos": "n."
+  },
+  "routine": {
+    "term": "routine",
+    "meaning_ko": "일상적",
+    "pos": "adj."
+  },
+  "rule": {
+    "term": "rule",
+    "meaning_ko": "규칙",
+    "pos": "n."
+  },
+  "rulebook": {
+    "term": "rulebook",
+    "meaning_ko": "규칙집",
+    "pos": "n."
+  },
+  "rules": {
+    "term": "rules",
+    "meaning_ko": "규칙",
+    "pos": "n."
+  },
+  "ruling": {
+    "term": "ruling",
+    "meaning_ko": "판결",
+    "pos": "n."
+  },
+  "rumours": {
+    "term": "rumours",
+    "meaning_ko": "소문",
+    "pos": "n."
+  },
+  "run": {
+    "term": "run",
+    "meaning_ko": "운영",
+    "pos": "n."
+  },
+  "rushed": {
+    "term": "rushed",
+    "meaning_ko": "급하게 했다",
+    "pos": "v."
+  },
+  "sad": {
+    "term": "sad",
+    "meaning_ko": "슬픈",
+    "pos": "adj."
+  },
+  "safe": {
+    "term": "safe",
+    "meaning_ko": "안전한",
+    "pos": "adj."
+  },
+  "safeguards": {
+    "term": "safeguards",
+    "meaning_ko": "안전장치",
+    "pos": "n."
+  },
+  "safely": {
+    "term": "safely",
+    "meaning_ko": "안전하게",
+    "pos": "adv."
+  },
+  "safer": {
+    "term": "safer",
+    "meaning_ko": "더 안전한",
+    "pos": "adj."
+  },
+  "safety": {
+    "term": "safety",
+    "meaning_ko": "안전",
+    "pos": "n."
+  },
+  "said": {
+    "term": "said",
+    "meaning_ko": "말했다",
+    "pos": "v."
+  },
+  "sale": {
+    "term": "sale",
+    "meaning_ko": "판매",
+    "pos": "n."
+  },
+  "sales": {
+    "term": "sales",
+    "meaning_ko": "판매",
+    "pos": "n."
+  },
+  "satellite": {
+    "term": "satellite",
+    "meaning_ko": "위성",
+    "pos": "n."
+  },
+  "satellites": {
+    "term": "satellites",
+    "meaning_ko": "위성",
+    "pos": "n."
+  },
+  "saturday": {
+    "term": "saturday",
+    "meaning_ko": "토요일",
+    "pos": "n."
+  },
+  "save": {
+    "term": "save",
+    "meaning_ko": "절약하다",
+    "pos": "v."
+  },
+  "saves": {
+    "term": "saves",
+    "meaning_ko": "절약한다",
+    "pos": "v."
+  },
+  "saw": {
+    "term": "saw",
+    "meaning_ko": "봤다",
+    "pos": "v."
+  },
+  "say": {
+    "term": "say",
+    "meaning_ko": "말하다",
+    "pos": "v."
+  },
+  "saying": {
+    "term": "saying",
+    "meaning_ko": "말하는",
+    "pos": "v."
+  },
+  "says": {
+    "term": "says",
+    "meaning_ko": "말한다",
+    "pos": "v."
+  },
+  "scene": {
+    "term": "scene",
+    "meaning_ko": "장면",
+    "pos": "n."
+  },
+  "science": {
+    "term": "science",
+    "meaning_ko": "과학",
+    "pos": "n."
+  },
+  "screen": {
+    "term": "screen",
+    "meaning_ko": "화면",
+    "pos": "n."
+  },
+  "screen-time": {
+    "term": "screen-time",
+    "meaning_ko": "화면 시청 시간",
+    "pos": "n."
+  },
+  "scroll": {
+    "term": "scroll",
+    "meaning_ko": "스크롤하다",
+    "pos": "v."
+  },
+  "scrolling": {
+    "term": "scrolling",
+    "meaning_ko": "스크롤하는",
+    "pos": "v."
+  },
+  "sea": {
+    "term": "sea",
+    "meaning_ko": "바다",
+    "pos": "n."
+  },
+  "searched": {
+    "term": "searched",
+    "meaning_ko": "검색했다",
+    "pos": "v."
+  },
+  "seat": {
+    "term": "seat",
+    "meaning_ko": "의석",
+    "pos": "n."
+  },
+  "seats": {
+    "term": "seats",
+    "meaning_ko": "의석들",
+    "pos": "n."
+  },
+  "second": {
+    "term": "second",
+    "meaning_ko": "두 번째",
+    "pos": "adj."
+  },
+  "see": {
+    "term": "see",
+    "meaning_ko": "보다",
+    "pos": "v."
+  },
+  "seemed": {
+    "term": "seemed",
+    "meaning_ko": "보였다",
+    "pos": "v."
+  },
+  "seen": {
+    "term": "seen",
+    "meaning_ko": "보인",
+    "pos": "v."
+  },
+  "sell": {
+    "term": "sell",
+    "meaning_ko": "팔다",
+    "pos": "v."
+  },
+  "selling": {
+    "term": "selling",
+    "meaning_ko": "판매하는",
+    "pos": "v."
+  },
+  "selloff": {
+    "term": "selloff",
+    "meaning_ko": "대량 매도",
+    "pos": "n."
+  },
+  "semiconductor": {
+    "term": "semiconductor",
+    "meaning_ko": "반도체",
+    "pos": "n."
+  },
+  "semiconductors": {
+    "term": "semiconductors",
+    "meaning_ko": "반도체들",
+    "pos": "n."
+  },
+  "senate": {
+    "term": "senate",
+    "meaning_ko": "상원",
+    "pos": "n."
+  },
+  "senator": {
+    "term": "senator",
+    "meaning_ko": "상원의원",
+    "pos": "n."
+  },
+  "senators": {
+    "term": "senators",
+    "meaning_ko": "상원의원들",
+    "pos": "n."
+  },
+  "send": {
+    "term": "send",
+    "meaning_ko": "보내다",
+    "pos": "v."
+  },
+  "senior": {
+    "term": "senior",
+    "meaning_ko": "선임의",
+    "pos": "adj."
+  },
+  "sense": {
+    "term": "sense",
+    "meaning_ko": "느낌",
+    "pos": "n."
+  },
+  "sensors": {
+    "term": "sensors",
+    "meaning_ko": "센서들",
+    "pos": "n."
+  },
+  "sent": {
+    "term": "sent",
+    "meaning_ko": "보냈다",
+    "pos": "v."
+  },
+  "separated": {
+    "term": "separated",
+    "meaning_ko": "분리된",
+    "pos": "v."
+  },
+  "separates": {
+    "term": "separates",
+    "meaning_ko": "분리한다",
+    "pos": "v."
+  },
+  "sequence": {
+    "term": "sequence",
+    "meaning_ko": "순서",
+    "pos": "n."
+  },
+  "series": {
+    "term": "series",
+    "meaning_ko": "시리즈",
+    "pos": "n."
+  },
+  "serious": {
+    "term": "serious",
+    "meaning_ko": "심각한",
+    "pos": "adj."
+  },
+  "seriously": {
+    "term": "seriously",
+    "meaning_ko": "심각하게",
+    "pos": "adv."
+  },
+  "serve": {
+    "term": "serve",
+    "meaning_ko": "제공하다",
+    "pos": "v."
+  },
+  "served": {
+    "term": "served",
+    "meaning_ko": "제공했다",
+    "pos": "v."
+  },
+  "serves": {
+    "term": "serves",
+    "meaning_ko": "제공한다",
+    "pos": "v."
+  },
+  "service": {
+    "term": "service",
+    "meaning_ko": "서비스",
+    "pos": "n."
+  },
+  "services": {
+    "term": "services",
+    "meaning_ko": "서비스들",
+    "pos": "n."
+  },
+  "sessions": {
+    "term": "sessions",
+    "meaning_ko": "회의들",
+    "pos": "n."
+  },
+  "set": {
+    "term": "set",
+    "meaning_ko": "설정하다",
+    "pos": "v."
+  },
+  "settler": {
+    "term": "settler",
+    "meaning_ko": "정착자",
+    "pos": "n."
+  },
+  "settlers": {
+    "term": "settlers",
+    "meaning_ko": "정착자들",
+    "pos": "n."
+  },
+  "several": {
+    "term": "several",
+    "meaning_ko": "여러",
+    "pos": "adj."
+  },
+  "shape": {
+    "term": "shape",
+    "meaning_ko": "형태",
+    "pos": "n."
+  },
+  "shaped": {
+    "term": "shaped",
+    "meaning_ko": "형성된",
+    "pos": "v."
+  },
+  "share": {
+    "term": "share",
+    "meaning_ko": "주식",
+    "pos": "n."
+  },
+  "shared": {
+    "term": "shared",
+    "meaning_ko": "공유된",
+    "pos": "v."
+  },
+  "shares": {
+    "term": "shares",
+    "meaning_ko": "주식들",
+    "pos": "n."
+  },
+  "sharp": {
+    "term": "sharp",
+    "meaning_ko": "급격한",
+    "pos": "adj."
+  },
+  "sharpest": {
+    "term": "sharpest",
+    "meaning_ko": "가장 급격한",
+    "pos": "adj."
+  },
+  "sharply": {
+    "term": "sharply",
+    "meaning_ko": "급격하게",
+    "pos": "adv."
+  },
+  "shift": {
+    "term": "shift",
+    "meaning_ko": "변화",
+    "pos": "n."
+  },
+  "ship": {
+    "term": "ship",
+    "meaning_ko": "배",
+    "pos": "n."
+  },
+  "shipments": {
+    "term": "shipments",
+    "meaning_ko": "선적들",
+    "pos": "n."
+  },
+  "shipping": {
+    "term": "shipping",
+    "meaning_ko": "해운",
+    "pos": "n."
+  },
+  "ships": {
+    "term": "ships",
+    "meaning_ko": "배들",
+    "pos": "n."
+  },
+  "shocked": {
+    "term": "shocked",
+    "meaning_ko": "충격을 받은",
+    "pos": "v."
+  },
+  "shocking": {
+    "term": "shocking",
+    "meaning_ko": "충격적인",
+    "pos": "adj."
+  },
+  "shockwaves": {
+    "term": "shockwaves",
+    "meaning_ko": "충격파들",
+    "pos": "n."
+  },
+  "shoppers": {
+    "term": "shoppers",
+    "meaning_ko": "쇼핑객들",
+    "pos": "n."
+  },
+  "shopping": {
+    "term": "shopping",
+    "meaning_ko": "쇼핑",
+    "pos": "n."
+  },
+  "shops": {
+    "term": "shops",
+    "meaning_ko": "상점들",
+    "pos": "n."
+  },
+  "short": {
+    "term": "short",
+    "meaning_ko": "짧은",
+    "pos": "adj."
+  },
+  "short-sleeve": {
+    "term": "short-sleeve",
+    "meaning_ko": "반소매",
+    "pos": "adj."
+  },
+  "short-video": {
+    "term": "short-video",
+    "meaning_ko": "숏폼 동영상",
+    "pos": "n."
+  },
+  "shortened": {
+    "term": "shortened",
+    "meaning_ko": "단축된",
+    "pos": "v."
+  },
+  "should": {
+    "term": "should",
+    "meaning_ko": "~해야 한다",
+    "pos": "v."
+  },
+  "show": {
+    "term": "show",
+    "meaning_ko": "보여주다",
+    "pos": "v."
+  },
+  "showed": {
+    "term": "showed",
+    "meaning_ko": "보여줬다",
+    "pos": "v."
+  },
+  "shown": {
+    "term": "shown",
+    "meaning_ko": "보여진",
+    "pos": "v."
+  },
+  "shows": {
+    "term": "shows",
+    "meaning_ko": "보여준다",
+    "pos": "v."
+  },
+  "sick": {
+    "term": "sick",
+    "meaning_ko": "병든",
+    "pos": "adj."
+  },
+  "side": {
+    "term": "side",
+    "meaning_ko": "측면",
+    "pos": "n."
+  },
+  "sides": {
+    "term": "sides",
+    "meaning_ko": "측면들",
+    "pos": "n."
+  },
+  "sign": {
+    "term": "sign",
+    "meaning_ko": "신호",
+    "pos": "n."
+  },
+  "signaled": {
+    "term": "signaled",
+    "meaning_ko": "신호했다",
+    "pos": "v."
+  },
+  "signalled": {
+    "term": "signalled",
+    "meaning_ko": "신호했다",
+    "pos": "v."
+  },
+  "signals": {
+    "term": "signals",
+    "meaning_ko": "신호들",
+    "pos": "n."
+  },
+  "significant": {
+    "term": "significant",
+    "meaning_ko": "의미 있는",
+    "pos": "adj."
+  },
+  "signs": {
+    "term": "signs",
+    "meaning_ko": "신호들",
+    "pos": "n."
+  },
+  "silence": {
+    "term": "silence",
+    "meaning_ko": "침묵",
+    "pos": "n."
+  },
+  "similar": {
+    "term": "similar",
+    "meaning_ko": "유사한",
+    "pos": "adj."
+  },
+  "simple": {
+    "term": "simple",
+    "meaning_ko": "단순한",
+    "pos": "adj."
+  },
+  "simply": {
+    "term": "simply",
+    "meaning_ko": "단순히",
+    "pos": "adv."
+  },
+  "since": {
+    "term": "since",
+    "meaning_ko": "이후",
+    "pos": "conj."
+  },
+  "single": {
+    "term": "single",
+    "meaning_ko": "단일의",
+    "pos": "adj."
+  },
+  "singled": {
+    "term": "singled",
+    "meaning_ko": "선택했다",
+    "pos": "v."
+  },
+  "sit": {
+    "term": "sit",
+    "meaning_ko": "앉다",
+    "pos": "v."
+  },
+  "site": {
+    "term": "site",
+    "meaning_ko": "장소",
+    "pos": "n."
+  },
+  "sits": {
+    "term": "sits",
+    "meaning_ko": "앉아 있다",
+    "pos": "v."
+  },
+  "sitting": {
+    "term": "sitting",
+    "meaning_ko": "앉아 있는",
+    "pos": "v."
+  },
+  "situation": {
+    "term": "situation",
+    "meaning_ko": "상황",
+    "pos": "n."
+  },
+  "six": {
+    "term": "six",
+    "meaning_ko": "6",
+    "pos": "n."
+  },
+  "slid": {
+    "term": "slid",
+    "meaning_ko": "미끄러졌다",
+    "pos": "v."
+  },
+  "slow": {
+    "term": "slow",
+    "meaning_ko": "느린",
+    "pos": "adj."
+  },
+  "slows": {
+    "term": "slows",
+    "meaning_ko": "느려진다",
+    "pos": "v."
+  },
+  "small": {
+    "term": "small",
+    "meaning_ko": "작은",
+    "pos": "adj."
+  },
+  "smoke": {
+    "term": "smoke",
+    "meaning_ko": "연기",
+    "pos": "n."
+  },
+  "snapshot": {
+    "term": "snapshot",
+    "meaning_ko": "스냅샷",
+    "pos": "n."
+  },
+  "social": {
+    "term": "social",
+    "meaning_ko": "사회의",
+    "pos": "adj."
+  },
+  "software": {
+    "term": "software",
+    "meaning_ko": "소프트웨어",
+    "pos": "n."
+  },
+  "sold": {
+    "term": "sold",
+    "meaning_ko": "팔았다",
+    "pos": "v."
+  },
+  "soldiers": {
+    "term": "soldiers",
+    "meaning_ko": "군인들",
+    "pos": "n."
+  },
+  "solid": {
+    "term": "solid",
+    "meaning_ko": "견고한",
+    "pos": "adj."
+  },
+  "solution": {
+    "term": "solution",
+    "meaning_ko": "해결책",
+    "pos": "n."
+  },
+  "some": {
+    "term": "some",
+    "meaning_ko": "일부",
+    "pos": "pron."
+  },
+  "someone": {
+    "term": "someone",
+    "meaning_ko": "누군가",
+    "pos": "pron."
+  },
+  "something": {
+    "term": "something",
+    "meaning_ko": "무언가",
+    "pos": "pron."
+  },
+  "somewhat": {
+    "term": "somewhat",
+    "meaning_ko": "어느 정도",
+    "pos": "adv."
+  },
+  "soon": {
+    "term": "soon",
+    "meaning_ko": "곧",
+    "pos": "adv."
+  },
+  "south": {
+    "term": "south",
+    "meaning_ko": "남쪽",
+    "pos": "n."
+  },
+  "southern": {
+    "term": "southern",
+    "meaning_ko": "남부의",
+    "pos": "adj."
+  },
+  "space": {
+    "term": "space",
+    "meaning_ko": "우주",
+    "pos": "n."
+  },
+  "spaceflight": {
+    "term": "spaceflight",
+    "meaning_ko": "우주 비행",
+    "pos": "n."
+  },
+  "speaking": {
+    "term": "speaking",
+    "meaning_ko": "말하는",
+    "pos": "v."
+  },
+  "special": {
+    "term": "special",
+    "meaning_ko": "특별한",
+    "pos": "adj."
+  },
+  "speculation": {
+    "term": "speculation",
+    "meaning_ko": "추측",
+    "pos": "n."
+  },
+  "speed": {
+    "term": "speed",
+    "meaning_ko": "속도",
+    "pos": "n."
+  },
+  "spell": {
+    "term": "spell",
+    "meaning_ko": "주문하다",
+    "pos": "v."
+  },
+  "spelled": {
+    "term": "spelled",
+    "meaning_ko": "주문했다",
+    "pos": "v."
+  },
+  "spend": {
+    "term": "spend",
+    "meaning_ko": "쓰다",
+    "pos": "v."
+  },
+  "spending": {
+    "term": "spending",
+    "meaning_ko": "지출",
+    "pos": "n."
+  },
+  "spent": {
+    "term": "spent",
+    "meaning_ko": "썼다",
+    "pos": "v."
+  },
+  "spiral": {
+    "term": "spiral",
+    "meaning_ko": "소용돌이",
+    "pos": "n."
+  },
+  "spoke": {
+    "term": "spoke",
+    "meaning_ko": "말했다",
+    "pos": "v."
+  },
+  "sport": {
+    "term": "sport",
+    "meaning_ko": "스포츠",
+    "pos": "n."
+  },
+  "sports": {
+    "term": "sports",
+    "meaning_ko": "스포츠",
+    "pos": "n."
+  },
+  "spot": {
+    "term": "spot",
+    "meaning_ko": "지점",
+    "pos": "n."
+  },
+  "spread": {
+    "term": "spread",
+    "meaning_ko": "퍼지다",
+    "pos": "v."
+  },
+  "stadium": {
+    "term": "stadium",
+    "meaning_ko": "경기장",
+    "pos": "n."
+  },
+  "staff": {
+    "term": "staff",
+    "meaning_ko": "직원",
+    "pos": "n."
+  },
+  "stage": {
+    "term": "stage",
+    "meaning_ko": "단계",
+    "pos": "n."
+  },
+  "staggered": {
+    "term": "staggered",
+    "meaning_ko": "엇갈린",
+    "pos": "adj."
+  },
+  "stake": {
+    "term": "stake",
+    "meaning_ko": "지분",
+    "pos": "n."
+  },
+  "stand": {
+    "term": "stand",
+    "meaning_ko": "서다",
+    "pos": "v."
+  },
+  "standard": {
+    "term": "standard",
+    "meaning_ko": "표준",
+    "pos": "n."
+  },
+  "standards": {
+    "term": "standards",
+    "meaning_ko": "표준들",
+    "pos": "n."
+  },
+  "standoff": {
+    "term": "standoff",
+    "meaning_ko": "교착",
+    "pos": "n."
+  },
+  "standout": {
+    "term": "standout",
+    "meaning_ko": "눈에 띄는 사람",
+    "pos": "n."
+  },
+  "star": {
+    "term": "star",
+    "meaning_ko": "별",
+    "pos": "n."
+  },
+  "start": {
+    "term": "start",
+    "meaning_ko": "시작하다",
+    "pos": "v."
+  },
+  "started": {
+    "term": "started",
+    "meaning_ko": "시작했다",
+    "pos": "v."
+  },
+  "starts": {
+    "term": "starts",
+    "meaning_ko": "시작한다",
+    "pos": "v."
+  },
+  "state": {
+    "term": "state",
+    "meaning_ko": "주",
+    "pos": "n."
+  },
+  "state-owned": {
+    "term": "state-owned",
+    "meaning_ko": "국유의",
+    "pos": "adj."
+  },
+  "stated": {
+    "term": "stated",
+    "meaning_ko": "명시했다",
+    "pos": "v."
+  },
+  "statement": {
+    "term": "statement",
+    "meaning_ko": "성명",
+    "pos": "n."
+  },
+  "states": {
+    "term": "states",
+    "meaning_ko": "주들",
+    "pos": "n."
+  },
+  "stay": {
+    "term": "stay",
+    "meaning_ko": "머물다",
+    "pos": "v."
+  },
+  "stayed": {
+    "term": "stayed",
+    "meaning_ko": "머물렀다",
+    "pos": "v."
+  },
+  "steady": {
+    "term": "steady",
+    "meaning_ko": "꾸준한",
+    "pos": "adj."
+  },
+  "steeply": {
+    "term": "steeply",
+    "meaning_ko": "급격히",
+    "pos": "adv."
+  },
+  "step": {
+    "term": "step",
+    "meaning_ko": "조치",
+    "pos": "n."
+  },
+  "steps": {
+    "term": "steps",
+    "meaning_ko": "조치들",
+    "pos": "n."
+  },
+  "still": {
+    "term": "still",
+    "meaning_ko": "여전히",
+    "pos": "adv."
+  },
+  "stock": {
+    "term": "stock",
+    "meaning_ko": "주식",
+    "pos": "n."
+  },
+  "stood": {
+    "term": "stood",
+    "meaning_ko": "섰다",
+    "pos": "v."
+  },
+  "stop": {
+    "term": "stop",
+    "meaning_ko": "멈추다",
+    "pos": "v."
+  },
+  "stopped": {
+    "term": "stopped",
+    "meaning_ko": "멈췄다",
+    "pos": "v."
+  },
+  "store": {
+    "term": "store",
+    "meaning_ko": "점포",
+    "pos": "n."
+  },
+  "stories": {
+    "term": "stories",
+    "meaning_ko": "이야기들",
+    "pos": "n."
+  },
+  "story": {
+    "term": "story",
+    "meaning_ko": "이야기",
+    "pos": "n."
+  },
+  "strait": {
+    "term": "strait",
+    "meaning_ko": "해협",
+    "pos": "n."
+  },
+  "strange": {
+    "term": "strange",
+    "meaning_ko": "이상한",
+    "pos": "adj."
+  },
+  "streets": {
+    "term": "streets",
+    "meaning_ko": "거리들",
+    "pos": "n."
+  },
+  "streetwear": {
+    "term": "streetwear",
+    "meaning_ko": "스트릿웨어",
+    "pos": "n."
+  },
+  "strength": {
+    "term": "strength",
+    "meaning_ko": "강점",
+    "pos": "n."
+  },
+  "stretch": {
+    "term": "stretch",
+    "meaning_ko": "연장",
+    "pos": "n."
+  },
+  "stretched": {
+    "term": "stretched",
+    "meaning_ko": "연장되었다",
+    "pos": "v."
+  },
+  "stricter": {
+    "term": "stricter",
+    "meaning_ko": "더 엄격한",
+    "pos": "adj."
+  },
+  "strikes": {
+    "term": "strikes",
+    "meaning_ko": "파업",
+    "pos": "n."
+  },
+  "striking": {
+    "term": "striking",
+    "meaning_ko": "눈에 띄는",
+    "pos": "adj."
+  },
+  "strikingly": {
+    "term": "strikingly",
+    "meaning_ko": "두드러지게",
+    "pos": "adv."
+  },
+  "strip": {
+    "term": "strip",
+    "meaning_ko": "벗기다",
+    "pos": "v."
+  },
+  "strong": {
+    "term": "strong",
+    "meaning_ko": "강한",
+    "pos": "adj."
+  },
+  "strongly": {
+    "term": "strongly",
+    "meaning_ko": "강하게",
+    "pos": "adv."
+  },
+  "strung": {
+    "term": "strung",
+    "meaning_ko": "연결된",
+    "pos": "adj."
+  },
+  "study": {
+    "term": "study",
+    "meaning_ko": "연구",
+    "pos": "n."
+  },
+  "style": {
+    "term": "style",
+    "meaning_ko": "스타일",
+    "pos": "n."
+  },
+  "stylish": {
+    "term": "stylish",
+    "meaning_ko": "세련된",
+    "pos": "adj."
+  },
+  "substantial": {
+    "term": "substantial",
+    "meaning_ko": "상당한",
+    "pos": "adj."
+  },
+  "succeeds": {
+    "term": "succeeds",
+    "meaning_ko": "성공한다",
+    "pos": "v."
+  },
+  "success": {
+    "term": "success",
+    "meaning_ko": "성공",
+    "pos": "n."
+  },
+  "succession": {
+    "term": "succession",
+    "meaning_ko": "계승",
+    "pos": "n."
+  },
+  "sudden": {
+    "term": "sudden",
+    "meaning_ko": "갑작스러운",
+    "pos": "adj."
+  },
+  "suddenly": {
+    "term": "suddenly",
+    "meaning_ko": "갑자기",
+    "pos": "adv."
+  },
+  "suddenness": {
+    "term": "suddenness",
+    "meaning_ko": "갑작스러움",
+    "pos": "n."
+  },
+  "suggest": {
+    "term": "suggest",
+    "meaning_ko": "암시하다",
+    "pos": "v."
+  },
+  "suggested": {
+    "term": "suggested",
+    "meaning_ko": "암시했다",
+    "pos": "v."
+  },
+  "suggests": {
+    "term": "suggests",
+    "meaning_ko": "암시한다",
+    "pos": "v."
+  },
+  "suits": {
+    "term": "suits",
+    "meaning_ko": "어울린다",
+    "pos": "v."
+  },
+  "sum": {
+    "term": "sum",
+    "meaning_ko": "합계",
+    "pos": "n."
+  },
+  "summer": {
+    "term": "summer",
+    "meaning_ko": "여름",
+    "pos": "n."
+  },
+  "sunday": {
+    "term": "sunday",
+    "meaning_ko": "일요일",
+    "pos": "n."
+  },
+  "supplier": {
+    "term": "supplier",
+    "meaning_ko": "공급자",
+    "pos": "n."
+  },
+  "supplies": {
+    "term": "supplies",
+    "meaning_ko": "공급품",
+    "pos": "n."
+  },
+  "supply": {
+    "term": "supply",
+    "meaning_ko": "공급",
+    "pos": "n."
+  },
+  "supplying": {
+    "term": "supplying",
+    "meaning_ko": "공급하는",
+    "pos": "v."
+  },
+  "support": {
+    "term": "support",
+    "meaning_ko": "지지",
+    "pos": "n."
+  },
+  "supporters": {
+    "term": "supporters",
+    "meaning_ko": "지지자들",
+    "pos": "n."
+  },
+  "supports": {
+    "term": "supports",
+    "meaning_ko": "지지한다",
+    "pos": "v."
+  },
+  "sure": {
+    "term": "sure",
+    "meaning_ko": "확실한",
+    "pos": "adj."
+  },
+  "surge": {
+    "term": "surge",
+    "meaning_ko": "급증",
+    "pos": "n."
+  },
+  "surged": {
+    "term": "surged",
+    "meaning_ko": "급증했다",
+    "pos": "v."
+  },
+  "surplus": {
+    "term": "surplus",
+    "meaning_ko": "흑자",
+    "pos": "n."
+  },
+  "survive": {
+    "term": "survive",
+    "meaning_ko": "생존하다",
+    "pos": "v."
+  },
+  "survivors": {
+    "term": "survivors",
+    "meaning_ko": "생존자들",
+    "pos": "n."
+  },
+  "swept": {
+    "term": "swept",
+    "meaning_ko": "쓸었다",
+    "pos": "v."
+  },
+  "switched": {
+    "term": "switched",
+    "meaning_ko": "바꿨다",
+    "pos": "v."
+  },
+  "systems": {
+    "term": "systems",
+    "meaning_ko": "체계들",
+    "pos": "n."
+  },
+  "t-shirts": {
+    "term": "t-shirts",
+    "meaning_ko": "티셔츠들",
+    "pos": "n."
+  },
+  "take": {
+    "term": "take",
+    "meaning_ko": "취하다",
+    "pos": "v."
+  },
+  "taken": {
+    "term": "taken",
+    "meaning_ko": "취했다",
+    "pos": "v."
+  },
+  "taking": {
+    "term": "taking",
+    "meaning_ko": "취하는",
+    "pos": "v."
+  },
+  "talk": {
+    "term": "talk",
+    "meaning_ko": "이야기하다",
+    "pos": "v."
+  },
+  "target": {
+    "term": "target",
+    "meaning_ko": "목표",
+    "pos": "n."
+  },
+  "targets": {
+    "term": "targets",
+    "meaning_ko": "목표들",
+    "pos": "n."
+  },
+  "team": {
+    "term": "team",
+    "meaning_ko": "팀",
+    "pos": "n."
+  },
+  "team's": {
+    "term": "team's",
+    "meaning_ko": "팀의",
+    "pos": "n."
+  },
+  "teaming": {
+    "term": "teaming",
+    "meaning_ko": "팀을 이루는",
+    "pos": "v."
+  },
+  "teams": {
+    "term": "teams",
+    "meaning_ko": "팀들",
+    "pos": "n."
+  },
+  "tech": {
+    "term": "tech",
+    "meaning_ko": "기술",
+    "pos": "n."
+  },
+  "technologies": {
+    "term": "technologies",
+    "meaning_ko": "기술들",
+    "pos": "n."
+  },
+  "technology": {
+    "term": "technology",
+    "meaning_ko": "기술",
+    "pos": "n."
+  },
+  "teenage": {
+    "term": "teenage",
+    "meaning_ko": "10대의",
+    "pos": "adj."
+  },
+  "teenagers": {
+    "term": "teenagers",
+    "meaning_ko": "십대들",
+    "pos": "n."
+  },
+  "teens": {
+    "term": "teens",
+    "meaning_ko": "십대들",
+    "pos": "n."
+  },
+  "tell": {
+    "term": "tell",
+    "meaning_ko": "말하다",
+    "pos": "v."
+  },
+  "telling": {
+    "term": "telling",
+    "meaning_ko": "말하는",
+    "pos": "v."
+  },
+  "tells": {
+    "term": "tells",
+    "meaning_ko": "말한다",
+    "pos": "v."
+  },
+  "temporary": {
+    "term": "temporary",
+    "meaning_ko": "임시의",
+    "pos": "adj."
+  },
+  "tension": {
+    "term": "tension",
+    "meaning_ko": "긴장",
+    "pos": "n."
+  },
+  "tensions": {
+    "term": "tensions",
+    "meaning_ko": "긴장들",
+    "pos": "n."
+  },
+  "term": {
+    "term": "term",
+    "meaning_ko": "기간",
+    "pos": "n."
+  },
+  "terms": {
+    "term": "terms",
+    "meaning_ko": "조건들",
+    "pos": "n."
+  },
+  "territories": {
+    "term": "territories",
+    "meaning_ko": "영토들",
+    "pos": "n."
+  },
+  "tests": {
+    "term": "tests",
+    "meaning_ko": "시험들",
+    "pos": "n."
+  },
+  "thai": {
+    "term": "thai",
+    "meaning_ko": "태국의",
+    "pos": "adj."
+  },
+  "themselves": {
+    "term": "themselves",
+    "meaning_ko": "그들 자신",
+    "pos": "pron."
+  },
+  "therefore": {
+    "term": "therefore",
+    "meaning_ko": "따라서",
+    "pos": "adv."
+  },
+  "thick": {
+    "term": "thick",
+    "meaning_ko": "두꺼운",
+    "pos": "adj."
+  },
+  "thing": {
+    "term": "thing",
+    "meaning_ko": "것",
+    "pos": "n."
+  },
+  "things": {
+    "term": "things",
+    "meaning_ko": "것들",
+    "pos": "n."
+  },
+  "thorough": {
+    "term": "thorough",
+    "meaning_ko": "철저한",
+    "pos": "adj."
+  },
+  "though": {
+    "term": "though",
+    "meaning_ko": "비록",
+    "pos": "conj."
+  },
+  "threaten": {
+    "term": "threaten",
+    "meaning_ko": "위협하다",
+    "pos": "v."
+  },
+  "three": {
+    "term": "three",
+    "meaning_ko": "3",
+    "pos": "n."
+  },
+  "through": {
+    "term": "through",
+    "meaning_ko": "~을 통해",
+    "pos": "prep."
+  },
+  "throughout": {
+    "term": "throughout",
+    "meaning_ko": "~내내",
+    "pos": "prep."
+  },
+  "thrown": {
+    "term": "thrown",
+    "meaning_ko": "던져진",
+    "pos": "v."
+  },
+  "tie-in": {
+    "term": "tie-in",
+    "meaning_ko": "연결",
+    "pos": "n."
+  },
+  "tie-up": {
+    "term": "tie-up",
+    "meaning_ko": "연계",
+    "pos": "n."
+  },
+  "tied": {
+    "term": "tied",
+    "meaning_ko": "묶인",
+    "pos": "v."
+  },
+  "ties": {
+    "term": "ties",
+    "meaning_ko": "관계들",
+    "pos": "n."
+  },
+  "tight": {
+    "term": "tight",
+    "meaning_ko": "팽팽한",
+    "pos": "adj."
+  },
+  "time": {
+    "term": "time",
+    "meaning_ko": "시간",
+    "pos": "n."
+  },
+  "times": {
+    "term": "times",
+    "meaning_ko": "시간들",
+    "pos": "n."
+  },
+  "timing": {
+    "term": "timing",
+    "meaning_ko": "시기",
+    "pos": "n."
+  },
+  "together": {
+    "term": "together",
+    "meaning_ko": "함께",
+    "pos": "adv."
+  },
+  "tolls": {
+    "term": "tolls",
+    "meaning_ko": "통행료",
+    "pos": "n."
+  },
+  "took": {
+    "term": "took",
+    "meaning_ko": "가져갔다",
+    "pos": "v."
+  },
+  "tools": {
+    "term": "tools",
+    "meaning_ko": "도구들",
+    "pos": "n."
+  },
+  "top": {
+    "term": "top",
+    "meaning_ko": "꼭대기",
+    "pos": "n."
+  },
+  "tore": {
+    "term": "tore",
+    "meaning_ko": "찢었다",
+    "pos": "v."
+  },
+  "total": {
+    "term": "total",
+    "meaning_ko": "총",
+    "pos": "n."
+  },
+  "totals": {
+    "term": "totals",
+    "meaning_ko": "합계들",
+    "pos": "n."
+  },
+  "touching": {
+    "term": "touching",
+    "meaning_ko": "만지는",
+    "pos": "v."
+  },
+  "tourists": {
+    "term": "tourists",
+    "meaning_ko": "관광객들",
+    "pos": "n."
+  },
+  "toward": {
+    "term": "toward",
+    "meaning_ko": "~을 향해",
+    "pos": "prep."
+  },
+  "trade": {
+    "term": "trade",
+    "meaning_ko": "무역",
+    "pos": "n."
+  },
+  "trade-off": {
+    "term": "trade-off",
+    "meaning_ko": "트레이드오프",
+    "pos": "n."
+  },
+  "traded": {
+    "term": "traded",
+    "meaning_ko": "거래했다",
+    "pos": "v."
+  },
+  "traders": {
+    "term": "traders",
+    "meaning_ko": "거래자들",
+    "pos": "n."
+  },
+  "trading": {
+    "term": "trading",
+    "meaning_ko": "거래",
+    "pos": "n."
+  },
+  "traffic": {
+    "term": "traffic",
+    "meaning_ko": "교통",
+    "pos": "n."
+  },
+  "tragedies": {
+    "term": "tragedies",
+    "meaning_ko": "비극들",
+    "pos": "n."
+  },
+  "tragedy": {
+    "term": "tragedy",
+    "meaning_ko": "비극",
+    "pos": "n."
+  },
+  "travel": {
+    "term": "travel",
+    "meaning_ko": "여행",
+    "pos": "n."
+  },
+  "travelled": {
+    "term": "travelled",
+    "meaning_ko": "여행했다",
+    "pos": "v."
+  },
+  "traveller": {
+    "term": "traveller",
+    "meaning_ko": "여행자",
+    "pos": "n."
+  },
+  "treated": {
+    "term": "treated",
+    "meaning_ko": "취급했다",
+    "pos": "v."
+  },
+  "treating": {
+    "term": "treating",
+    "meaning_ko": "취급하는",
+    "pos": "v."
+  },
+  "trendy": {
+    "term": "trendy",
+    "meaning_ko": "유행하는",
+    "pos": "adj."
+  },
+  "tributes": {
+    "term": "tributes",
+    "meaning_ko": "경의",
+    "pos": "n."
+  },
+  "tried": {
+    "term": "tried",
+    "meaning_ko": "시도했다",
+    "pos": "v."
+  },
+  "tries": {
+    "term": "tries",
+    "meaning_ko": "시도한다",
+    "pos": "v."
+  },
+  "trigger": {
+    "term": "trigger",
+    "meaning_ko": "촉발하다",
+    "pos": "v."
+  },
+  "trip": {
+    "term": "trip",
+    "meaning_ko": "여행",
+    "pos": "n."
+  },
+  "tripled": {
+    "term": "tripled",
+    "meaning_ko": "3배가 됐다",
+    "pos": "v."
+  },
+  "troops": {
+    "term": "troops",
+    "meaning_ko": "군대",
+    "pos": "n."
+  },
+  "trouble": {
+    "term": "trouble",
+    "meaning_ko": "문제",
+    "pos": "n."
+  },
+  "true": {
+    "term": "true",
+    "meaning_ko": "참",
+    "pos": "adj."
+  },
+  "truth": {
+    "term": "truth",
+    "meaning_ko": "진실",
+    "pos": "n."
+  },
+  "try": {
+    "term": "try",
+    "meaning_ko": "시도하다",
+    "pos": "v."
+  },
+  "trying": {
+    "term": "trying",
+    "meaning_ko": "시도하는",
+    "pos": "v."
+  },
+  "tumbled": {
+    "term": "tumbled",
+    "meaning_ko": "떨어졌다",
+    "pos": "v."
+  },
+  "turn": {
+    "term": "turn",
+    "meaning_ko": "순번",
+    "pos": "n."
+  },
+  "turned": {
+    "term": "turned",
+    "meaning_ko": "돌았다",
+    "pos": "v."
+  },
+  "turning": {
+    "term": "turning",
+    "meaning_ko": "돌고있는",
+    "pos": "v."
+  },
+  "turnover": {
+    "term": "turnover",
+    "meaning_ko": "회전율",
+    "pos": "n."
+  },
+  "turns": {
+    "term": "turns",
+    "meaning_ko": "순번들",
+    "pos": "n."
+  },
+  "twenty": {
+    "term": "twenty",
+    "meaning_ko": "20",
+    "pos": "n."
+  },
+  "twins": {
+    "term": "twins",
+    "meaning_ko": "쌍둥이들",
+    "pos": "n."
+  },
+  "two": {
+    "term": "two",
+    "meaning_ko": "2",
+    "pos": "n."
+  },
+  "typical": {
+    "term": "typical",
+    "meaning_ko": "전형적인",
+    "pos": "adj."
+  },
+  "ukrainian": {
+    "term": "ukrainian",
+    "meaning_ko": "우크라이나의",
+    "pos": "adj."
+  },
+  "uncertain": {
+    "term": "uncertain",
+    "meaning_ko": "불확실한",
+    "pos": "adj."
+  },
+  "unchecked": {
+    "term": "unchecked",
+    "meaning_ko": "억제되지 않은",
+    "pos": "adj."
+  },
+  "under": {
+    "term": "under",
+    "meaning_ko": "~아래",
+    "pos": "prep."
+  },
+  "underlining": {
+    "term": "underlining",
+    "meaning_ko": "강조하는",
+    "pos": "v."
+  },
+  "underlying": {
+    "term": "underlying",
+    "meaning_ko": "근본적인",
+    "pos": "adj."
+  },
+  "understand": {
+    "term": "understand",
+    "meaning_ko": "이해하다",
+    "pos": "v."
+  },
+  "unease": {
+    "term": "unease",
+    "meaning_ko": "불안",
+    "pos": "n."
+  },
+  "unexpected": {
+    "term": "unexpected",
+    "meaning_ko": "예상치 못한",
+    "pos": "adj."
+  },
+  "unfolded": {
+    "term": "unfolded",
+    "meaning_ko": "펼쳐졌다",
+    "pos": "v."
+  },
+  "union": {
+    "term": "union",
+    "meaning_ko": "조합",
+    "pos": "n."
+  },
+  "union's": {
+    "term": "union's",
+    "meaning_ko": "조합의",
+    "pos": "pron."
+  },
+  "united": {
+    "term": "united",
+    "meaning_ko": "연합된",
+    "pos": "adj."
+  },
+  "unsettle": {
+    "term": "unsettle",
+    "meaning_ko": "불안하게 하다",
+    "pos": "v."
+  },
+  "until": {
+    "term": "until",
+    "meaning_ko": "~까지",
+    "pos": "conj."
+  },
+  "unusual": {
+    "term": "unusual",
+    "meaning_ko": "비상한",
+    "pos": "adj."
+  },
+  "unusually": {
+    "term": "unusually",
+    "meaning_ko": "이례적으로",
+    "pos": "adv."
+  },
+  "unwell": {
+    "term": "unwell",
+    "meaning_ko": "건강하지 않은",
+    "pos": "adj."
+  },
+  "upright": {
+    "term": "upright",
+    "meaning_ko": "수직의",
+    "pos": "adj."
+  },
+  "urging": {
+    "term": "urging",
+    "meaning_ko": "촉구하는",
+    "pos": "v."
+  },
+  "usage": {
+    "term": "usage",
+    "meaning_ko": "사용",
+    "pos": "n."
+  },
+  "use": {
+    "term": "use",
+    "meaning_ko": "사용",
+    "pos": "n."
+  },
+  "used": {
+    "term": "used",
+    "meaning_ko": "사용했다",
+    "pos": "v."
+  },
+  "user's": {
+    "term": "user's",
+    "meaning_ko": "사용자의",
+    "pos": "pron."
+  },
+  "users": {
+    "term": "users",
+    "meaning_ko": "사용자들",
+    "pos": "n."
+  },
+  "using": {
+    "term": "using",
+    "meaning_ko": "사용하는",
+    "pos": "v."
+  },
+  "usually": {
+    "term": "usually",
+    "meaning_ko": "보통",
+    "pos": "adv."
+  },
+  "vacant": {
+    "term": "vacant",
+    "meaning_ko": "비어있는",
+    "pos": "adj."
+  },
+  "value": {
+    "term": "value",
+    "meaning_ko": "가치",
+    "pos": "n."
+  },
+  "vanished": {
+    "term": "vanished",
+    "meaning_ko": "사라졌다",
+    "pos": "v."
+  },
+  "vary": {
+    "term": "vary",
+    "meaning_ko": "다양하다",
+    "pos": "v."
+  },
+  "vehicle": {
+    "term": "vehicle",
+    "meaning_ko": "차량",
+    "pos": "n."
+  },
+  "venue": {
+    "term": "venue",
+    "meaning_ko": "장소",
+    "pos": "n."
+  },
+  "venues": {
+    "term": "venues",
+    "meaning_ko": "장소들",
+    "pos": "n."
+  },
+  "verify": {
+    "term": "verify",
+    "meaning_ko": "확인하다",
+    "pos": "v."
+  },
+  "version": {
+    "term": "version",
+    "meaning_ko": "버전",
+    "pos": "n."
+  },
+  "vessels": {
+    "term": "vessels",
+    "meaning_ko": "선박",
+    "pos": "n."
+  },
+  "veteran": {
+    "term": "veteran",
+    "meaning_ko": "베테랑",
+    "pos": "n."
+  },
+  "video": {
+    "term": "video",
+    "meaning_ko": "영상",
+    "pos": "n."
+  },
+  "videos": {
+    "term": "videos",
+    "meaning_ko": "영상들",
+    "pos": "n."
+  },
+  "viewing": {
+    "term": "viewing",
+    "meaning_ko": "시청",
+    "pos": "n."
+  },
+  "village": {
+    "term": "village",
+    "meaning_ko": "마을",
+    "pos": "n."
+  },
+  "violence": {
+    "term": "violence",
+    "meaning_ko": "폭력",
+    "pos": "n."
+  },
+  "visit": {
+    "term": "visit",
+    "meaning_ko": "방문",
+    "pos": "n."
+  },
+  "visited": {
+    "term": "visited",
+    "meaning_ko": "방문했다",
+    "pos": "v."
+  },
+  "voice": {
+    "term": "voice",
+    "meaning_ko": "목소리",
+    "pos": "n."
+  },
+  "vote": {
+    "term": "vote",
+    "meaning_ko": "투표",
+    "pos": "n."
+  },
+  "voted": {
+    "term": "voted",
+    "meaning_ko": "투표했다",
+    "pos": "v."
+  },
+  "vulnerability": {
+    "term": "vulnerability",
+    "meaning_ko": "취약점",
+    "pos": "n."
+  },
+  "vulnerable": {
+    "term": "vulnerable",
+    "meaning_ko": "취약한",
+    "pos": "adj."
+  },
+  "wait": {
+    "term": "wait",
+    "meaning_ko": "기다리다",
+    "pos": "v."
+  },
+  "waited": {
+    "term": "waited",
+    "meaning_ko": "기다렸다",
+    "pos": "v."
+  },
+  "waiting": {
+    "term": "waiting",
+    "meaning_ko": "기다리는",
+    "pos": "v."
+  },
+  "walk-in": {
+    "term": "walk-in",
+    "meaning_ko": "즉석방문객",
+    "pos": "n."
+  },
+  "want": {
+    "term": "want",
+    "meaning_ko": "원하다",
+    "pos": "v."
+  },
+  "wanted": {
+    "term": "wanted",
+    "meaning_ko": "원했다",
+    "pos": "v."
+  },
+  "wants": {
+    "term": "wants",
+    "meaning_ko": "원한다",
+    "pos": "v."
+  },
+  "war": {
+    "term": "war",
+    "meaning_ko": "전쟁",
+    "pos": "n."
+  },
+  "warn": {
+    "term": "warn",
+    "meaning_ko": "경고하다",
+    "pos": "v."
+  },
+  "warned": {
+    "term": "warned",
+    "meaning_ko": "경고했다",
+    "pos": "v."
+  },
+  "warning": {
+    "term": "warning",
+    "meaning_ko": "경고",
+    "pos": "n."
+  },
+  "wars": {
+    "term": "wars",
+    "meaning_ko": "전쟁들",
+    "pos": "n."
+  },
+  "watched": {
+    "term": "watched",
+    "meaning_ko": "봤다",
+    "pos": "v."
+  },
+  "watching": {
+    "term": "watching",
+    "meaning_ko": "보는",
+    "pos": "v."
+  },
+  "waterway": {
+    "term": "waterway",
+    "meaning_ko": "수로",
+    "pos": "n."
+  },
+  "waterways": {
+    "term": "waterways",
+    "meaning_ko": "수로들",
+    "pos": "n."
+  },
+  "wave": {
+    "term": "wave",
+    "meaning_ko": "파도",
+    "pos": "n."
+  },
+  "way": {
+    "term": "way",
+    "meaning_ko": "방법",
+    "pos": "n."
+  },
+  "ways": {
+    "term": "ways",
+    "meaning_ko": "방법들",
+    "pos": "n."
+  },
+  "weaken": {
+    "term": "weaken",
+    "meaning_ko": "약해지다",
+    "pos": "v."
+  },
+  "weakness": {
+    "term": "weakness",
+    "meaning_ko": "약점",
+    "pos": "n."
+  },
+  "wear": {
+    "term": "wear",
+    "meaning_ko": "입다",
+    "pos": "v."
+  },
+  "week": {
+    "term": "week",
+    "meaning_ko": "주",
+    "pos": "n."
+  },
+  "weekend": {
+    "term": "weekend",
+    "meaning_ko": "주말",
+    "pos": "n."
+  },
+  "weekends": {
+    "term": "weekends",
+    "meaning_ko": "주말들",
+    "pos": "n."
+  },
+  "weeks": {
+    "term": "weeks",
+    "meaning_ko": "주들",
+    "pos": "n."
+  },
+  "weight": {
+    "term": "weight",
+    "meaning_ko": "무게",
+    "pos": "n."
+  },
+  "well": {
+    "term": "well",
+    "meaning_ko": "잘",
+    "pos": "adv."
+  },
+  "well-being": {
+    "term": "well-being",
+    "meaning_ko": "복지",
+    "pos": "n."
+  },
+  "well-known": {
+    "term": "well-known",
+    "meaning_ko": "잘 알려진",
+    "pos": "adj."
+  },
+  "went": {
+    "term": "went",
+    "meaning_ko": "갔다",
+    "pos": "v."
+  },
+  "west": {
+    "term": "west",
+    "meaning_ko": "서쪽",
+    "pos": "n."
+  },
+  "when": {
+    "term": "when",
+    "meaning_ko": "언제",
+    "pos": "conj."
+  },
+  "where": {
+    "term": "where",
+    "meaning_ko": "어디",
+    "pos": "conj."
+  },
+  "whether": {
+    "term": "whether",
+    "meaning_ko": "~인지 아닌지",
+    "pos": "conj."
+  },
+  "while": {
+    "term": "while",
+    "meaning_ko": "동안",
+    "pos": "conj."
+  },
+  "whole": {
+    "term": "whole",
+    "meaning_ko": "전체",
+    "pos": "adj."
+  },
+  "whose": {
+    "term": "whose",
+    "meaning_ko": "누구의",
+    "pos": "pron."
+  },
+  "why": {
+    "term": "why",
+    "meaning_ko": "왜",
+    "pos": "adv."
+  },
+  "wide": {
+    "term": "wide",
+    "meaning_ko": "넓은",
+    "pos": "adj."
+  },
+  "wide-ranging": {
+    "term": "wide-ranging",
+    "meaning_ko": "광범위한",
+    "pos": "adj."
+  },
+  "widened": {
+    "term": "widened",
+    "meaning_ko": "넓혀졌다",
+    "pos": "v."
+  },
+  "wider": {
+    "term": "wider",
+    "meaning_ko": "더 넓은",
+    "pos": "adj."
+  },
+  "will": {
+    "term": "will",
+    "meaning_ko": "~할 것이다",
+    "pos": "v."
+  },
+  "window": {
+    "term": "window",
+    "meaning_ko": "창",
+    "pos": "n."
+  },
+  "within": {
+    "term": "within",
+    "meaning_ko": "~내에",
+    "pos": "prep."
+  },
+  "witnessed": {
+    "term": "witnessed",
+    "meaning_ko": "목격했다",
+    "pos": "v."
+  },
+  "witnesses": {
+    "term": "witnesses",
+    "meaning_ko": "증인들",
+    "pos": "n."
+  },
+  "won": {
+    "term": "won",
+    "meaning_ko": "이겼다",
+    "pos": "v."
+  },
+  "wording": {
+    "term": "wording",
+    "meaning_ko": "표현",
+    "pos": "n."
+  },
+  "words": {
+    "term": "words",
+    "meaning_ko": "단어들",
+    "pos": "n."
+  },
+  "work": {
+    "term": "work",
+    "meaning_ko": "일하다",
+    "pos": "v."
+  },
+  "worked": {
+    "term": "worked",
+    "meaning_ko": "일했다",
+    "pos": "v."
+  },
+  "workers": {
+    "term": "workers",
+    "meaning_ko": "근로자들",
+    "pos": "n."
+  },
+  "working": {
+    "term": "working",
+    "meaning_ko": "일하는",
+    "pos": "v."
+  },
+  "works": {
+    "term": "works",
+    "meaning_ko": "일한다",
+    "pos": "v."
+  },
+  "world": {
+    "term": "world",
+    "meaning_ko": "세계",
+    "pos": "n."
+  },
+  "world's": {
+    "term": "world's",
+    "meaning_ko": "세계의",
+    "pos": "n."
+  },
+  "worldwide": {
+    "term": "worldwide",
+    "meaning_ko": "세계적",
+    "pos": "adj."
+  },
+  "worried": {
+    "term": "worried",
+    "meaning_ko": "걱정했다",
+    "pos": "v."
+  },
+  "worry": {
+    "term": "worry",
+    "meaning_ko": "걱정하다",
+    "pos": "v."
+  },
+  "worth": {
+    "term": "worth",
+    "meaning_ko": "가치",
+    "pos": "n."
+  },
+  "would": {
+    "term": "would",
+    "meaning_ko": "~할 것이다",
+    "pos": "v."
+  },
+  "wrong": {
+    "term": "wrong",
+    "meaning_ko": "잘못된",
+    "pos": "adj."
+  },
+  "year": {
+    "term": "year",
+    "meaning_ko": "년",
+    "pos": "n."
+  },
+  "years": {
+    "term": "years",
+    "meaning_ko": "년들",
+    "pos": "n."
+  },
+  "yet": {
+    "term": "yet",
+    "meaning_ko": "아직",
+    "pos": "adv."
+  },
+  "young": {
+    "term": "young",
+    "meaning_ko": "젊은",
+    "pos": "adj."
+  },
+  "younger": {
+    "term": "younger",
+    "meaning_ko": "더 젊은",
+    "pos": "adj."
+  }
+}
