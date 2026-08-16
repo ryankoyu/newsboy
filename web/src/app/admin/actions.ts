@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { localFsEditionRepository } from "@/lib/admin/localFsEditionRepository";
+import { resolveEditionRepository } from "@/lib/admin/editionRepository";
 import { publishEdition, PublishError } from "@/lib/admin/publishEdition";
 import { clearAdminSessionCookie, requireAdminSession } from "@/lib/admin/session";
 
@@ -14,7 +14,7 @@ export interface ActionResult {
 export async function approveArticleAction(editionDate: string, articleId: string): Promise<ActionResult> {
   await requireAdminSession();
   try {
-    await localFsEditionRepository.setArticleDecision(editionDate, articleId, "approved");
+    await resolveEditionRepository().setArticleDecision(editionDate, articleId, "approved");
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
@@ -33,7 +33,7 @@ export async function excludeArticleAction(
     return { ok: false, error: "제외 사유를 입력해 주세요." };
   }
   try {
-    await localFsEditionRepository.setArticleDecision(editionDate, articleId, "excluded", reason);
+    await resolveEditionRepository().setArticleDecision(editionDate, articleId, "excluded", reason);
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
@@ -63,7 +63,7 @@ export async function requestRegenerationAction(
     return { ok: false, error: "재생성 요청 사유를 입력해 주세요. (무엇을 고쳐야 하는지)" };
   }
   try {
-    await localFsEditionRepository.setArticleDecision(editionDate, articleId, "regenerate", note);
+    await resolveEditionRepository().setArticleDecision(editionDate, articleId, "regenerate", note);
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
@@ -78,7 +78,7 @@ export async function resetArticleDecisionAction(
 ): Promise<ActionResult> {
   await requireAdminSession();
   try {
-    await localFsEditionRepository.setArticleDecision(editionDate, articleId, "pending");
+    await resolveEditionRepository().setArticleDecision(editionDate, articleId, "pending");
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
@@ -142,7 +142,7 @@ export async function setLeadArticleAction(
 ): Promise<ActionResult> {
   await requireAdminSession();
   try {
-    await localFsEditionRepository.setLeadArticle(editionDate, articleId);
+    await resolveEditionRepository().setLeadArticle(editionDate, articleId);
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
@@ -168,7 +168,7 @@ export async function approveAllPendingAction(
 ): Promise<BulkApproveActionResult> {
   await requireAdminSession();
   try {
-    const res = await localFsEditionRepository.approveAllPending(editionDate);
+    const res = await resolveEditionRepository().approveAllPending(editionDate);
     revalidatePath(`/admin/${editionDate}`);
     revalidatePath("/admin");
     return { ok: true, approved: res.approved, skipped: res.skipped };

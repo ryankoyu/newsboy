@@ -1,5 +1,17 @@
 import Link from "next/link";
-import { localFsEditionRepository } from "@/lib/admin/localFsEditionRepository";
+import { resolveEditionRepository } from "@/lib/admin/editionRepository";
+
+/**
+ * Never prerendered.
+ *
+ * The desk reads live editions and the operator's own decisions, so a build-
+ * time snapshot would be wrong the moment it was taken. Worse, with the desk's
+ * credentials present in the build environment, Next's default static
+ * generation opened a database connection *during the build* — which is how a
+ * missing migration turned into a failed deploy rather than a screen that says
+ * what is wrong.
+ */
+export const dynamic = "force-dynamic";
 
 /**
  * /admin — edition list (production-readiness.md §2 "검수 대기 에디션
@@ -7,7 +19,7 @@ import { localFsEditionRepository } from "@/lib/admin/localFsEditionRepository";
  * summary, per task instruction.
  */
 export default async function AdminHomePage() {
-  const editions = await localFsEditionRepository.listEditions();
+  const editions = await resolveEditionRepository().listEditions();
 
   return (
     <main>

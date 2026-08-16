@@ -16,7 +16,7 @@ import path from "node:path";
 import { WEB_SEED_DIR } from "@/lib/config/paths";
 import { deriveGateStatus } from "./gateStatus";
 import { buildSeedBundle, type SeedRow } from "./seedTransform";
-import { localFsEditionRepository } from "./localFsEditionRepository";
+import { resolveEditionRepository } from "./editionRepository";
 import type { EditionRepository } from "./editionRepository";
 import {
   isSupabasePublishConfigured,
@@ -54,7 +54,7 @@ export class PublishError extends Error {}
 
 export async function publishEdition(
   editionDate: string,
-  repo: EditionRepository = localFsEditionRepository
+  repo: EditionRepository = resolveEditionRepository()
 ): Promise<PublishResult> {
   const edition = await repo.getEdition(editionDate);
   if (!edition) throw new PublishError(`Edition not found: ${editionDate}`);

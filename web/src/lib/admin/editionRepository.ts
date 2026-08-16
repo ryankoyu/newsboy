@@ -6,6 +6,8 @@
  * same pattern as web/src/lib/data/provider.ts for the public DataProvider.
  */
 import type { PipelineEdition, ReviewDecision } from "./pipelineTypes";
+import { localFsEditionRepository } from "./localFsEditionRepository";
+import { SupabaseEditionRepository } from "./supabaseEditionRepository";
 
 export interface EditionListItem {
   editionDate: string;
@@ -68,4 +70,31 @@ export interface EditionRepository {
     status: PipelineEdition["status"],
     publishedAt?: string | null
   ): Promise<PipelineEdition>;
+}
+
+/**
+ * The repository the console actually uses.
+ *
+ * Database when the desk's credentials are present, local files otherwise —
+ * the same shape of choice web/src/lib/data/index.ts makes for the reader, and
+ * for the same reason: the app has to work with no environment at all, and it
+ * has to work deployed, without the call sites knowing which.
+ *
+ * SUPABASE_SERVICE_ROLE_KEY is the deciding variable rather than the reader's
+ * NEXT_PUBLIC_* pair, because it is what the desk's writes require: row-level
+ * security admits the anon key only to published rows, and every screen here
+ * works on `review` and `held` ones.
+ */
+export function resolveEditionRepository(): EditionRepository {
+  if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return new SupabaseEditionRepository();
+  }
+  return localFsEditionRepository;
+}
+
+/** Which store the console is working against — for the operator-facing notice. */
+export function editionRepositoryKind(): "supabase" | "local-file" {
+  return process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+    ? "supabase"
+    : "local-file";
 }
