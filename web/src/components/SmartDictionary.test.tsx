@@ -54,7 +54,7 @@ describe("SmartDictionary — part of speech slot (docs/feature-status.md G9)", 
         onClose={() => {}}
       />,
     );
-    expect(screen.getByText(/뜻 준비 중이에요/)).toBeInTheDocument();
+    expect(screen.getByText(/사전에 없어요/)).toBeInTheDocument();
   });
 });
 

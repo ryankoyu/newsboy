@@ -48,6 +48,7 @@ import type { Top10Result } from "./selectTop10.js";
 import type { GlobalImpactProvider } from "./globalImpact.js";
 import { resolveUsableEvents, MIN_USABLE_FACTS_TO_REWRITE } from "./replaceLowUsableFacts.js";
 import { generateAndGateAll } from "./generate.js";
+import { buildGlossary, collectGlossTerms, mayPersistGlosses } from "./glossary.js";
 import type { EventToGenerate, GeneratedArticleDraft } from "./generate.js";
 import { UsageLedger } from "../llm/cost.js";
 import type Anthropic from "@anthropic-ai/sdk";
@@ -618,6 +619,49 @@ export async function runPipeline(options: RunOptions): Promise<PipelineRun> {
       });
       throw err;
     }
+
+    // [5c] 사전 뜻 — a Korean meaning for every word the reader can tap, not
+    // just the five per level the rewrite curated.
+    //
+    // Wrapped so it can only ever cost money, never the edition: the articles
+    // are already written and gated by this point, and a reader would rather
+    // have today's news with an incomplete dictionary than no news at all. A
+    // failure is recorded in the stage detail and the run continues.
+    await stage("glossary", async () => {
+      const terms = collectGlossTerms(articles);
+      try {
+        const known = await options.storage.loadKnownGlossTerms();
+        const glossary = await buildGlossary({ terms, known, llm: options.llm, log });
+        const persist = mayPersistGlosses(options.llm);
+        if (glossary.entries.length > 0 && persist) {
+          await options.storage.saveGlosses(glossary.entries);
+        } else if (glossary.entries.length > 0) {
+          log(
+            `[glossary] ${glossary.entries.length} gloss(es) discarded — a ${options.llm.name} ` +
+              "provider must not write to a dictionary nothing reviews",
+          );
+        }
+        if (glossary.usage.outputTokens > 0) {
+          usageLedger.record({
+            stage: "glossary",
+            tier: "haiku",
+            mode: "standard",
+            usage: glossary.usage,
+          });
+        }
+        return {
+          termsInEdition: glossary.found,
+          alreadyKnown: glossary.alreadyKnown,
+          glossed: persist ? glossary.entries.length : 0,
+          discardedMockGlosses: persist ? undefined : glossary.entries.length,
+          failedChunks: glossary.failedChunks,
+        };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        log(`[pipeline] WARNING: glossary stage failed (${message}) — publishing without new glosses`);
+        return { termsInEdition: terms.length, glossed: 0, error: message };
+      }
+    });
 
     // 저장 (status='review' — 검수 대기)
     const edition: PipelineEdition = {

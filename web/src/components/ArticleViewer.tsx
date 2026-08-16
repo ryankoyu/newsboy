@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { ArticleWithDetails, CefrLevel, EditionWithArticles, Word } from "@/lib/types";
+import type { ArticleWithDetails, CefrLevel, EditionWithArticles, Gloss, Word } from "@/lib/types";
 import { estimateReadingMinutes } from "@/lib/data";
 import { useSession, notifySessionChange } from "@/lib/useSession";
 import { READING_SCALE_VALUE, sessionStore } from "@/lib/session";
@@ -41,12 +41,20 @@ export function ArticleViewer({
   initialLevel,
   hasExplicitLevel,
   wordsByVersion,
+  glosses,
   edition,
 }: {
   article: ArticleWithDetails;
   initialLevel: CefrLevel;
   hasExplicitLevel: boolean;
   wordsByVersion: Record<string, Word[]>;
+  /**
+   * Dictionary meanings for every word in this article's bodies, fetched once
+   * on the server for all three levels. Switching level is a client-side
+   * re-render, so a per-level fetch would either block the switch or arrive
+   * after the reader had already tapped a word.
+   */
+  glosses?: Record<string, Gloss>;
   edition?: EditionWithArticles | null;
 }) {
   const router = useRouter();
@@ -246,6 +254,7 @@ export function ArticleViewer({
             level={version.level as CefrLevel}
             sentences={version.sentences}
             words={words}
+            glosses={glosses}
           />
         </div>
 

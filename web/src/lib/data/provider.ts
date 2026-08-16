@@ -1,6 +1,7 @@
 import type {
   Category,
   Edition,
+  Gloss,
   EditionWithArticles,
   ArticleWithDetails,
   Word,
@@ -26,6 +27,17 @@ export interface DataProvider {
    * articles for a specific date should follow up with getEditionByDate.
    */
   listEditions(): Promise<Edition[]>;
+
+  /**
+   * Dictionary meanings for the given surface forms, keyed by term.
+   *
+   * Asked by the article page for every word in the body, so a reader who
+   * taps a word outside the curated five still gets a meaning
+   * (supabase/migrations/0006_glosses.sql, pipeline/src/pipeline/glossary.ts).
+   * Terms with no entry are simply absent from the result — the reader gets
+   * the honest empty card, never an invented gloss.
+   */
+  getGlosses(terms: readonly string[]): Promise<Record<string, Gloss>>;
 }
 
 /**

@@ -65,6 +65,7 @@ import type {
   CheckKind,
   ExtractedFact,
   GatedVersion,
+  GlossEntry,
   PipelineArticle,
   PipelineCheckpoint,
   PipelineEdition,
@@ -194,6 +195,18 @@ interface WordRow {
   pronunciation: string | null;
   sort_order: number;
   is_key: boolean;
+  pos: string | null;
+}
+
+/**
+ * glosses (0006) — the dictionary, keyed by term and shared by every edition.
+ *
+ * No version_id, unlike WordRow: a curated word belongs to one level of one
+ * article, a gloss belongs to the language.
+ */
+interface GlossRow {
+  term: string;
+  meaning_ko: string;
   pos: string | null;
 }
 
@@ -739,6 +752,63 @@ export class SupabaseStorageAdapter implements StorageAdapter {
       throw new Error(
         `[SupabaseStorageAdapter] pipeline_checkpoints delete failed: ${error.message}`,
       );
+    }
+  }
+
+  /**
+   * Dictionary glosses (0006_glosses.sql) — insert-if-absent, keyed by term.
+   *
+   * `ignoreDuplicates: true` is the whole behaviour: a term another edition
+   * already glossed keeps the gloss a reader may have seen and saved to their
+   * vocabulary list. It also makes the write safe against a concurrent run
+   * that glossed the same word a second earlier, which a read-then-insert
+   * would turn into a unique-violation.
+   *
+   * Chunked because an edition can introduce well over a thousand terms and
+   * one insert of that size is a request large enough to be worth not finding
+   * the limit of experimentally.
+   */
+  async saveGlosses(entries: readonly GlossEntry[]): Promise<void> {
+    const CHUNK = 500;
+    for (let i = 0; i < entries.length; i += CHUNK) {
+      const rows: GlossRow[] = entries.slice(i, i + CHUNK).map((e) => ({
+        term: e.term,
+        meaning_ko: e.meaningKo,
+        pos: e.pos ?? null,
+      }));
+      if (rows.length === 0) continue;
+      const { error } = await this.client
+        .from("glosses")
+        .upsert(rows, { onConflict: "term", ignoreDuplicates: true });
+      if (error) {
+        throw new Error(`[SupabaseStorageAdapter] glosses upsert failed: ${error.message}`);
+      }
+    }
+  }
+
+  /**
+   * Terms the dictionary already covers.
+   *
+   * Paged rather than one select: Supabase caps a response at 1,000 rows by
+   * default, and a truncated list here does not fail — it silently re-buys
+   * glosses the dictionary already had, which is exactly the cost this table
+   * exists to avoid. The loop is the only thing keeping the daily bill falling.
+   */
+  async loadKnownGlossTerms(): Promise<Set<string>> {
+    const PAGE = 1000;
+    const terms = new Set<string>();
+    for (let from = 0; ; from += PAGE) {
+      const { data, error } = await this.client
+        .from("glosses")
+        .select("term")
+        .order("term")
+        .range(from, from + PAGE - 1);
+      if (error) {
+        throw new Error(`[SupabaseStorageAdapter] glosses select failed: ${error.message}`);
+      }
+      const rows = (data ?? []) as Array<Pick<GlossRow, "term">>;
+      for (const row of rows) terms.add(row.term);
+      if (rows.length < PAGE) return terms;
     }
   }
 }

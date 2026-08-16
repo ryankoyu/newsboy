@@ -30,6 +30,8 @@ import type {
   ExtractFactsInput,
   GenerateAllLevelsInput,
   GenerateAllLevelsOutput,
+  GenerateGlossesInput,
+  GenerateGlossesResult,
   LearnabilityAndDemeritInput,
   LearnabilityAndDemeritOutput,
   LearnabilityAndDemeritResult,
@@ -274,6 +276,42 @@ export class AnthropicLLMProvider implements LLMProvider {
     const { text, usage } = await this.complete("haiku", system, user);
     const parsed = extractJson<{ scores: LearnabilityAndDemeritOutput[] }>(text);
     return { scores: Array.isArray(parsed.scores) ? parsed.scores : [], usage };
+  }
+
+  /**
+   * [5c] Korean meanings for a batch of words — the dictionary behind every
+   * tappable word that is not one of a level's curated five.
+   *
+   * Haiku, because this is the one call in the pipeline that scales with body
+   * length rather than article count (~1,700 words for a first edition, then
+   * only what each later edition introduces — see pipeline/glossary.ts).
+   *
+   * The proper-noun rule is the load-bearing instruction here, not a nicety:
+   * a gloss for "Nikkei" or a person's name is a claim about the world, and
+   * the one thing this pipeline may never do is state a fact it did not get
+   * from a source. `null` is a correct answer and the caller stores nothing.
+   */
+  async generateGlosses(input: GenerateGlossesInput): Promise<GenerateGlossesResult> {
+    const system =
+      "You write Korean dictionary glosses for English words that appear in news articles " +
+      "read by Korean adults learning English. For EACH word return the Korean meaning most " +
+      "likely in general news usage, and its part of speech. " +
+      "Keep meanings short — a dictionary headword gloss, not a definition or a sentence. " +
+      "Gloss the exact form given: an inflected form keeps its inflection " +
+      '("companies" -> "회사들", "reported" -> "보도했다"). ' +
+      'Part of speech is one of "n.", "v.", "adj.", "adv.", "prep.", "conj.", "pron.". ' +
+      "IMPORTANT: return meaningKo: null for any proper noun — the name of a person, company, " +
+      "publication, place, or organization — and for any word you are not confident about. " +
+      "A null is expected and useful; never invent a description of a named entity, and never " +
+      "guess. " +
+      'Respond with strict JSON only: {"glosses": [{"term": "...", "meaningKo": "..." or null, ' +
+      '"pos": "..."}]} with one entry per input word, in the same order.';
+    const user = JSON.stringify({ words: input.terms });
+    const { text, usage } = await this.complete("haiku", system, user);
+    const parsed = extractJson<{
+      glosses: Array<{ term: string; meaningKo: string | null; pos?: string | null }>;
+    }>(text);
+    return { entries: Array.isArray(parsed.glosses) ? parsed.glosses : [], usage };
   }
 
   async extractFacts(input: ExtractFactsInput): Promise<ExtractFactsResult> {

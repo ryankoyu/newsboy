@@ -7,6 +7,7 @@ import type {
   Fact,
   FactSource,
   Word,
+  Gloss,
   EditionWithArticles,
   ArticleWithDetails,
 } from "@/lib/types";
@@ -20,6 +21,7 @@ import sourcesJson from "@/lib/data/seed/sources.json";
 import factsJson from "@/lib/data/seed/facts.json";
 import factSourcesJson from "@/lib/data/seed/fact_sources.json";
 import wordsJson from "@/lib/data/seed/words.json";
+import glossesJson from "@/lib/data/seed/glosses.json";
 
 const categories = categoriesJson as Category[];
 const editions = editionsJson as Edition[];
@@ -29,6 +31,7 @@ const sources = sourcesJson as Source[];
 const facts = factsJson as Fact[];
 const factSources = factSourcesJson as FactSource[];
 const words = wordsJson as Word[];
+const glosses = glossesJson as Record<string, Gloss>;
 
 function buildArticleWithDetails(article: Article): ArticleWithDetails {
   return {
@@ -89,6 +92,20 @@ export const seedDataProvider: DataProvider = {
 
   async listEditions() {
     return [...editions].sort((a, b) => (a.edition_date < b.edition_date ? 1 : -1));
+  },
+
+  /**
+   * The committed seed ships with an empty dictionary.
+   *
+   * Glosses are produced by a pipeline run (pipeline/src/pipeline/glossary.ts)
+   * and live in the database; there is no honest way to hand-author 1,700
+   * Korean meanings into a fixture, and a seed full of invented ones would be
+   * a dictionary nobody checked. So the seed reader behaves exactly as it did
+   * before this feature — every uncurated word opens the empty card — and the
+   * dictionary appears once the site is reading from Supabase.
+   */
+  async getGlosses() {
+    return glosses;
   },
 };
 

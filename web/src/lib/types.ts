@@ -84,6 +84,21 @@ export interface Article {
   updated_at: string;
 }
 
+/**
+ * A dictionary entry for one word — the fallback behind every word that is
+ * not one of a version's curated `Word` rows.
+ *
+ * Keyed by the lowercased surface form as it appears in a body ("companies",
+ * not "company"), because that is what the reader taps. Thinner than `Word`
+ * on purpose: no example sentence, no pronunciation. See
+ * supabase/migrations/0006_glosses.sql.
+ */
+export interface Gloss {
+  term: string;
+  meaning_ko: string;
+  pos: string | null;
+}
+
 export interface ArticleVersion {
   id: string;
   article_id: string;

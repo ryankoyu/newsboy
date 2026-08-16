@@ -16,6 +16,8 @@
 
 import type {
   ExtractFactsInput,
+  GenerateGlossesInput,
+  GenerateGlossesResult,
   GenerateAllLevelsInput,
   GenerateAllLevelsOutput,
   LearnabilityAndDemeritInput,
@@ -303,6 +305,24 @@ export class MockLLMProvider implements LLMProvider {
     return {
       withinBand: true,
       reasoning: "[mock] no real CEFR judgment performed — heuristic checker is authoritative in demo mode.",
+    };
+  }
+
+  /**
+   * [5c] Glosses — visibly fake, and one term short on purpose.
+   *
+   * The mock marks its meanings so a mock-run edition can never be mistaken
+   * for a real dictionary, and it drops the last word of every batch so the
+   * pipeline's "a gloss may simply not come back" path (proper nouns, low
+   * confidence) is exercised by every mock run rather than only by unit tests.
+   */
+  async generateGlosses(input: GenerateGlossesInput): Promise<GenerateGlossesResult> {
+    const glossable = input.terms.slice(0, Math.max(0, input.terms.length - 1));
+    return {
+      entries: [
+        ...glossable.map((term) => ({ term, meaningKo: `[mock] ${term} 뜻`, pos: "n." })),
+        ...input.terms.slice(-1).map((term) => ({ term, meaningKo: null })),
+      ],
     };
   }
 }

@@ -11,6 +11,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type {
   ExtractedFact,
+  GlossEntry,
   PipelineCheckpoint,
   PipelineEdition,
   PipelineRun,
@@ -149,6 +150,14 @@ class MemoryStorage implements StorageAdapter {
   async clearCheckpoint(_date: string): Promise<void> {
     this.cleared = true;
     this.checkpoint = null;
+  }
+  /** The dictionary (glossary.ts) — recorded so a test can assert what was written. */
+  glosses: GlossEntry[] = [];
+  async saveGlosses(entries: readonly GlossEntry[]): Promise<void> {
+    this.glosses.push(...entries);
+  }
+  async loadKnownGlossTerms(): Promise<Set<string>> {
+    return new Set(this.glosses.map((g) => g.term));
   }
 }
 

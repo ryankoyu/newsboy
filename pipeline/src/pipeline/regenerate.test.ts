@@ -101,6 +101,12 @@ class MemoryStorage implements StorageAdapter {
     return null;
   }
   async clearCheckpoint(_date: string): Promise<void> {}
+  // Regeneration rewrites one article's prose; the dictionary is an
+  // edition-level stage (run.ts), so these are never reached from this path.
+  async saveGlosses(): Promise<void> {}
+  async loadKnownGlossTerms(): Promise<Set<string>> {
+    return new Set();
+  }
 }
 
 /** A provider that fails generation — stands in for an API outage mid-request. */

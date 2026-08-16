@@ -87,7 +87,13 @@ export interface UsageRecord {
     | "cefr_judge"
     | "same_event"
     /** Layer 2 학습 적합성/감점 — one Haiku call per run, not per candidate. */
-    | "learnability";
+    | "learnability"
+    /**
+     * [5c] Dictionary glosses. The only line that scales with body length
+     * rather than article count — and the only one that shrinks as the
+     * archive grows, since a term is bought once and kept.
+     */
+    | "glossary";
   eventId?: string;
   level?: string;
   tier: ModelTier;

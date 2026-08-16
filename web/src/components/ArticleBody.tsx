@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { CefrLevel, Word } from "@/lib/types";
+import type { CefrLevel, Gloss, Word } from "@/lib/types";
 import { SmartDictionary, type DictionaryEntry } from "@/components/SmartDictionary";
 import { SentenceActionPopover } from "@/components/SentenceActionPopover";
 import { useSession } from "@/lib/useSession";
@@ -9,6 +9,7 @@ import {
   tokenizeSentence,
   buildWordSequences,
   findMatchedRuns,
+  lookupKey,
 } from "@/lib/wordMatcher";
 
 /**
@@ -49,7 +50,8 @@ import {
  * part of a curated Word[] match is still wrapped in ClickableWordToken —
  * `entry` is null for it. Clicking opens the same SmartDictionary component
  * with a minimal entry (term only, meaning_ko: null) — never a fabricated
- * meaning. SmartDictionary shows "뜻 준비 중" and still offers Save, so the
+ * meaning — the dictionary gloss when there is one, the empty card when
+ * there is not. Save works either way, so the
  * word can land in My Vocabulary marked "뜻 미등록" (per session.ts
  * SavedWordEntry.meaning_ko: string | null).
  *
@@ -76,11 +78,22 @@ export function ArticleBody({
   level,
   sentences,
   words,
+  glosses = {},
 }: {
   articleId: string;
   level: CefrLevel;
   sentences: string[];
   words: Word[];
+  /**
+   * Dictionary meanings for the words this body contains, keyed by lowercased
+   * surface form (supabase/migrations/0006_glosses.sql). The curated `words`
+   * above still win where both exist — they carry an in-context example and a
+   * pronunciation that a gloss does not.
+   *
+   * Defaults to empty so a caller with no dictionary (a test, the committed
+   * seed) behaves exactly as this component did before glosses existed.
+   */
+  glosses?: Record<string, Gloss>;
 }) {
   const { session, refresh } = useSession();
   const [active, setActive] = useState<{
@@ -105,8 +118,19 @@ export function ArticleBody({
   ) {
     session.markWordSeen(text);
     refresh();
+    // Curated word first, then the dictionary, then the honest empty card.
+    // The third case is not a failure state — a proper noun has no gloss by
+    // design (pipeline/src/pipeline/glossary.ts), and inventing one there
+    // would be asserting something about the world.
+    const gloss = entry ? null : glosses[lookupKey(text)];
     const dictEntry: Word | DictionaryEntry =
-      entry ?? { term: text, pronunciation: null, meaning_ko: null, example: null };
+      entry ?? {
+        term: text,
+        pronunciation: null,
+        meaning_ko: gloss?.meaning_ko ?? null,
+        example: null,
+        pos: gloss?.pos ?? null,
+      };
     setActive({ word: dictEntry, rect: el.getBoundingClientRect(), ref: refObj });
   }
 
@@ -180,7 +204,7 @@ export function ArticleBody({
             if (!insideRun.has(tIdx)) {
               if (tok.isWord) {
                 // §4.8-1: every word is clickable, even without a curated
-                // dictionary entry. entry=null -> minimal "뜻 준비 중" card.
+                // curated entry. entry=null -> gloss lookup, then empty card.
                 const seen = session.isWordSeen(tok.text);
                 const wordSaved = session.isWordSaved(tok.text);
                 rendered.push(
@@ -297,7 +321,7 @@ function SentenceParagraph({
 
 /**
  * `entry` is null for a word with no curated dictionary match — it's still
- * fully clickable (§4.8-1), just opens the minimal "뜻 준비 중" card instead
+ * fully clickable (§4.8-1), just opens the gloss or the empty card instead
  * of the full Smart Dictionary entry (see handleWordClick in ArticleBody).
  *
  * `keyGloss` (§4.8-3): non-null only for the FIRST occurrence of an isKey

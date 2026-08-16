@@ -13,6 +13,7 @@
  */
 
 import type {
+  GlossEntry,
   PipelineArticle,
   PipelineCheckpoint,
   PipelineEdition,
@@ -66,4 +67,21 @@ export interface StorageAdapter {
 
   /** Drop the checkpoint — called once the edition is safely stored. */
   clearCheckpoint(editionDate: string): Promise<void>;
+
+  /**
+   * Add dictionary glosses, keyed by term (pipeline/glossary.ts).
+   *
+   * Insert-if-absent, never overwrite: a term glossed by an earlier edition
+   * keeps that gloss. Words do not change meaning between Tuesday and
+   * Wednesday, so a second write would only ever be a second opinion — and
+   * rewriting one silently changes what a reader already saw and saved.
+   */
+  saveGlosses(entries: readonly GlossEntry[]): Promise<void>;
+
+  /**
+   * Every term already glossed, so the run pays only for what today's edition
+   * introduces. English being Zipfian, this is what turns the dictionary from
+   * a per-edition cost into a one-off one.
+   */
+  loadKnownGlossTerms(): Promise<Set<string>>;
 }

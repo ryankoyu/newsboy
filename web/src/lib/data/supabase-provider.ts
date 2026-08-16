@@ -6,6 +6,7 @@ import type {
   ArticleVersion,
   Source,
   Word,
+  Gloss,
   EditionWithArticles,
   ArticleWithDetails,
   CefrLevel,
@@ -214,6 +215,38 @@ export function createSupabaseDataProvider(
         .order("edition_date", { ascending: false });
       if (error) throw new Error(`[supabaseDataProvider] editions: ${error.message}`);
       return (data ?? []) as Edition[];
+    },
+
+    /**
+     * Dictionary meanings for a body's words (0006_glosses.sql).
+     *
+     * Chunked because a B2 article carries ~200 distinct words and all three
+     * levels together run past 300 — enough that one `in (...)` clause starts
+     * pushing against URL length limits, which would fail as a confusing
+     * network error rather than as a missing word.
+     *
+     * A failure here returns what it has instead of throwing: the article is
+     * already on screen by the time these matter, and losing the whole page
+     * because the dictionary lookup failed would trade a small degradation
+     * for a total one.
+     */
+    async getGlosses(terms: readonly string[]): Promise<Record<string, Gloss>> {
+      const CHUNK = 150;
+      const found: Record<string, Gloss> = {};
+      for (let i = 0; i < terms.length; i += CHUNK) {
+        const chunk = terms.slice(i, i + CHUNK);
+        if (chunk.length === 0) continue;
+        const { data, error } = await db
+          .from("glosses")
+          .select("term, meaning_ko, pos")
+          .in("term", chunk as string[]);
+        if (error) {
+          console.warn(`[supabaseDataProvider] glosses: ${error.message}`);
+          return found;
+        }
+        for (const row of (data ?? []) as Gloss[]) found[row.term] = row;
+      }
+      return found;
     },
   };
 }

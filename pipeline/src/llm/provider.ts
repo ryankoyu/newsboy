@@ -200,4 +200,29 @@ export interface LLMProvider {
   scoreLearnabilityAndDemerit?(
     inputs: LearnabilityAndDemeritInput[],
   ): Promise<LearnabilityAndDemeritResult>;
+
+  /**
+   * [5c] Korean meaning + part of speech for a batch of words (Haiku tier) —
+   * the dictionary behind every non-curated word in a body.
+   *
+   * Optional for the same reason as scoreLearnabilityAndDemerit: a provider
+   * without it degrades to what the reader had before (the empty card), never
+   * to a failed edition. pipeline/glossary.ts checks before calling.
+   */
+  generateGlosses?(input: GenerateGlossesInput): Promise<GenerateGlossesResult>;
+}
+
+export interface GenerateGlossesInput {
+  /** Lowercased surface forms, as they appear in article bodies. */
+  terms: string[];
+}
+
+export interface GenerateGlossesResult {
+  /**
+   * One entry per word the model could gloss. Deliberately allowed to be
+   * shorter than the input: the prompt asks it to skip proper nouns rather
+   * than invent a description of a company or a person.
+   */
+  entries: Array<{ term: string; meaningKo: string | null; pos?: string | null }>;
+  usage?: CallUsage;
 }

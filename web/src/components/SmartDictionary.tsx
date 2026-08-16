@@ -13,12 +13,22 @@ import { useSession } from "@/lib/useSession";
  * `anchorRect` positions the desktop popover; on mobile it's ignored and the
  * sheet always docks to the bottom.
  *
- * design-decisions.md §4.8-1 ("모든 단어 클릭 가능"): a word with no curated
- * dictionary entry (not in the article's Word[] list) still opens this same
- * component with a minimal entry — meaning_ko: null. We never invent a
- * meaning; the UI shows "뜻 준비 중" instead and offers Save so the word
- * lands in My Vocabulary marked "뜻 미등록" until a real dictionary/LLM
- * lookup backfills it later.
+ * design-decisions.md §4.8-1 ("모든 단어 클릭 가능"): a word with no meaning
+ * still opens this same component, with meaning_ko: null. We never invent one.
+ *
+ * What an empty card means changed on 2026-08-16. It used to mean "not one of
+ * this level's five curated words", which was most of the page, and the card
+ * said 뜻 준비 중 and promised to tell the reader when the dictionary caught
+ * up — a promise nothing in the codebase could keep: no backfill existed and
+ * no notification did either. Now every word in a body is glossed at
+ * publication time (pipeline/src/pipeline/glossary.ts), so an empty card means
+ * something narrower and true: this word has no meaning to give. That is
+ * mostly proper nouns, which the pipeline deliberately refuses to gloss
+ * because describing a company or a person is asserting a fact about the
+ * world. The card now says that instead of promising a future.
+ *
+ * Save still works on an empty card — a reader who wants to keep the word
+ * keeps it, marked 뜻 미등록 (session.ts SavedWordEntry.meaning_ko: null).
  */
 export interface DictionaryEntry {
   term: string;
@@ -27,7 +37,7 @@ export interface DictionaryEntry {
   example: string | null;
   /**
    * docs/feature-status.md G9 — part of speech ("n.", "v.", "adj." ...).
-   * Always undefined for the minimal "뜻 준비 중" card (uncatalogued words
+   * Always undefined on the empty card (a word with no meaning has no pos
    * never have a pos), kept here only so the shared `Word | DictionaryEntry`
    * union type-checks. Shown when present, omitted when absent — never
    * invented.
@@ -212,7 +222,7 @@ export function SmartDictionary({
             margin: 0,
           }}
         >
-          뜻 준비 중이에요. 저장해두면 사전이 업데이트될 때 알려드릴게요.
+          이 단어는 사전에 없어요. 사람 이름이나 회사 이름처럼 뜻을 지어낼 수 없는 말은 비워둡니다.
         </p>
       )}
 

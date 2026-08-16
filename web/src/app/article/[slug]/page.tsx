@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { dataProvider } from "@/lib/data";
 import type { ArticleWithDetails, CefrLevel, Word } from "@/lib/types";
 import { ArticleViewer } from "@/components/ArticleViewer";
+import { collectBodyTerms } from "@/lib/glossTerms";
 
 const VALID_LEVELS: CefrLevel[] = ["A2", "B1", "B2"];
 
@@ -99,12 +100,21 @@ export default async function ArticlePage({ params, searchParams }: Props) {
     edition = match ? await dataProvider.getEditionByDate(match.edition_date) : null;
   }
 
+  // The dictionary behind every word that is not one of a level's curated
+  // five (0006_glosses.sql). Fetched for all three levels at once: switching
+  // level never leaves the server, so a per-level fetch would arrive after
+  // the reader had already tapped something.
+  const glosses = await dataProvider.getGlosses(
+    collectBodyTerms(article.versions.map((v) => v.content)),
+  );
+
   return (
     <ArticleViewer
       article={article}
       initialLevel={requestedLevel}
       hasExplicitLevel={hasExplicitLevel}
       wordsByVersion={wordsByVersion}
+      glosses={glosses}
       edition={edition}
     />
   );

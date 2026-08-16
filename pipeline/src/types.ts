@@ -233,6 +233,28 @@ export interface FactExtractionResult {
 }
 
 // ---------------------------------------------------------------------------
+// [5c] 사전 뜻 (glossary) — maps to the glosses table (0006)
+// ---------------------------------------------------------------------------
+
+/**
+ * A dictionary entry for one word, global rather than article-scoped.
+ *
+ * Deliberately thinner than WordEntry: meaning and part of speech, no example
+ * and no pronunciation. The curated five per level are worth the model's full
+ * attention — they carry an in-context example sentence and an IPA hint. These
+ * are the other ~495 words on the page, where an invented example sentence per
+ * word would multiply cost several times over to add the part a reader is
+ * least likely to need mid-sentence. See pipeline/glossary.ts.
+ */
+export interface GlossEntry {
+  /** Lowercased surface form exactly as it appears in an article body. */
+  term: string;
+  meaningKo: string;
+  /** "n." / "v." / "adj." — omitted when the model does not supply one. */
+  pos?: string;
+}
+
+// ---------------------------------------------------------------------------
 // [5] 레벨별 재작성 (rewrite) — maps to article_versions + words
 // ---------------------------------------------------------------------------
 
@@ -375,6 +397,8 @@ export type PipelineStage =
   | "extract"
   | "rewrite"
   | "gate"
+  /** [5c] Korean glosses for every tappable word — pipeline/glossary.ts. */
+  | "glossary"
   | "store";
 
 export interface StageOutcome {

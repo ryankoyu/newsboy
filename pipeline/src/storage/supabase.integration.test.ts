@@ -127,6 +127,7 @@ describe("migrations apply to a real Postgres", () => {
       "pipeline_runs",
       "categories",
       "pipeline_checkpoints",
+      "glosses",
     ]) {
       expect(tables, `missing table: ${t}`).toContain(t);
     }
@@ -197,6 +198,38 @@ describe("the constraints that killed real runs", () => {
     ).rejects.toThrow();
 
     await client!.query("delete from editions where edition_date = '2030-01-01'");
+  });
+
+  it("keeps the gloss a reader already saw when a later edition re-glosses the word", async () => {
+    // The adapter upserts with ignoreDuplicates, which compiles to
+    // ON CONFLICT DO NOTHING. If it ever became DO UPDATE, a word a reader
+    // saved to their vocabulary list would silently change meaning under them.
+    await client!.query(
+      "insert into glosses (term, meaning_ko, pos) values ('ferry', '여객선', 'n.')",
+    );
+    await client!.query(
+      `insert into glosses (term, meaning_ko, pos) values ('ferry', '나룻배', 'n.')
+       on conflict (term) do nothing`,
+    );
+    const { rows } = await client!.query("select meaning_ko from glosses where term = 'ferry'");
+    expect(rows).toHaveLength(1);
+    expect(rows[0].meaning_ko).toBe("여객선");
+
+    await client!.query("delete from glosses where term = 'ferry'");
+  });
+
+  it("stores a gloss with no part of speech — the model does not always give one", async () => {
+    await client!.query("insert into glosses (term, meaning_ko) values ('overnight', '밤새')");
+    const { rows } = await client!.query("select pos from glosses where term = 'overnight'");
+    expect(rows[0].pos).toBeNull();
+
+    await client!.query("delete from glosses where term = 'overnight'");
+  });
+
+  it("rejects a gloss with no meaning — an empty card is worse than an absent one", async () => {
+    await expect(
+      client!.query("insert into glosses (term) values ('rescuers')"),
+    ).rejects.toThrow();
   });
 
   it("rejects a second article with the same slug — why slugs carry the date", async () => {
