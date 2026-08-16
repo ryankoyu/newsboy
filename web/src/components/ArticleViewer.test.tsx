@@ -12,7 +12,6 @@ import type {
   Source,
   Word,
 } from "@/lib/types";
-import { countUniqueOutlets } from "@/lib/sourceOutlets";
 import editionsJson from "@/lib/data/seed/editions.json";
 import articlesJson from "@/lib/data/seed/articles.json";
 import articleVersionsJson from "@/lib/data/seed/article_versions.json";

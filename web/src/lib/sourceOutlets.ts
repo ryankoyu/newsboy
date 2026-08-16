@@ -54,11 +54,6 @@ export function groupSourcesByOutlet(sources: Source[]): OutletGroup[] {
   return [...groups.values()];
 }
 
-/** Number of distinct outlets (by domain) among the given sources. */
-export function countUniqueOutlets(sources: Source[]): number {
-  return groupSourcesByOutlet(sources).length;
-}
-
 /**
  * Domains that carry someone else's reporting rather than doing their own.
  *
@@ -72,10 +67,12 @@ const AGGREGATOR_DOMAINS = new Set(["news.google.com", "google.com"]);
 /**
  * Distinct outlets that actually reported the story, aggregators excluded.
  *
- * Use this — not countUniqueOutlets — for anything that makes a claim to the
- * reader about cross-verification. countUniqueOutlets answers "how many
- * places did we fetch from", which is a different and less interesting
- * question.
+ * The only outlet count in the reader. There used to be a second one,
+ * countUniqueOutlets, answering "how many places did we fetch from" — a
+ * different and less interesting question that nonetheless ended up on screen
+ * as a cross-verification claim. It was deleted with the components that used
+ * it (2026-08-17) rather than left available: two counts meant the wrong one
+ * could always be picked, and it was.
  */
 export function countIndependentOutlets(sources: Source[]): number {
   return groupSourcesByOutlet(sources).filter((g) => !AGGREGATOR_DOMAINS.has(g.domain)).length;

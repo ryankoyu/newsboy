@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { Source } from "@/lib/types";
-import { countUniqueOutlets, groupSourcesByOutlet } from "@/lib/sourceOutlets";
+import { groupSourcesByOutlet } from "@/lib/sourceOutlets";
 
 function makeSource(overrides: Partial<Source>): Source {
   return {
@@ -16,13 +16,13 @@ function makeSource(overrides: Partial<Source>): Source {
   };
 }
 
-describe("countUniqueOutlets / groupSourcesByOutlet", () => {
+describe("groupSourcesByOutlet", () => {
   it("counts sources with distinct domains as distinct outlets", () => {
     const sources = [
       makeSource({ url: "https://www.bbc.co.uk/news/a", outlet: "BBC World" }),
       makeSource({ url: "https://www.aljazeera.com/news/b", outlet: "Al Jazeera" }),
     ];
-    expect(countUniqueOutlets(sources)).toBe(2);
+    expect(groupSourcesByOutlet(sources)).toHaveLength(2);
   });
 
   it("de-dupes two feeds from the same outlet domain into one outlet — docs/feature-status.md G2", () => {
@@ -39,7 +39,7 @@ describe("countUniqueOutlets / groupSourcesByOutlet", () => {
       }),
       makeSource({ url: "https://www.bbc.co.uk/news/c", outlet: "BBC World" }),
     ];
-    expect(countUniqueOutlets(sources)).toBe(2);
+    expect(groupSourcesByOutlet(sources)).toHaveLength(2);
 
     const groups = groupSourcesByOutlet(sources);
     const guardianGroup = groups.find((g) => g.domain === "theguardian.com");
@@ -51,7 +51,7 @@ describe("countUniqueOutlets / groupSourcesByOutlet", () => {
       makeSource({ url: "https://www.koreaherald.com/article/1" }),
       makeSource({ url: "https://koreaherald.com/article/1" }),
     ];
-    expect(countUniqueOutlets(sources)).toBe(1);
+    expect(groupSourcesByOutlet(sources)).toHaveLength(1);
   });
 
   it("keeps every article link even when outlets are grouped", () => {
@@ -65,6 +65,6 @@ describe("countUniqueOutlets / groupSourcesByOutlet", () => {
   });
 
   it("returns 0 for an empty source list", () => {
-    expect(countUniqueOutlets([])).toBe(0);
+    expect(groupSourcesByOutlet([])).toHaveLength(0);
   });
 });
