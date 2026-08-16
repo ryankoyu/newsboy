@@ -495,7 +495,13 @@ export class SupabaseStorageAdapter implements StorageAdapter {
       for (const outlet of fact.confirmedByOutlets) {
         const matchingSourceIds = sourceIdsByOutlet.get(outlet) ?? [];
         for (const sourceId of matchingSourceIds) {
-          const pair = `${factId} ${sourceId}`;
+          // The separator is written as an escape, never as a literal NUL
+          // typed into the source. A literal one makes grep and ripgrep
+          // classify this whole file as binary and silently return nothing
+          // for every search in it — a 750-line adapter that appears not to
+          // exist. The escape compiles to the same character (chosen because
+          // no id can contain it) and keeps the file searchable.
+          const pair = `${factId}\u0000${sourceId}`;
           if (seen.has(pair)) continue;
           seen.add(pair);
           factSourceRows.push({
