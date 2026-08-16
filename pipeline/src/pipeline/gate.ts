@@ -100,7 +100,7 @@ export async function gateVersion(
       },
     );
     const ngramResult = checkNgramOverlap(currentVersion.content, sourceItems);
-    const twoSourceResult = checkTwoSourceRule(facts);
+    const twoSourceResult = checkTwoSourceRule(facts, sourceItems);
     const wordMatchResult = checkWordMatch(currentVersion.content, currentVersion.words);
     const wordCountResult = checkWordCount(currentVersion.content, currentVersion.level);
 

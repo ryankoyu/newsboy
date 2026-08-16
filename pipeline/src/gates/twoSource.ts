@@ -23,9 +23,21 @@
  * prose to check which facts it actually cites — that would need real NLP
  * fact-matching, out of scope here — it closes the specific vacuous-pass
  * hole where zero usable facts read as zero violations.
+ *
+ * FIX (2026-08-16 inflated source count): counting `confirmedByOutlets` as a
+ * set of strings counted an aggregator link as a newsroom, and one outlet's
+ * two feeds as two outlets. Two of the four articles published on 2026-08-12
+ * cleared this gate that way, each resting on a single newsroom. The count
+ * now goes through config/outlets.ts, which resolves every name back to the
+ * item it came from — so this gate and the notice the reader is shown
+ * (web/src/components/ProvenanceNote.tsx) finally answer the same question.
+ * That is why the source items are now a parameter: the names alone never
+ * carried enough information to count honestly.
  */
 
 import type { ExtractedFact } from "../types.js";
+import { countIndependentOutlets } from "../config/outlets.js";
+import type { OutletIdentitySource } from "../config/outlets.js";
 
 const MIN_SOURCES = 2;
 
@@ -48,9 +60,19 @@ export interface TwoSourceCheckResult {
   detail: Record<string, unknown>;
 }
 
-export function checkTwoSourceRule(facts: ExtractedFact[]): TwoSourceCheckResult {
+export function checkTwoSourceRule(
+  facts: ExtractedFact[],
+  /**
+   * The items the facts were extracted from. Required, not optional: an
+   * optional parameter is how a caller silently gets the old, inflated count
+   * back, and this is the last gate before publication.
+   */
+  sourceItems: readonly OutletIdentitySource[],
+): TwoSourceCheckResult {
   const loadBearing = facts.filter((f) => f.usedInText);
-  const violating = loadBearing.filter((f) => new Set(f.confirmedByOutlets).size < MIN_SOURCES);
+  const violating = loadBearing.filter(
+    (f) => countIndependentOutlets(f.confirmedByOutlets, sourceItems) < MIN_SOURCES,
+  );
   const insufficientLoadBearing = loadBearing.length < MIN_LOAD_BEARING_FACTS;
 
   return {

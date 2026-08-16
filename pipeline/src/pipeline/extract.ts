@@ -6,16 +6,22 @@
  * the 2-source rule as code (not just prompt instruction) so a fact can never
  * slip through as "usedInText" without independent corroboration
  * (news-sourcing-strategy.md §2 rule #2, gate 6c).
+ *
+ * What "independent" counts as lives in config/outlets.ts, shared with the
+ * final gate. Until 2026-08-16 this file counted distinct outlet *names*,
+ * which let an aggregator link and a newsroom's own two feeds each pass as
+ * two sources — see that module for the incident.
  */
 
-import type { EventCluster, ExtractedFact, FactExtractionResult } from "../types.js";
+import type { EventCluster, ExtractedFact, FactExtractionResult, RawItem } from "../types.js";
 import type { LLMProvider } from "../llm/provider.js";
+import { countIndependentOutlets } from "../config/outlets.js";
 
 const MIN_SOURCES_TO_USE = 2;
 
-function enforceTwoSourceRule(facts: ExtractedFact[]): ExtractedFact[] {
+function enforceTwoSourceRule(facts: ExtractedFact[], items: readonly RawItem[]): ExtractedFact[] {
   return facts.map((f) => {
-    const sourceCount = new Set(f.confirmedByOutlets).size;
+    const sourceCount = countIndependentOutlets(f.confirmedByOutlets, items);
     const meetsThreshold = sourceCount >= MIN_SOURCES_TO_USE;
     return {
       ...f,
@@ -23,7 +29,8 @@ function enforceTwoSourceRule(facts: ExtractedFact[]): ExtractedFact[] {
       usedInText: f.usedInText && meetsThreshold,
       note: meetsThreshold
         ? f.note
-        : f.note ?? "single source — excluded from load-bearing text per 2-source rule",
+        : f.note ??
+          "single source (aggregators and sibling feeds not counted) — excluded from load-bearing text per 2-source rule",
     };
   });
 }
@@ -41,7 +48,7 @@ export async function extractFacts(
 
   return {
     eventId: event.id,
-    facts: enforceTwoSourceRule(rawFacts),
+    facts: enforceTwoSourceRule(rawFacts, event.items),
     usage,
   };
 }
