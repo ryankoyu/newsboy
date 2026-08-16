@@ -81,6 +81,13 @@ export class LocalFileStorageAdapter implements StorageAdapter {
     await removeCheckpointFile(editionDate);
   }
 
+  /** Article bodies for one edition — read straight out of the stored JSON. */
+  async getVersionBodies(editionDate: string): Promise<string[]> {
+    const edition = await this.getEdition(editionDate);
+    if (!edition) return [];
+    return edition.articles.flatMap((a) => a.versions.map((g) => g.version.content));
+  }
+
   /**
    * One file for every edition's glosses, because the dictionary is not
    * edition-scoped — the whole point is that yesterday's words are free today.

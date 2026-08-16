@@ -96,13 +96,25 @@ function isGlossable(term: string): boolean {
  * handful of entries and closes a gap that would otherwise be invisible.
  */
 export function collectGlossTerms(articles: readonly PipelineArticle[]): string[] {
+  return collectTermsFromBodies(articles.flatMap((a) => a.versions.map((g) => g.version.content)));
+}
+
+/**
+ * The same collection, from bodies alone.
+ *
+ * The backfill script (scripts/run-glossary.ts) reads an edition back out of
+ * storage, where the articles do not carry their versions — the Supabase
+ * adapter's getEdition() returns articles without nested content, and says so.
+ * Taking body strings instead of assembled articles lets that path use exactly
+ * this tokenizer and these filters rather than growing a second copy that
+ * could drift from what the pipeline stores.
+ */
+export function collectTermsFromBodies(bodies: readonly string[]): string[] {
   const terms = new Set<string>();
-  for (const article of articles) {
-    for (const gated of article.versions) {
-      for (const match of gated.version.content.matchAll(WORD_RE)) {
-        const term = glossKey(match[0]);
-        if (isGlossable(term)) terms.add(term);
-      }
+  for (const body of bodies) {
+    for (const match of body.matchAll(WORD_RE)) {
+      const term = glossKey(match[0]);
+      if (isGlossable(term)) terms.add(term);
     }
   }
   // Sorted so the same edition produces the same call inputs twice running —

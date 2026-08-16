@@ -101,6 +101,11 @@ class MemoryStorage implements StorageAdapter {
     return null;
   }
   async clearCheckpoint(_date: string): Promise<void> {}
+  async getVersionBodies(_date: string): Promise<string[]> {
+    return (this.edition?.articles ?? []).flatMap((a) =>
+      a.versions.map((g) => g.version.content),
+    );
+  }
   // Regeneration rewrites one article's prose; the dictionary is an
   // edition-level stage (run.ts), so these are never reached from this path.
   async saveGlosses(): Promise<void> {}

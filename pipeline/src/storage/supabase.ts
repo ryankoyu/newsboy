@@ -762,6 +762,51 @@ export class SupabaseStorageAdapter implements StorageAdapter {
   }
 
   /**
+   * Article bodies for one edition, all levels (see the port's doc for why
+   * this is separate from getEdition).
+   *
+   * Two hops rather than a nested select: article ids for the edition, then
+   * their versions' content. The nested-select form would need the join
+   * syntax getEdition() has never grown, and this is a read of at most a few
+   * dozen rows.
+   */
+  async getVersionBodies(editionDate: string): Promise<string[]> {
+    const { data: editionData, error: editionError } = await this.client
+      .from("editions")
+      .select("id")
+      .eq("edition_date", editionDate)
+      .maybeSingle();
+    if (editionError) {
+      throw new Error(`[SupabaseStorageAdapter] editions select failed: ${editionError.message}`);
+    }
+    const editionId = (editionData as { id: string } | null)?.id;
+    if (!editionId) return [];
+
+    const { data: articleData, error: articlesError } = await this.client
+      .from("articles")
+      .select("id")
+      .eq("edition_id", editionId);
+    if (articlesError) {
+      throw new Error(`[SupabaseStorageAdapter] articles select failed: ${articlesError.message}`);
+    }
+    const articleIds = ((articleData ?? []) as Array<{ id: string }>).map((a) => a.id);
+    if (articleIds.length === 0) return [];
+
+    const { data: versionData, error: versionsError } = await this.client
+      .from("article_versions")
+      .select("content")
+      .in("article_id", articleIds);
+    if (versionsError) {
+      throw new Error(
+        `[SupabaseStorageAdapter] article_versions select failed: ${versionsError.message}`,
+      );
+    }
+    return ((versionData ?? []) as Array<{ content: string | null }>)
+      .map((v) => v.content ?? "")
+      .filter((c) => c.length > 0);
+  }
+
+  /**
    * Dictionary glosses (0006_glosses.sql) — insert-if-absent, keyed by term.
    *
    * `ignoreDuplicates: true` is the whole behaviour: a term another edition

@@ -79,6 +79,20 @@ export interface StorageAdapter {
   saveGlosses(entries: readonly GlossEntry[]): Promise<void>;
 
   /**
+   * Every article body in an edition, all three levels, as plain strings.
+   *
+   * Exists because getEdition() does not reassemble nested versions on the
+   * Supabase side and says as much in its own comment. The dictionary backfill
+   * needs body text and nothing else, so it asks for exactly that rather than
+   * waiting on a full round-trip it would not use — and rather than reading a
+   * half-populated edition and quietly finding no words in it, which is what
+   * happened the first time this ran.
+   *
+   * Empty array when the edition does not exist.
+   */
+  getVersionBodies(editionDate: string): Promise<string[]>;
+
+  /**
    * Every term already glossed, so the run pays only for what today's edition
    * introduces. English being Zipfian, this is what turns the dictionary from
    * a per-edition cost into a one-off one.

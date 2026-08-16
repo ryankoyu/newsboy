@@ -20,7 +20,7 @@ import { AnthropicLLMProvider } from "../llm/anthropic.js";
 import { MockLLMProvider } from "../llm/mock.js";
 import { LocalFileStorageAdapter } from "../storage/localFile.js";
 import { SupabaseStorageAdapter } from "../storage/supabase.js";
-import { buildGlossary, collectGlossTerms, mayPersistGlosses } from "../pipeline/glossary.js";
+import { buildGlossary, collectTermsFromBodies, mayPersistGlosses } from "../pipeline/glossary.js";
 import { estimateCostUsd } from "../llm/cost.js";
 import type { LLMProvider } from "../llm/provider.js";
 import type { StorageAdapter } from "../storage/adapter.js";
@@ -49,17 +49,32 @@ async function main(): Promise<number> {
   }
 
   const storage = buildStorage();
-  const edition = await storage.getEdition(editionDate);
-  if (!edition) {
-    console.error(`[glossary] ${editionDate} 에디션을 찾을 수 없습니다 (storage=${storage.name}).`);
+  const bodies = await storage.getVersionBodies(editionDate);
+  if (bodies.length === 0) {
+    console.error(
+      `[glossary] ${editionDate} 에디션의 기사 본문을 찾을 수 없습니다 (storage=${storage.name}). ` +
+        "에디션 날짜가 맞는지, 그 저장소에 실제로 기사가 있는지 확인하세요.",
+    );
     return 1;
   }
 
-  const terms = collectGlossTerms(edition.articles);
+  const terms = collectTermsFromBodies(bodies);
+  // A body list that yields no terms means the read went wrong, not that an
+  // edition of English prose contains no words. Saying "0개" and exiting 0 is
+  // how the first run of this script reported a half-populated read as a
+  // success — it is a failure and it says so.
+  if (terms.length === 0) {
+    console.error(
+      `[glossary] 본문 ${bodies.length}개를 읽었는데 단어가 하나도 나오지 않았습니다 — ` +
+        "읽기 경로가 잘못됐을 가능성이 높습니다. 중단합니다.",
+    );
+    return 1;
+  }
+
   const known = await storage.loadKnownGlossTerms();
   const missing = terms.filter((t) => !known.has(t));
   console.log(
-    `[glossary] ${editionDate}: 기사 ${edition.articles.length}건, 단어 ${terms.length}개 ` +
+    `[glossary] ${editionDate}: 본문 ${bodies.length}개, 단어 ${terms.length}개 ` +
       `(이미 있는 뜻 ${terms.length - missing.length}개, 새로 만들 것 ${missing.length}개)`,
   );
 

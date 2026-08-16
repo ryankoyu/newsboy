@@ -151,6 +151,11 @@ class MemoryStorage implements StorageAdapter {
     this.cleared = true;
     this.checkpoint = null;
   }
+  async getVersionBodies(_date: string): Promise<string[]> {
+    return (this.edition?.articles ?? []).flatMap((a) =>
+      a.versions.map((g) => g.version.content),
+    );
+  }
   /** The dictionary (glossary.ts) — recorded so a test can assert what was written. */
   glosses: GlossEntry[] = [];
   async saveGlosses(entries: readonly GlossEntry[]): Promise<void> {
