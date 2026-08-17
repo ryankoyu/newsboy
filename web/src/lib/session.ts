@@ -680,6 +680,19 @@ export interface SessionExport {
 }
 
 /** Suggested filename for a downloaded backup, e.g. briefly-backup-2026-08-11.json. */
+/**
+ * Erases this browser's copy of the reader's record.
+ *
+ * Only for account deletion. Signing out deliberately leaves local data alone
+ * — a shared laptop is not a request to be forgotten — but deleting an account
+ * is exactly that request, and leaving the words and reading history sitting
+ * in localStorage would answer it with the visible half only.
+ */
+export function clearLocalSession(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(STORAGE_KEY);
+}
+
 export function sessionExportFilename(now: Date = new Date()): string {
   return `briefly-backup-${now.toISOString().slice(0, 10)}.json`;
 }

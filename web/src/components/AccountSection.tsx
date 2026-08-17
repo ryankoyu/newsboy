@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { getAuthClient } from "@/lib/auth/client";
 import { syncSession } from "@/lib/sync/syncSession";
+import { clearLocalSession } from "@/lib/session";
 import { notifySessionChange } from "@/lib/useSession";
 
 /**
@@ -25,6 +26,9 @@ export function AccountSection() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Deletion is two steps on purpose: the confirm box only appears after the
+  // reader asks for it, and the button inside it is the only thing that acts.
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   useEffect(() => {
     // No client means no sign-in at all, and the render below returns before
@@ -100,6 +104,38 @@ export function AccountSection() {
     setMessage("로그아웃했습니다. 이 기기의 기록은 그대로 있습니다.");
   }
 
+  /**
+   * Deletes the account and everything attached to it.
+   *
+   * One RPC, not a series of deletes: delete_own_account() (0008) removes the
+   * auth user, and every table holding the reader's rows cascades from it —
+   * profiles, reading progress, saved words, bookmarks, saved sentences. A
+   * client-side sweep would be a list that silently falls behind the schema.
+   *
+   * The local copy goes too. Signing out leaves it alone by design, but
+   * deleting an account is a request to be forgotten, and honouring only the
+   * server half of that would leave the reader's words on the screen in front
+   * of them.
+   */
+  async function deleteAccount() {
+    if (!client) return;
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    const { error: err } = await client.rpc("delete_own_account");
+    if (err) {
+      setBusy(false);
+      setError(`계정을 삭제하지 못했습니다: ${err.message}`);
+      return;
+    }
+    clearLocalSession();
+    await client.auth.signOut();
+    setBusy(false);
+    setConfirmingDelete(false);
+    notifySessionChange();
+    setMessage("계정과 저장한 기록을 모두 삭제했습니다.");
+  }
+
   return (
     <Panel>
       {session ? (
@@ -116,6 +152,44 @@ export function AccountSection() {
               로그아웃
             </button>
           </div>
+
+          {confirmingDelete ? (
+            <div
+              style={{
+                marginTop: "var(--sp-4)",
+                padding: "var(--sp-3)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--r-md)",
+              }}
+            >
+              <p style={{ ...muted, margin: "0 0 var(--sp-3)" }}>
+                계정과 함께 저장한 단어·문장·북마크·읽은 기록이 모두 삭제됩니다. 되돌릴 수
+                없습니다. 남겨두고 싶은 것이 있다면 먼저 내보내기로 백업하세요.
+              </p>
+              <div style={{ display: "flex", gap: "var(--sp-2)", flexWrap: "wrap" }}>
+                <button type="button" onClick={deleteAccount} disabled={busy} style={plainBtn}>
+                  {busy ? "삭제 중…" : "네, 삭제합니다"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmingDelete(false)}
+                  disabled={busy}
+                  style={plainBtn}
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(true)}
+              disabled={busy}
+              style={{ ...plainBtn, marginTop: "var(--sp-4)" }}
+            >
+              회원 탈퇴
+            </button>
+          )}
           <p style={{ ...muted, marginTop: "var(--sp-3)", fontSize: "var(--fs-sm)" }}>
             저장한 단어·북마크·읽은 기록이 동기화됩니다. 저장한 문장은 아직 이 기기에만
             남습니다.
