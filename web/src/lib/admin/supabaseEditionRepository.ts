@@ -44,10 +44,20 @@ import {
  * pipeline's own getEdition() has (it returns articles with no versions and
  * says so in a comment). PostgREST resolves the nesting from the foreign keys
  * declared in 0001_schema.sql.
+ *
+ * The `!articles_edition_id_fkey` hint is load-bearing, not decoration. 0007
+ * added editions.lead_article_id -> articles(id), so there are now two foreign
+ * keys between these tables and PostgREST refuses an ambiguous embed outright:
+ * "more than one relationship was found". Naming the one we mean — the
+ * edition's list of articles, not its single lead — is the whole fix.
+ *
+ * That failure is invisible to this file's unit tests, which mock the client
+ * and would accept any select string at all. It surfaced on the first query
+ * against the real database, which is the only place it could.
  */
 const EDITION_SELECT = `
   id, edition_date, status, published_at, lead_article_id,
-  articles (
+  articles!articles_edition_id_fkey (
     id, slug, event_summary, rank_in_edition, status, created_at, category_id,
     review_decision, exclude_reason, regenerate_note, regenerate_requested_at,
     regeneration_count, regenerated_at,
