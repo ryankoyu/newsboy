@@ -57,9 +57,9 @@ jobs:
       run:
         working-directory: pipeline
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # 22, not 20: @supabase/realtime-js reaches for a global WebSocket,
           # which Node only provides from 22 on. On 20 the pipeline died with
@@ -95,7 +95,7 @@ jobs:
       # artifact so the operator can inspect 검수 대기 output without a DB.
       - name: Upload local output (if any)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pipeline-output-${{ github.run_id }}
           path: pipeline/output/
