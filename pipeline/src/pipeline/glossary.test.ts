@@ -41,17 +41,22 @@ describe("collectGlossTerms", () => {
     expect(terms).toContain("investigators");
   });
 
-  it("drops function words, short tokens, and anything with a digit", () => {
+  it("drops only what a dictionary entry cannot help with — digits", () => {
     const terms = collectGlossTerms([
       article([version("A2", "The ship of 44 people was at sea by 2026 and it is gone.")]),
     ]);
-    expect(terms).not.toContain("the");
-    expect(terms).not.toContain("of");
-    expect(terms).not.toContain("was");
-    expect(terms).not.toContain("at"); // under the 3-letter floor
     expect(terms).not.toContain("44");
     expect(terms).not.toContain("2026");
     expect(terms).toEqual(expect.arrayContaining(["ship", "people", "sea", "gone"]));
+  });
+
+  it("keeps the common words a beginner is least sure of", () => {
+    // These were skipped as "noise" until a reader tapped `with` and got a
+    // card saying the word was a name we would not invent a meaning for.
+    const terms = collectGlossTerms([
+      article([version("A2", "The ship of 44 people was at sea with a crew.")]),
+    ]);
+    expect(terms).toEqual(expect.arrayContaining(["the", "of", "was", "at", "with", "a"]));
   });
 
   it("keeps inflected forms as they appear rather than reducing them", () => {

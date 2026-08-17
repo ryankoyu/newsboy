@@ -8,12 +8,11 @@ import { lookupKey, tokenizeSentence } from "@/lib/wordMatcher";
  * is a word the reader can still tap and will find nothing for, and a term it
  * invents is a lookup that can never hit. One tokenizer, one answer.
  *
- * The filters mirror pipeline/src/pipeline/glossary.ts — three letters or
- * more, no digits. Function words are NOT filtered here even though the
- * pipeline skips them: this side only decides what to *ask* about, and a term
- * that was never stored simply comes back absent. Duplicating the stopword
- * list across two packages would give it two chances to drift, and the cost
- * of asking is one entry in an `in (...)` clause.
+ * The filter mirrors pipeline/src/pipeline/glossary.ts: anything without a
+ * digit. Both sides once skipped common words like "with" and short ones like
+ * "of"; a reader at A2 taps exactly those, and the empty card they got claimed
+ * the word was a proper noun. Now the only words without a meaning are the
+ * ones the model declined, which is what the card actually says.
  */
 export function collectBodyTerms(bodies: readonly string[]): string[] {
   const terms = new Set<string>();
@@ -21,7 +20,7 @@ export function collectBodyTerms(bodies: readonly string[]): string[] {
     for (const token of tokenizeSentence(body)) {
       if (!token.isWord) continue;
       const term = lookupKey(token.text);
-      if (term.length < 3 || /[0-9]/.test(term)) continue;
+      if (/[0-9]/.test(term)) continue;
       terms.add(term);
     }
   }

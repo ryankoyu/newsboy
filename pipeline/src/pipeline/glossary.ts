@@ -52,23 +52,24 @@ import type { LLMProvider } from "../llm/provider.js";
 export const GLOSS_CHUNK_SIZE = 120;
 
 /**
- * Words that carry grammar rather than meaning.
+ * Nothing is skipped for being a common word.
  *
- * Not an optimization — a Korean gloss for "the" or "of" is noise in a card
- * meant to teach vocabulary, and the reader who taps one is better served by
- * the empty card than by "그" floating without context. Kept deliberately
- * short: anything that could plausibly be looked up by a learner (modals,
- * quantifiers, prepositions with real semantic weight) stays glossable.
+ * There used to be a stoplist here — "the", "of", "with", "than" and about
+ * fifty others — on the theory that a Korean gloss for a preposition is noise
+ * in a card meant to teach vocabulary. That theory was written from the point
+ * of view of someone who already knows English. A reader at A2 who taps "with"
+ * wants to know what it means, and the function words are exactly the ones a
+ * beginner is least sure of.
+ *
+ * It also produced a hole the card could not explain. The empty card says the
+ * word is a name we will not invent a meaning for, which is true of "Nikkei"
+ * and plainly false of "with" — a screen telling the reader something untrue,
+ * which is the one thing this codebase keeps having to fix.
+ *
+ * The cost of not skipping them is nil: there are only a few dozen such words
+ * as distinct types, they are bought once, and every later edition gets them
+ * free. One filter remains, in isGlossable below.
  */
-const FUNCTION_WORDS = new Set([
-  "the", "a", "an", "and", "or", "but", "of", "to", "in", "on", "at", "for",
-  "with", "from", "by", "as", "is", "are", "was", "were", "be", "been", "being",
-  "it", "its", "this", "that", "these", "those", "there", "here",
-  "he", "she", "they", "them", "his", "her", "their", "our", "your", "you",
-  "we", "us", "him", "who", "whom", "which", "what",
-  "has", "have", "had", "do", "does", "did", "not", "no", "so", "if", "then",
-  "than", "too", "very", "also", "just", "only", "own", "same", "such",
-]);
 
 /** Matches the tokenizer the reader's screen uses (web/src/lib/wordMatcher.ts WORD_RE). */
 const WORD_RE = /[A-Za-z0-9]+(?:['’-][A-Za-z0-9]+)*/g;
@@ -79,11 +80,10 @@ export function glossKey(raw: string): string {
 }
 
 function isGlossable(term: string): boolean {
-  if (term.length < 3) return false;
   // A token containing a digit is a figure, a year, or an identifier — none of
-  // which a dictionary entry helps with.
-  if (/[0-9]/.test(term)) return false;
-  return !FUNCTION_WORDS.has(term);
+  // which a dictionary entry helps with. That is the whole filter: everything
+  // else a reader can tap, a reader can ask about, including "a" and "I".
+  return !/[0-9]/.test(term);
 }
 
 /**

@@ -22,10 +22,18 @@ import { useSession } from "@/lib/useSession";
  * up — a promise nothing in the codebase could keep: no backfill existed and
  * no notification did either. Now every word in a body is glossed at
  * publication time (pipeline/src/pipeline/glossary.ts), so an empty card means
- * something narrower and true: this word has no meaning to give. That is
- * mostly proper nouns, which the pipeline deliberately refuses to gloss
- * because describing a company or a person is asserting a fact about the
- * world. The card now says that instead of promising a future.
+ * something narrower and true: this word has no meaning to give.
+ *
+ * Two kinds of word land here, and the card names both. Proper nouns, which
+ * the pipeline deliberately refuses to gloss because describing a company or
+ * a person is asserting a fact about the world. And the handful the model
+ * declines because Korean has nothing to put there — "a" and "the" have no
+ * article system to translate into.
+ *
+ * The card said only the first for two days, until a reader tapped "with" and
+ * was told it was a name. That word is glossed now (the stoplist that skipped
+ * it is gone), but the lesson stands: an explanation that covers one case
+ * reads as a lie in the other.
  *
  * Save still works on an empty card — a reader who wants to keep the word
  * keeps it, marked 뜻 미등록 (session.ts SavedWordEntry.meaning_ko: null).
@@ -222,7 +230,7 @@ export function SmartDictionary({
             margin: 0,
           }}
         >
-          이 단어는 사전에 없어요. 사람 이름이나 회사 이름처럼 뜻을 지어낼 수 없는 말은 비워둡니다.
+          이 단어에는 뜻을 붙이지 않았어요. 사람·회사 이름처럼 지어낼 수 없는 말, 또는 a·the처럼 한국어로 옮길 말이 마땅치 않은 경우입니다.
         </p>
       )}
 

@@ -77,14 +77,14 @@ describe("ArticleBody — tapping an uncurated word", () => {
     // publication is asserting a fact about the world.
     renderBody({ glosses: { rescuers: gloss("rescuers", "구조대원들") } });
     fireEvent.click(screen.getByText("Nikkei"));
-    expect(screen.getByText(/사전에 없어요/)).toBeInTheDocument();
+    expect(screen.getByText(/뜻을 붙이지 않았어요/)).toBeInTheDocument();
     expect(screen.queryByText(/알려드릴게요/)).not.toBeInTheDocument();
   });
 
   it("keeps working with no dictionary at all — the committed seed's case", () => {
     renderBody();
     fireEvent.click(screen.getByText("ferry"));
-    expect(screen.getByText(/사전에 없어요/)).toBeInTheDocument();
+    expect(screen.getByText(/뜻을 붙이지 않았어요/)).toBeInTheDocument();
   });
 });
 

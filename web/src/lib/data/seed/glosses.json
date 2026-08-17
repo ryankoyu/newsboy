@@ -1,4 +1,9 @@
 {
+  "a": {
+    "term": "a",
+    "meaning_ko": "(부정관사)",
+    "pos": "prep."
+  },
   "ability": {
     "term": "ability",
     "meaning_ko": "능력",
@@ -254,6 +259,11 @@
     "meaning_ko": "이미",
     "pos": "adv."
   },
+  "also": {
+    "term": "also",
+    "meaning_ko": "또한",
+    "pos": "adv."
+  },
   "american": {
     "term": "american",
     "meaning_ko": "미국의",
@@ -274,10 +284,20 @@
     "meaning_ko": "확대하다",
     "pos": "v."
   },
+  "an": {
+    "term": "an",
+    "meaning_ko": "(부정관사)",
+    "pos": "prep."
+  },
   "analysts": {
     "term": "analysts",
     "meaning_ko": "분석가들",
     "pos": "n."
+  },
+  "and": {
+    "term": "and",
+    "meaning_ko": "그리고",
+    "pos": "conj."
   },
   "angry": {
     "term": "angry",
@@ -384,6 +404,11 @@
     "meaning_ko": "구조",
     "pos": "n."
   },
+  "are": {
+    "term": "are",
+    "meaning_ko": "이다",
+    "pos": "v."
+  },
   "area": {
     "term": "area",
     "meaning_ko": "지역",
@@ -439,6 +464,11 @@
     "meaning_ko": "인공의",
     "pos": "adj."
   },
+  "as": {
+    "term": "as",
+    "meaning_ko": "같이",
+    "pos": "prep."
+  },
   "aside": {
     "term": "aside",
     "meaning_ko": "제쳐두고",
@@ -463,6 +493,11 @@
     "term": "assess",
     "meaning_ko": "평가하다",
     "pos": "v."
+  },
+  "at": {
+    "term": "at",
+    "meaning_ko": "에서",
+    "pos": "prep."
   },
   "atmosphere": {
     "term": "atmosphere",
@@ -594,6 +629,11 @@
     "meaning_ko": "전투",
     "pos": "n."
   },
+  "be": {
+    "term": "be",
+    "meaning_ko": "이다",
+    "pos": "v."
+  },
   "beanie": {
     "term": "beanie",
     "meaning_ko": "비니",
@@ -632,6 +672,11 @@
   "becomes": {
     "term": "becomes",
     "meaning_ko": "된다",
+    "pos": "v."
+  },
+  "been": {
+    "term": "been",
+    "meaning_ko": "이었다",
     "pos": "v."
   },
   "before": {
@@ -889,6 +934,11 @@
     "meaning_ko": "바쁜",
     "pos": "adj."
   },
+  "but": {
+    "term": "but",
+    "meaning_ko": "하지만",
+    "pos": "conj."
+  },
   "buy": {
     "term": "buy",
     "meaning_ko": "사다",
@@ -908,6 +958,11 @@
     "term": "buzz",
     "meaning_ko": "화제",
     "pos": "n."
+  },
+  "by": {
+    "term": "by",
+    "meaning_ko": "에 의해",
+    "pos": "prep."
   },
   "call": {
     "term": "call",
@@ -962,6 +1017,11 @@
   "capital": {
     "term": "capital",
     "meaning_ko": "자본",
+    "pos": "n."
+  },
+  "capitol": {
+    "term": "capitol",
+    "meaning_ko": "의사당",
     "pos": "n."
   },
   "capture": {
@@ -1974,6 +2034,11 @@
     "meaning_ko": "결정하다",
     "pos": "v."
   },
+  "did": {
+    "term": "did",
+    "meaning_ko": "했다",
+    "pos": "v."
+  },
   "died": {
     "term": "died",
     "meaning_ko": "죽었다",
@@ -2104,10 +2169,20 @@
     "meaning_ko": "나누었다",
     "pos": "v."
   },
+  "do": {
+    "term": "do",
+    "meaning_ko": "하다",
+    "pos": "v."
+  },
   "doctors": {
     "term": "doctors",
     "meaning_ko": "의사들",
     "pos": "n."
+  },
+  "does": {
+    "term": "does",
+    "meaning_ko": "한다",
+    "pos": "v."
   },
   "doing": {
     "term": "doing",
@@ -2979,6 +3054,11 @@
     "meaning_ko": "영상",
     "pos": "n."
   },
+  "for": {
+    "term": "for",
+    "meaning_ko": "을 위해",
+    "pos": "prep."
+  },
   "forceful": {
     "term": "forceful",
     "meaning_ko": "강력한",
@@ -3048,6 +3128,11 @@
     "term": "frightening",
     "meaning_ko": "무서운",
     "pos": "adj."
+  },
+  "from": {
+    "term": "from",
+    "meaning_ko": "에서",
+    "pos": "prep."
   },
   "front": {
     "term": "front",
@@ -3164,6 +3249,11 @@
     "meaning_ko": "세계적인",
     "pos": "adj."
   },
+  "go": {
+    "term": "go",
+    "meaning_ko": "가다",
+    "pos": "v."
+  },
   "goal": {
     "term": "goal",
     "meaning_ko": "목표",
@@ -3279,6 +3369,11 @@
     "meaning_ko": "만",
     "pos": "n."
   },
+  "had": {
+    "term": "had",
+    "meaning_ko": "가지고 있었다",
+    "pos": "v."
+  },
   "half": {
     "term": "half",
     "meaning_ko": "반",
@@ -3344,15 +3439,30 @@
     "meaning_ko": "가혹한",
     "pos": "adj."
   },
+  "has": {
+    "term": "has",
+    "meaning_ko": "가지고 있다",
+    "pos": "v."
+  },
   "hat": {
     "term": "hat",
     "meaning_ko": "모자",
     "pos": "n."
   },
+  "have": {
+    "term": "have",
+    "meaning_ko": "가지고 있다",
+    "pos": "v."
+  },
   "hawk": {
     "term": "hawk",
     "meaning_ko": "매",
     "pos": "n."
+  },
+  "he": {
+    "term": "he",
+    "meaning_ko": "그는",
+    "pos": "pron."
   },
   "headed": {
     "term": "headed",
@@ -3459,9 +3569,19 @@
     "meaning_ko": "언덕",
     "pos": "n."
   },
+  "him": {
+    "term": "him",
+    "meaning_ko": "그를",
+    "pos": "pron."
+  },
   "himself": {
     "term": "himself",
     "meaning_ko": "자신",
+    "pos": "pron."
+  },
+  "his": {
+    "term": "his",
+    "meaning_ko": "그의",
     "pos": "pron."
   },
   "history": {
@@ -3559,6 +3679,11 @@
     "meaning_ko": "정체성",
     "pos": "n."
   },
+  "if": {
+    "term": "if",
+    "meaning_ko": "만약",
+    "pos": "conj."
+  },
   "ignored": {
     "term": "ignored",
     "meaning_ko": "무시했다",
@@ -3588,6 +3713,11 @@
     "term": "imports",
     "meaning_ko": "수입품들",
     "pos": "n."
+  },
+  "in": {
+    "term": "in",
+    "meaning_ko": "에",
+    "pos": "prep."
   },
   "in-person": {
     "term": "in-person",
@@ -3759,6 +3889,11 @@
     "meaning_ko": "포함한다",
     "pos": "v."
   },
+  "is": {
+    "term": "is",
+    "meaning_ko": "이다",
+    "pos": "v."
+  },
   "israeli": {
     "term": "israeli",
     "meaning_ko": "이스라엘의",
@@ -3769,10 +3904,20 @@
     "meaning_ko": "발행했다",
     "pos": "v."
   },
+  "it": {
+    "term": "it",
+    "meaning_ko": "그것",
+    "pos": "pron."
+  },
   "items": {
     "term": "items",
     "meaning_ko": "항목들",
     "pos": "n."
+  },
+  "its": {
+    "term": "its",
+    "meaning_ko": "그것의",
+    "pos": "pron."
   },
   "itself": {
     "term": "itself",
@@ -3843,6 +3988,11 @@
     "term": "june",
     "meaning_ko": "6월",
     "pos": "n."
+  },
+  "just": {
+    "term": "just",
+    "meaning_ko": "방금",
+    "pos": "adv."
   },
   "keenly": {
     "term": "keenly",
@@ -4699,6 +4849,11 @@
     "meaning_ko": "야간 문화생활",
     "pos": "n."
   },
+  "no": {
+    "term": "no",
+    "meaning_ko": "아니다",
+    "pos": "adj."
+  },
   "nod": {
     "term": "nod",
     "meaning_ko": "끄덕이다",
@@ -4718,6 +4873,11 @@
     "term": "northern",
     "meaning_ko": "북부의",
     "pos": "adj."
+  },
+  "not": {
+    "term": "not",
+    "meaning_ko": "아니다",
+    "pos": "adv."
   },
   "notable": {
     "term": "notable",
@@ -4784,6 +4944,11 @@
     "meaning_ko": "대양",
     "pos": "n."
   },
+  "of": {
+    "term": "of",
+    "meaning_ko": "의",
+    "pos": "prep."
+  },
   "off": {
     "term": "off",
     "meaning_ko": "떨어진",
@@ -4844,6 +5009,11 @@
     "meaning_ko": "더 오래된",
     "pos": "adj."
   },
+  "on": {
+    "term": "on",
+    "meaning_ko": "위에",
+    "pos": "prep."
+  },
   "once": {
     "term": "once",
     "meaning_ko": "한 번",
@@ -4863,6 +5033,11 @@
     "term": "online",
     "meaning_ko": "온라인의",
     "pos": "adj."
+  },
+  "only": {
+    "term": "only",
+    "meaning_ko": "오직",
+    "pos": "adv."
   },
   "onto": {
     "term": "onto",
@@ -4913,6 +5088,11 @@
     "term": "option",
     "meaning_ko": "선택지",
     "pos": "n."
+  },
+  "or": {
+    "term": "or",
+    "meaning_ko": "또는",
+    "pos": "conj."
   },
   "orbit": {
     "term": "orbit",
@@ -4987,6 +5167,11 @@
   "oversubscribed": {
     "term": "oversubscribed",
     "meaning_ko": "초과 신청된",
+    "pos": "adj."
+  },
+  "own": {
+    "term": "own",
+    "meaning_ko": "자신의",
     "pos": "adj."
   },
   "owned": {
@@ -6319,6 +6504,11 @@
     "meaning_ko": "판매",
     "pos": "n."
   },
+  "same": {
+    "term": "same",
+    "meaning_ko": "같은",
+    "pos": "adj."
+  },
   "satellite": {
     "term": "satellite",
     "meaning_ko": "위성",
@@ -6859,6 +7049,11 @@
     "meaning_ko": "스냅샷",
     "pos": "n."
   },
+  "so": {
+    "term": "so",
+    "meaning_ko": "그래서",
+    "pos": "conj."
+  },
   "social": {
     "term": "social",
     "meaning_ko": "사회의",
@@ -7284,6 +7479,11 @@
     "meaning_ko": "계승",
     "pos": "n."
   },
+  "such": {
+    "term": "such",
+    "meaning_ko": "그런",
+    "pos": "adj."
+  },
   "sudden": {
     "term": "sudden",
     "meaning_ko": "갑작스러운",
@@ -7554,15 +7754,60 @@
     "meaning_ko": "태국의",
     "pos": "adj."
   },
+  "than": {
+    "term": "than",
+    "meaning_ko": "보다",
+    "pos": "prep."
+  },
+  "that": {
+    "term": "that",
+    "meaning_ko": "그",
+    "pos": "pron."
+  },
+  "the": {
+    "term": "the",
+    "meaning_ko": "(정관사)",
+    "pos": "prep."
+  },
+  "their": {
+    "term": "their",
+    "meaning_ko": "그들의",
+    "pos": "pron."
+  },
+  "them": {
+    "term": "them",
+    "meaning_ko": "그들을",
+    "pos": "pron."
+  },
   "themselves": {
     "term": "themselves",
     "meaning_ko": "그들 자신",
     "pos": "pron."
   },
+  "then": {
+    "term": "then",
+    "meaning_ko": "그러면",
+    "pos": "adv."
+  },
+  "there": {
+    "term": "there",
+    "meaning_ko": "거기",
+    "pos": "adv."
+  },
   "therefore": {
     "term": "therefore",
     "meaning_ko": "따라서",
     "pos": "adv."
+  },
+  "these": {
+    "term": "these",
+    "meaning_ko": "이것들",
+    "pos": "pron."
+  },
+  "they": {
+    "term": "they",
+    "meaning_ko": "그들은",
+    "pos": "pron."
   },
   "thick": {
     "term": "thick",
@@ -7579,10 +7824,20 @@
     "meaning_ko": "것들",
     "pos": "n."
   },
+  "this": {
+    "term": "this",
+    "meaning_ko": "이",
+    "pos": "pron."
+  },
   "thorough": {
     "term": "thorough",
     "meaning_ko": "철저한",
     "pos": "adj."
+  },
+  "those": {
+    "term": "those",
+    "meaning_ko": "저것들",
+    "pos": "pron."
   },
   "though": {
     "term": "though",
@@ -7654,6 +7909,11 @@
     "meaning_ko": "시기",
     "pos": "n."
   },
+  "to": {
+    "term": "to",
+    "meaning_ko": "에",
+    "pos": "prep."
+  },
   "together": {
     "term": "together",
     "meaning_ko": "함께",
@@ -7663,6 +7923,11 @@
     "term": "tolls",
     "meaning_ko": "통행료",
     "pos": "n."
+  },
+  "too": {
+    "term": "too",
+    "meaning_ko": "또한",
+    "pos": "adv."
   },
   "took": {
     "term": "took",
@@ -7979,6 +8244,11 @@
     "meaning_ko": "건강하지 않은",
     "pos": "adj."
   },
+  "up": {
+    "term": "up",
+    "meaning_ko": "위로",
+    "pos": "adv."
+  },
   "upright": {
     "term": "upright",
     "meaning_ko": "수직의",
@@ -8068,6 +8338,11 @@
     "term": "version",
     "meaning_ko": "버전",
     "pos": "n."
+  },
+  "very": {
+    "term": "very",
+    "meaning_ko": "매우",
+    "pos": "adv."
   },
   "vessels": {
     "term": "vessels",
@@ -8199,6 +8474,11 @@
     "meaning_ko": "전쟁들",
     "pos": "n."
   },
+  "was": {
+    "term": "was",
+    "meaning_ko": "이었다",
+    "pos": "v."
+  },
   "watched": {
     "term": "watched",
     "meaning_ko": "봤다",
@@ -8294,10 +8574,20 @@
     "meaning_ko": "갔다",
     "pos": "v."
   },
+  "were": {
+    "term": "were",
+    "meaning_ko": "이었다",
+    "pos": "v."
+  },
   "west": {
     "term": "west",
     "meaning_ko": "서쪽",
     "pos": "n."
+  },
+  "what": {
+    "term": "what",
+    "meaning_ko": "무엇",
+    "pos": "pron."
   },
   "when": {
     "term": "when",
@@ -8314,15 +8604,30 @@
     "meaning_ko": "~인지 아닌지",
     "pos": "conj."
   },
+  "which": {
+    "term": "which",
+    "meaning_ko": "어떤",
+    "pos": "pron."
+  },
   "while": {
     "term": "while",
     "meaning_ko": "동안",
     "pos": "conj."
   },
+  "who": {
+    "term": "who",
+    "meaning_ko": "누가",
+    "pos": "pron."
+  },
   "whole": {
     "term": "whole",
     "meaning_ko": "전체",
     "pos": "adj."
+  },
+  "whom": {
+    "term": "whom",
+    "meaning_ko": "누구를",
+    "pos": "pron."
   },
   "whose": {
     "term": "whose",
@@ -8363,6 +8668,11 @@
     "term": "window",
     "meaning_ko": "창",
     "pos": "n."
+  },
+  "with": {
+    "term": "with",
+    "meaning_ko": "~와 함께",
+    "pos": "prep."
   },
   "within": {
     "term": "within",
@@ -8473,6 +8783,11 @@
     "term": "yet",
     "meaning_ko": "아직",
     "pos": "adv."
+  },
+  "you": {
+    "term": "you",
+    "meaning_ko": "당신",
+    "pos": "pron."
   },
   "young": {
     "term": "young",
