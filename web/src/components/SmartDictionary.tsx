@@ -69,11 +69,6 @@ export function SmartDictionary({
   const saved = session.isWordSaved(entry.term);
 
   useEffect(() => {
-    session.markWordSeen(entry.term);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entry.term]);
-
-  useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
         onClose();

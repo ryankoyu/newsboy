@@ -242,14 +242,17 @@ a {
 .briefly-word:focus-visible {
   background: var(--color-accent-soft);
 }
-.briefly-word[data-seen="true"] {
-  border-bottom: 1px dotted var(--color-text-muted);
-}
-/* Saved word (design-decisions.md §4.7 item 3): a filled highlight instead
-   of the "seen" dotted underline — stronger, distinct style for a word the
-   user has actually saved to My Vocabulary. Takes priority over the dotted
-   "seen" underline (border-bottom cleared) since the fill already conveys
-   "you know this one". */
+/* Saved word (design-decisions.md §4.7 item 3) — the only mark a word carries.
+   There used to be a second one: a dotted underline on every word the reader
+   had ever tapped ("seen"), per a3-ui-ux.md §2-2. It was removed on
+   2026-08-19 at the operator's call, and the reasoning is worth keeping.
+   Having looked a word up is not information that stays useful — it decays
+   into noise as it accumulates, and nothing ever cleared it. Completing the
+   dictionary made that far worse: with a meaning behind every word rather
+   than five per level, a daily reader taps enough that the underline would
+   spread across most of the body within weeks and stop distinguishing
+   anything. Having SAVED a word is a deliberate act and stays meaningful, so
+   that is the mark that remains. */
 .briefly-word[data-saved="true"] {
   background: var(--color-accent-soft);
   border-bottom: none;

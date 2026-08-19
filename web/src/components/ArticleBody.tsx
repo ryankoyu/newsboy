@@ -21,9 +21,10 @@ import {
  * - hyphenated words are one token
  * - lookup key = lowercase, punctuation-stripped lemma
  * - role="button" tabindex="0", Enter/Space triggers
- * - seen words get a dotted underline; SAVED words get a filled highlight
- *   instead (design-decisions.md §4.7 item 3 — a stronger, distinct style
- *   from "seen" so a saved word stands out on revisit).
+ * - SAVED words get a filled highlight (design-decisions.md §4.7 item 3).
+ *   They are the only marked words: the dotted underline that used to mark
+ *   every word the reader had tapped was removed on 2026-08-19 — see
+ *   globals.css for why.
  *
  * Matching curated words (Word[]) against body tokens (Q2 fix):
  * - Multi-word terms ("lay off") match a contiguous token sequence, and the
@@ -116,7 +117,6 @@ export function ArticleBody({
     el: HTMLElement,
     refObj: React.RefObject<HTMLElement | null>
   ) {
-    session.markWordSeen(text);
     refresh();
     // Curated word first, then the dictionary, then the honest empty card.
     // The third case is not a failure state — a proper noun has no gloss by
@@ -183,7 +183,6 @@ export function ArticleBody({
                 .slice(run.startIdx, run.endIdx + 1)
                 .map((t) => t.text)
                 .join("");
-              const seen = session.isWordSeen(text);
               const wordSaved = session.isWordSaved(text);
               const showKeyGloss = Boolean(run.entry.isKey) && !shownKeyWordIds.has(run.entry.id);
               if (showKeyGloss) shownKeyWordIds.add(run.entry.id);
@@ -192,7 +191,6 @@ export function ArticleBody({
                   key={tIdx}
                   text={text}
                   entry={run.entry}
-                  seen={seen}
                   saved={wordSaved}
                   keyGloss={showKeyGloss ? run.entry.meaning_ko : null}
                   onActivate={handleWordClick}
@@ -205,14 +203,12 @@ export function ArticleBody({
               if (tok.isWord) {
                 // §4.8-1: every word is clickable, even without a curated
                 // curated entry. entry=null -> gloss lookup, then empty card.
-                const seen = session.isWordSeen(tok.text);
                 const wordSaved = session.isWordSaved(tok.text);
                 rendered.push(
                   <ClickableWordToken
                     key={tIdx}
                     text={tok.text}
                     entry={null}
-                    seen={seen}
                     saved={wordSaved}
                     keyGloss={null}
                     onActivate={handleWordClick}
@@ -334,14 +330,12 @@ function SentenceParagraph({
 function ClickableWordToken({
   text,
   entry,
-  seen,
   saved,
   keyGloss,
   onActivate,
 }: {
   text: string;
   entry: Word | null;
-  seen: boolean;
   saved: boolean;
   keyGloss?: string | null;
   onActivate: (
@@ -369,7 +363,6 @@ function ClickableWordToken({
       role="button"
       tabIndex={0}
       className="briefly-word"
-      data-seen={seen}
       data-saved={saved}
       data-has-entry={entry != null}
       aria-label={`${text}, 뜻 보기${saved ? " (저장한 단어)" : ""}${

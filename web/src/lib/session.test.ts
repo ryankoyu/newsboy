@@ -22,10 +22,9 @@ describe("localSessionStore — defaults", () => {
     expect(localSessionStore.hasDismissedOnboardingBanner()).toBe(false);
   });
 
-  it("defaults bookmarks/read/seen/saved to empty lists", () => {
+  it("defaults bookmarks/read/saved to empty lists", () => {
     expect(localSessionStore.getBookmarks()).toEqual([]);
     expect(localSessionStore.getReadArticles()).toEqual([]);
-    expect(localSessionStore.getSeenWords()).toEqual([]);
     expect(localSessionStore.getSavedWords()).toEqual([]);
   });
 });
@@ -143,21 +142,6 @@ describe("localSessionStore — read events (timestamped, enhancement-plan.md Ba
     );
     expect(localSessionStore.getReadArticles()).toEqual(["article-1"]);
     expect(localSessionStore.getReadEvents()).toEqual([]);
-  });
-});
-
-describe("localSessionStore — seen words", () => {
-  it("markWordSeen stores lowercase key and is case-insensitive on read", () => {
-    localSessionStore.markWordSeen("Workforce");
-    expect(localSessionStore.isWordSeen("workforce")).toBe(true);
-    expect(localSessionStore.isWordSeen("WORKFORCE")).toBe(true);
-    expect(localSessionStore.getSeenWords()).toEqual(["workforce"]);
-  });
-
-  it("does not duplicate an already-seen word", () => {
-    localSessionStore.markWordSeen("lay off");
-    localSessionStore.markWordSeen("Lay Off");
-    expect(localSessionStore.getSeenWords()).toEqual(["lay off"]);
   });
 });
 

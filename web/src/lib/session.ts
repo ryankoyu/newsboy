@@ -70,9 +70,6 @@ export interface SessionStore {
   getReadEvents(): ReadEvent[];
 
   /** Words the user has looked up at least once ("본 적 있음" dotted underline). */
-  getSeenWords(): string[];
-  isWordSeen(term: string): boolean;
-  markWordSeen(term: string): void;
 
   /** Saved words (My Vocabulary, surfaced minimally in Saved tab). */
   getSavedWords(): SavedWordEntry[];
@@ -155,7 +152,6 @@ interface PersistedShape {
    * simply excluded from weekly/streak aggregation).
    */
   readEvents: ReadEvent[];
-  seenWords: string[];
   savedWords: SavedWordEntry[];
   savedSentences: SavedSentenceEntry[];
   displayName: string | null;
@@ -171,7 +167,6 @@ const DEFAULTS: PersistedShape = {
   bookmarks: [],
   readArticles: [],
   readEvents: [],
-  seenWords: [],
   savedWords: [],
   savedSentences: [],
   displayName: null,
@@ -380,7 +375,6 @@ function coerce(raw: unknown): CoerceResult {
       bookmarks: ids("bookmarks", []),
       readArticles: ids("readArticles", []),
       readEvents: entries("readEvents", isReadEvent, []),
-      seenWords: ids("seenWords", []),
       savedWords: entries("savedWords", isSavedWord, []),
       savedSentences: entries("savedSentences", isSavedSentence, []),
       displayName,
@@ -577,20 +571,6 @@ export const localSessionStore: SessionStore = {
     return load().readEvents;
   },
 
-  getSeenWords() {
-    return load().seenWords;
-  },
-  isWordSeen(term) {
-    return load().seenWords.includes(term.toLowerCase());
-  },
-  markWordSeen(term) {
-    const key = term.toLowerCase();
-    const s = load();
-    if (!s.seenWords.includes(key)) {
-      s.seenWords = [...s.seenWords, key];
-      save(s);
-    }
-  },
 
   getSavedWords() {
     return load().savedWords;

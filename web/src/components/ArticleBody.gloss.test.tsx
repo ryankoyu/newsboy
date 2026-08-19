@@ -22,7 +22,7 @@ const curated = (term: string, meaning: string): Word => ({
   example: `An example using ${term}.`,
   pronunciation: "/ˈtest/",
   sort_order: 1,
-  is_key: false,
+  isKey: false,
   pos: "n.",
 });
 
